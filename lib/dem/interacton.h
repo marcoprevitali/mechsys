@@ -531,7 +531,7 @@ inline CInteractonSphere::CInteractonSphere (Particle * Pt1, Particle * Pt2, siz
         {
             if (fabs(Gn)>1.0) throw new Fatal("CInteractonSphere the restitution coefficient is greater than 1");
             Gn = 2.0*sqrt((pow(log(-Gn),2.0)*(Kn/me))/(M_PI*M_PI+pow(log(-Gn),2.0)));
-            Gt = 0.0;
+            Gt = 2.0*sqrt(2.0/7.0 * (pow(log(-Gt),2.0)*(Kt/me))/(M_PI*M_PI+pow(log(-Gt),2.0)));
         }
         Gn *= me;
         Gt *= me;
