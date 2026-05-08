@@ -648,6 +648,12 @@ inline bool CInteractonSphere::CalcForce(double dt, Vec3_t const & Per, size_t c
     //}
 
     First = false;
+
+    if (delta<=0.0){
+ //   printf("Reset overlap..\n");
+    Fdvv = Vec3_t(0.0, 0.0, 0.0);
+    }
+
     if (delta>0.0)
     {
 #ifdef USE_CHECK_OVERLAP
@@ -699,43 +705,82 @@ inline bool CInteractonSphere::CalcForce(double dt, Vec3_t const & Per, size_t c
         Vec3_t vt = vrel - dot(n,vrel)*n;
         Vec3_t F  = OrthoSys::O;
         Vec3_t Ft = OrthoSys::O;
-        if (contactlaw==0)
-        {
-            Fn  = Kn*delta*n;
-            
-            Fnet += Fn;
-            Fdvv += vt*dt;
-            Fdvv -= dot(Fdvv,n)*n;
-            Vec3_t tan = Fdvv;
-            if (norm(tan)>0.0) tan/=norm(tan);
-            if (norm(Fdvv)>Mu*norm(Fn)/Kt)
-            {
-                 //Count a sliding contact
-                Nsc++;
-                Fdvv = Mu*norm(Fn)/Kt*tan;
-                dEfric += Kt*dot(Fdvv,vt)*dt;
-            }
-            Ftnet += Kt*Fdvv;
 
-            //Calculating the rolling resistance torque
-            double Kr = beta*Kt;
-            Vec3_t Vr = P1->Props.R*P2->Props.R*cross(Vec3_t(t1 - t2),n)/(P1->Props.R+P2->Props.R);
-            Fdr += Kr*Vr*dt;
-            Fdr -= dot(Fdr,n)*n;
-            
-            tan = Fdr;
-            if (norm(tan)>0.0) tan/=norm(tan);
-            if (norm(Fdr)>eta*Mu*norm(Fn))
-            {
-                Fdr = eta*Mu*norm(Fn)*tan;
-                Nr++;
-            }
+double sliding_mult = 1.0;
 
-            Ft = -Fdr;
-            
-            F = Fn + Kt*Fdvv + Gn*dot(n,vrel)*n + Gt*vt;
-            dEvis += (Gn*dot(vrel-vt,vrel-vt)+Gt*dot(vt,vt))*dt;
-        }
+if (contactlaw == 0)
+{
+
+    // normal force with dashpot (elastic + viscous) ---
+    Fn = Kn * delta * n;                           // elastic normal force
+    Vec3_t Fn_dash = Gn * dot(n, vrel) * n;        // normal dashpot force
+    Vec3_t Fn_total = Fn + Fn_dash;                // total normal force
+
+    // (i) Prevent tensile total normal force (force cannot pull)
+    if (dot(Fn_total, n) < 0.0)
+        Fn_total = Vec3_t(0.0, 0.0, 0.0);
+    
+   // printf("GN: %g, GT:%g\n",Gn,Gt);
+    // accumulate total normal force into Fnet (including dashpot and tensile cap)
+    Fnet += Fn_total;
+
+    // tangential displacement increment
+    Fdvv += vt * dt;
+    Fdvv -= dot(Fdvv, n) * n;                     // keep tangential component only
+
+
+    Vec3_t Ft_elastic = Kt * Fdvv;
+    Vec3_t Ft_dashpot = Gt * vt;
+
+    Vec3_t Ft_total_tentative = Ft_elastic + Ft_dashpot;
+
+    double friction_limit = Mu * norm(Fn_total);  // coulomb model
+    Vec3_t tan(0.0, 0.0, 0.0);
+
+    if (norm(Ft_total_tentative) > friction_limit) {
+        Nsc++;                                      // count sliding contact
+        sliding_mult = 0.0;
+
+        // sliding direction
+        tan = Ft_total_tentative / norm(Ft_total_tentative);
+
+        
+        // tangential force is elastic = tangential limit
+        Ft_elastic = friction_limit * tan;
+        Fdvv = Ft_elastic / Kt;                     // update elastic displacement
+
+        // set the dashpot to zero if sliding
+        Ft_dashpot = Vec3_t(0.0, 0.0, 0.0);
+
+        // frictional work
+        dEfric += Kt * dot(Fdvv, vt) * dt;
+    }
+
+    // ftnet now includes both
+    Ftnet += Ft_elastic + Ft_dashpot;
+
+    
+    double Kr = beta * Kt;
+    Vec3_t Vr = P1->Props.R * P2->Props.R * cross(Vec3_t(t1 - t2), n) / (P1->Props.R + P2->Props.R);
+    Fdr += Kr * Vr * dt;
+    Fdr -= dot(Fdr, n) * n;
+
+    tan = Fdr;
+    if (norm(tan) > 0.0) tan /= norm(tan);
+    if (norm(Fdr) > eta * Mu * norm(Fn)) { // unchanged, we can think about rolling resistance another time
+        Fdr = eta * Mu * norm(Fn) * tan;
+        Nr++;
+    }
+
+    Ft = -Fdr;   
+
+    // applied force
+    F = Fn_total + Ft_elastic + Ft_dashpot;
+
+
+    double dEvis_tangential = (sliding_mult > 0.5) ? Gt * dot(vt, vt) * dt : 0.0; //if we slide, there is no dashpot energy component
+    dEvis += (Gn * dot(vrel - vt, vrel - vt) * dt) + dEvis_tangential;
+}
         else if (contactlaw==1)
         {
             Fn  = Kn*sqrt(delta)*delta*n;
