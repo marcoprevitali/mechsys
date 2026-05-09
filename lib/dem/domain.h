@@ -71,6 +71,17 @@
 #include <mechsys/dem/dem.cuh>
 #endif
 
+
+/*
+#define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
+inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true) {
+   if (code != cudaSuccess) {
+      fprintf(stderr,"GPUassert: %s %s %d\n", cudaGetErrorString(code), file, line);
+      if (abort) exit(code);
+   }
+}
+*/
+
 namespace DEM
 {
 
@@ -300,8 +311,8 @@ public:
     real3                     * pWdot;
     OrientationUpdate_ptr_t     pOrientationUpdate;
     FinalizeRotation_ptr_t      pFinalizeRotation;
-
-
+    EnforceAngularFixity_ptr_t pEnforceAngularFixity;
+    ZeroFixedTorque_ptr_t    pZeroFixedTorque;
 #endif
     
 };
@@ -356,11 +367,12 @@ inline Domain::Domain (void * UD, size_t contactlaw)
 pOrientationUpdate = OrientationUpdate;
 pFinalizeRotation  = FinalizeRotation;
     pExtraParams = NULL;
-    
-
+    pEnforceAngularFixity = EnforceAngularFixity;
+pZeroFixedTorque = ZeroFixedTorque;
 
 #endif
 }
+
 
 inline Domain::~Domain ()
 {
@@ -449,6 +461,7 @@ inline void Domain::SetProps (Dict & D)
         it->second->UpdateParameters(ContactLaw);
     }
 }
+
 
 inline void Domain::Initialize (double dt)
 {
@@ -595,21 +608,19 @@ inline void Domain::Solve (double tf, double dt, double dtOut, ptFun_t ptSetup, 
     }
     
     UpdateContacts();
+    
 
-    size_t iter_b = iter;
+  size_t iter_b = iter;
     size_t iter_t = 0;
     size_t numup  = 0;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// VELOCITY VERLET: allocate and compute initial accelerations
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// new allocations for the velocity verlet
   A.Resize(Particles.Size());
     Wdot.Resize(Particles.Size());
 
+    // Initial forces
     #pragma omp parallel for schedule(static) num_threads(Nproc)
     for (size_t i = 0; i < Particles.Size(); i++) {
         Particles[i]->F = Particles[i]->Ff;
@@ -630,6 +641,17 @@ inline void Domain::Solve (double tf, double dt, double dtOut, ptFun_t ptSetup, 
     }
 
     if (MostlySpheres) CalcForceSphere();
+    
+    // zero force and torque components for particles with fixed degrees of freedom
+#pragma omp parallel for schedule(static) num_threads(Nproc)
+for (size_t i = 0; i < Particles.Size(); i++) {
+    if (Particles[i]->vxf) Particles[i]->F(0) = 0.0;
+    if (Particles[i]->vyf) Particles[i]->F(1) = 0.0;
+    if (Particles[i]->vzf) Particles[i]->F(2) = 0.0;
+    if (Particles[i]->wxf) Particles[i]->T(0) = 0.0;
+    if (Particles[i]->wyf) Particles[i]->T(1) = 0.0;
+    if (Particles[i]->wzf) Particles[i]->T(2) = 0.0;
+}
 
     #pragma omp parallel for schedule(static) num_threads(Nproc)
     for (size_t i = 0; i < Particles.Size(); i++) {
@@ -642,12 +664,24 @@ inline void Domain::Solve (double tf, double dt, double dtOut, ptFun_t ptSetup, 
         Wdot[i](2) = (Particles[i]->T(2) - (Iy - Ix) * w(0) * w(1)) / Iz;
     }
 
+    // Initial accelerations – respect fixity (translation and rotation)
+#pragma omp parallel for schedule(static) num_threads(Nproc)
+for (size_t i = 0; i < Particles.Size(); i++) {
+    if (Particles[i]->vxf) A[i](0) = 0.0;
+    if (Particles[i]->vyf) A[i](1) = 0.0;
+    if (Particles[i]->vzf) A[i](2) = 0.0;
+    if (Particles[i]->wxf) Wdot[i](0) = 0.0;
+    if (Particles[i]->wyf) Wdot[i](1) = 0.0;
+    if (Particles[i]->wzf) Wdot[i](2) = 0.0;
+}
+
     bool px = (Xmax - Xmin) > Alpha;
     bool py = (Ymax - Ymin) > Alpha;
     bool pz = (Zmax - Zmin) > Alpha;
 
 
 #ifdef USE_CUDA
+
     //if (iter==0) UpLoadDevice(Nproc,true);
     //else         UpLoadDevice(Nproc,false);
     UpLoadDevice(Nproc,true);
@@ -661,8 +695,6 @@ inline void Domain::Solve (double tf, double dt, double dtOut, ptFun_t ptSetup, 
         << "  Number of edges                           =  " << demaux.nedges/2 << TERM_RST << std::endl
         << "  Number of faces                           =  " << demaux.nfaces/2 << TERM_RST << std::endl;
 #endif
-
-
 
     // run
     while (Time<tf)
@@ -701,36 +733,43 @@ inline void Domain::Solve (double tf, double dt, double dtOut, ptFun_t ptSetup, 
       // 1. Reset forces and interaction accumulators
 pReset<<<(demaux.nparts+demaux.ncoint)/Nthread+1, Nthread>>>(
     pParticlesCU, pDynParticlesCU, pInteractons, pComInteractons, pdemaux, pExtraParams);
+//gpuErrchk(cudaDeviceSynchronize());
 
 // 2. Translation half‑step (position update)
 pVerletStep1<<<demaux.nparts/Nthread+1, Nthread>>>(pVertsCU, pParticlesCU, pDynParticlesCU, pA,pdemaux);
-pOrientationUpdate<<<demaux.nparts/Nthread+1, Nthread>>>(
-    pVertsCU, pParticlesCU, pDynParticlesCU, pWdot, pdemaux);
+////gpuErrchk(cudaDeviceSynchronize());
 
+pOrientationUpdate<<<demaux.nparts/Nthread+1, Nthread>>>(    pVertsCU, pParticlesCU, pDynParticlesCU, pWdot, pdemaux);
+//gpuErrchk(cudaDeviceSynchronize());
+
+pEnforceAngularFixity<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pParticlesCU, pDynParticlesCU, pdemaux);
+//gpuErrchk(cudaDeviceSynchronize());
 
 // 3. Compute forces (using half‑step v and old w)
-pForceVV<<<demaux.nvvint/Nthread+1, Nthread>>>(
-    pInteractons, pComInteractons, pDynInteractonsVV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
-pForceEE<<<demaux.neeint/Nthread+1, Nthread>>>(
-    pEdgesCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsEE, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
-pForceVF<<<demaux.nvfint/Nthread+1, Nthread>>>(
-    pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsVF, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
-pForceFV<<<demaux.nfvint/Nthread+1, Nthread>>>(
-    pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsFV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
+pForceVV<<<demaux.nvvint/Nthread+1, Nthread>>>(pInteractons, pComInteractons, pDynInteractonsVV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
+//gpuErrchk(cudaDeviceSynchronize());
+pForceEE<<<demaux.neeint/Nthread+1, Nthread>>>(pEdgesCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsEE, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
+pForceVF<<<demaux.nvfint/Nthread+1, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsVF, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
+pForceFV<<<demaux.nfvint/Nthread+1, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsFV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
 
 // 4. Rotate (original Euler) – updates Q, w, and rotates vertices
 //pRotate<<<demaux.nparts/Nthread+1, Nthread>>>(pVertsCU, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
+pZeroFixedTorque<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pParticlesCU, pdemaux);
+//gpuErrchk(cudaDeviceSynchronize());
 
 // 5. Finalise translational velocity (Verlet corrector)
-pFinalizeVelocity<<<demaux.nparts/Nthread+1, Nthread>>>(
-    pParticlesCU, pDynParticlesCU, pA,pdemaux);
-pFinalizeRotation<<<demaux.nparts/Nthread+1, Nthread>>>(
-    pParticlesCU, pDynParticlesCU, pWdot, pdemaux);
+pFinalizeVelocity<<<demaux.nparts/Nthread+1, Nthread>>>(pParticlesCU, pDynParticlesCU, pA,pdemaux);
+//gpuErrchk(cudaDeviceSynchronize());
+
+pFinalizeRotation<<<demaux.nparts/Nthread+1, Nthread>>>(pParticlesCU, pDynParticlesCU, pWdot, pdemaux);
+//gpuErrchk(cudaDeviceSynchronize());
+
+pEnforceAngularFixity<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pParticlesCU, pDynParticlesCU, pdemaux);
+//gpuErrchk(cudaDeviceSynchronize());
 
 // 6. Max displacement for contact trigger
-MaxD<<<demaux.nverts/Nthread+1, Nthread>>>(
-    pVertsCU, pVertsoCU, pMaxDCU, pdemaux);
-
+MaxD<<<demaux.nverts/Nthread+1, Nthread>>>(pVertsCU, pVertsoCU, pMaxDCU, pdemaux);
+//gpuErrchk(cudaDeviceSynchronize());
         real maxdis = 0.0;
         thrust::device_vector<real>::iterator it=thrust::max_element(bMaxDCU.begin(),bMaxDCU.end());
         maxdis = *it;
@@ -749,40 +788,65 @@ MaxD<<<demaux.nverts/Nthread+1, Nthread>>>(
             //cudaDeviceSynchronize();
         }
 #else
-                // ---------- VELOCITY VERLET STEP ----------
+     // ---------- VELOCITY VERLET STEP (CPU) ----------
         // 1. Half‑step velocities (store in Particle::v, Particle::w)
+
+        // fix particles (i.e. remove accelerations)
+        #pragma omp parallel for schedule(static) num_threads(Nproc)
+        for (size_t i = 0; i < Particles.Size(); i++) {
+            if (Particles[i]->vxf) A[i](0) = 0.0;
+            if (Particles[i]->vyf) A[i](1) = 0.0;
+            if (Particles[i]->vzf) A[i](2) = 0.0;
+            if (Particles[i]->wxf) Wdot[i](0) = 0.0;
+            if (Particles[i]->wyf) Wdot[i](1) = 0.0;
+            if (Particles[i]->wzf) Wdot[i](2) = 0.0;
+        }
+
         #pragma omp parallel for schedule(static) num_threads(Nproc)
         for (size_t i = 0; i < Particles.Size(); i++) {
             Particles[i]->v += 0.5 * A[i] * Dt;
             Particles[i]->w += 0.5 * Wdot[i] * Dt;
+
+            // --- FIX: enforce rotational fixity immediately after update ---
+            if (Particles[i]->wxf) Particles[i]->w(0) = 0.0;
+            if (Particles[i]->wyf) Particles[i]->w(1) = 0.0;
+            if (Particles[i]->wzf) Particles[i]->w(2) = 0.0;
         }
 
         // 2. Position & orientation update
-        #pragma omp parallel for schedule(static) num_threads(Nproc)
-        for (size_t i = 0; i < Particles.Size(); i++) {
-            // translate
-            Particles[i]->x += Particles[i]->v * Dt;
+    #pragma omp parallel for schedule(static) num_threads(Nproc)
+for (size_t i = 0; i < Particles.Size(); i++) {
+    // --- translation ---
+    Vec3_t old_x = Particles[i]->x;
+    Particles[i]->x += Particles[i]->v * Dt;
 
-            // periodic b.c.
-            if (px && Particles[i]->IsFree()) {
-                if (Particles[i]->x(0) >= Xmax) Particles[i]->x(0) += Xmin - Xmax;
-                if (Particles[i]->x(0) <  Xmin) Particles[i]->x(0) += Xmax - Xmin;
-            }
-            if (py && Particles[i]->IsFree()) {
-                if (Particles[i]->x(1) >= Ymax) Particles[i]->x(1) += Ymin - Ymax;
-                if (Particles[i]->x(1) <  Ymin) Particles[i]->x(1) += Ymax - Ymin;
-            }
-            if (pz && Particles[i]->IsFree()) {
-                if (Particles[i]->x(2) >= Zmax) Particles[i]->x(2) += Zmin - Zmax;
-                if (Particles[i]->x(2) <  Zmin) Particles[i]->x(2) += Zmax - Zmin;
-            }
+    // periodic wrapping
+    if (px && Particles[i]->IsFree()) {
+        if (Particles[i]->x(0) >= Xmax) Particles[i]->x(0) += Xmin - Xmax;
+        if (Particles[i]->x(0) <  Xmin) Particles[i]->x(0) += Xmax - Xmin;
+    }
+    if (py && Particles[i]->IsFree()) {
+        if (Particles[i]->x(1) >= Ymax) Particles[i]->x(1) += Ymin - Ymax;
+        if (Particles[i]->x(1) <  Ymin) Particles[i]->x(1) += Ymax - Ymin;
+    }
+    if (pz && Particles[i]->IsFree()) {
+        if (Particles[i]->x(2) >= Zmax) Particles[i]->x(2) += Zmin - Zmax;
+        if (Particles[i]->x(2) <  Zmin) Particles[i]->x(2) += Zmax - Zmin;
+    }
 
-            // rotate (body‑frame ω_half → quaternion increment)
-            Quaternion_t dq = Exp(Particles[i]->w, Dt);
-            Particles[i]->Q = Particles[i]->Q * dq;
-            Particles[i]->Q = Particles[i]->Q / norm(Particles[i]->Q);   // renormalise
-        }
+    // move vertices by the same displacement
+    Vec3_t dis = Particles[i]->x - old_x;
+    for (size_t j = 0; j < Particles[i]->Verts.Size(); j++)
+        *Particles[i]->Verts[j] += dis;
 
+    // --- rotation ---
+    Quaternion_t dq = Exp(Particles[i]->w, Dt);
+    // rotate vertices around the new centre
+    Particles[i]->Rotate(dq, Particles[i]->x);
+    // update stored orientation
+    Particles[i]->Q = Particles[i]->Q * dq;
+    Particles[i]->Q = Particles[i]->Q / norm(Particles[i]->Q);
+}
         // 3. Check for contact‑list update
         double maxdis = 0.0;
         #pragma omp parallel for schedule(static) num_threads(Nproc)
@@ -823,6 +887,17 @@ MaxD<<<demaux.nverts/Nthread+1, Nthread>>>(
 
         if (MostlySpheres) CalcForceSphere();
 
+        // zero force components for fixed degrees of freedom
+        #pragma omp parallel for schedule(static) num_threads(Nproc)
+        for (size_t i = 0; i < Particles.Size(); i++) {
+            if (Particles[i]->vxf) Particles[i]->F(0) = 0.0;
+            if (Particles[i]->vyf) Particles[i]->F(1) = 0.0;
+            if (Particles[i]->vzf) Particles[i]->F(2) = 0.0;
+            if (Particles[i]->wxf) Particles[i]->T(0) = 0.0;
+            if (Particles[i]->wyf) Particles[i]->T(1) = 0.0;
+            if (Particles[i]->wzf) Particles[i]->T(2) = 0.0;
+        }
+
         // 5. Finalise velocities and compute new accelerations
         #pragma omp parallel for schedule(static) num_threads(Nproc)
         for (size_t i = 0; i < Particles.Size(); i++) {
@@ -835,11 +910,24 @@ MaxD<<<demaux.nverts/Nthread+1, Nthread>>>(
             wdot_new(1) = (Particles[i]->T(1) - (Ix - Iz)*w_half(2)*w_half(0)) / Iy;
             wdot_new(2) = (Particles[i]->T(2) - (Iy - Ix)*w_half(0)*w_half(1)) / Iz;
 
-            // finish velocity: v(t+dt) = v(t+dt/2) + 0.5 * a(t+dt) * dt
+            // --- FIX: zero fixed components before final update ---
+            if (Particles[i]->vxf) a_new(0) = 0.0;
+            if (Particles[i]->vyf) a_new(1) = 0.0;
+            if (Particles[i]->vzf) a_new(2) = 0.0;
+            if (Particles[i]->wxf) wdot_new(0) = 0.0;
+            if (Particles[i]->wyf) wdot_new(1) = 0.0;
+            if (Particles[i]->wzf) wdot_new(2) = 0.0;
+
+            // update velocities
             Particles[i]->v += 0.5 * a_new * Dt;
             Particles[i]->w += 0.5 * wdot_new * Dt;
 
-            // save accelerations for next step
+            // --- FIX: enforce rotational fixity again after final update ---
+            if (Particles[i]->wxf) Particles[i]->w(0) = 0.0;
+            if (Particles[i]->wyf) Particles[i]->w(1) = 0.0;
+            if (Particles[i]->wzf) Particles[i]->w(2) = 0.0;
+
+            // store accelerations for next step
             A[i] = a_new;
             Wdot[i] = wdot_new;
         }
@@ -877,7 +965,6 @@ MaxD<<<demaux.nverts/Nthread+1, Nthread>>>(
     printf("%s  Potential energy                                          = %g%s\n",TERM_CLR4, Epot, TERM_RST);
     printf("%s  Total energy                                              = %g%s\n",TERM_CLR2, Etot, TERM_RST);
 }
-
 inline void Domain::WriteBF (char const * FileKey)
 {
     size_t n_fn = 0;
@@ -1170,6 +1257,7 @@ if (delta > 1e-12)
     of << oss.str();
     of.close();
 }
+
 
 inline void Domain::WriteXDMF (char const * FileKey)
 {
@@ -2326,7 +2414,7 @@ inline void Domain::ResetInteractons()
         }
     }
 }
-
+// --- FIXED ResetDisplacements: periodic wrapping BEFORE storing reference ---
 inline void Domain::ResetDisplacements()
 {
     #pragma omp parallel for schedule(static) num_threads(Nproc)
@@ -2338,25 +2426,34 @@ inline void Domain::ResetDisplacements()
     bool px = (Xmax-Xmin)>Alpha;
     bool py = (Ymax-Ymin)>Alpha;
     bool pz = (Zmax-Zmin)>Alpha;
+
     #pragma omp parallel for schedule(static) num_threads(Nproc)
     for (size_t i=0;i<Particles.Size();i++)
     {
-        Particles[i]->ResetDisplacements();
         if(Particles[i]->IsFree())
         {
-            //#ifndef USE_CUDA
-            if (px&&Particles[i]->x(0)>=Xmax) Particles[i]->Translate(Vec3_t(Xmin-Xmax,0.0,0.0));
-            if (px&&Particles[i]->x(0)< Xmin) Particles[i]->Translate(Vec3_t(Xmax-Xmin,0.0,0.0));
-            if (py&&Particles[i]->x(1)>=Ymax) Particles[i]->Translate(Vec3_t(0.0,Ymin-Ymax,0.0));
-            if (py&&Particles[i]->x(1)< Ymin) Particles[i]->Translate(Vec3_t(0.0,Ymax-Ymin,0.0));
-            if (pz&&Particles[i]->x(2)>=Zmax) Particles[i]->Translate(Vec3_t(0.0,0.0,Zmin-Zmax));
-            if (pz&&Particles[i]->x(2)< Zmin) Particles[i]->Translate(Vec3_t(0.0,0.0,Zmax-Zmin));
-            //#endif
+            // ------ do periodic wrap FIRST ------
+            if (px && Particles[i]->x(0) >= Xmax) Particles[i]->Translate(Vec3_t(Xmin-Xmax,0.0,0.0));
+            if (px && Particles[i]->x(0) <  Xmin) Particles[i]->Translate(Vec3_t(Xmax-Xmin,0.0,0.0));
+            if (py && Particles[i]->x(1) >= Ymax) Particles[i]->Translate(Vec3_t(0.0,Ymin-Ymax,0.0));
+            if (py && Particles[i]->x(1) <  Ymin) Particles[i]->Translate(Vec3_t(0.0,Ymax-Ymin,0.0));
+            if (pz && Particles[i]->x(2) >= Zmax) Particles[i]->Translate(Vec3_t(0.0,0.0,Zmin-Zmax));
+            if (pz && Particles[i]->x(2) <  Zmin) Particles[i]->Translate(Vec3_t(0.0,0.0,Zmax-Zmin));
+
+            // ------ NOW store reference vertices ------
+            Particles[i]->ResetDisplacements();
+
+            // linked cell placement
             iVec3_t idx;
             idx(0) = floor((Particles[i]->x(0)-LCxmin(0))/DxLC(0));
             idx(1) = floor((Particles[i]->x(1)-LCxmin(1))/DxLC(1));
             idx(2) = floor((Particles[i]->x(2)-LCxmin(2))/DxLC(2));
             MTD[omp_get_thread_num()].LLC.Push(std::make_pair(idx,i));
+        }
+        else
+        {
+            // non‑free particles never wrapped
+            Particles[i]->ResetDisplacements();
         }
     }
     for (size_t i=0;i<Nproc;i++)
@@ -2368,6 +2465,7 @@ inline void Domain::ResetDisplacements()
         }
     }
 }
+
 
 inline void Domain::UpdateLinkedCells()
 {
@@ -3131,23 +3229,36 @@ inline void Domain::UpLoadDevice(size_t Nc, bool first)
         pEdgesCU         = thrust::raw_pointer_cast(bEdgesCU       .data());
         pFacidCU         = thrust::raw_pointer_cast(bFacidCU       .data());
         pFacesCU         = thrust::raw_pointer_cast(bFacesCU       .data());
-
-// Copy A and Wdot to device
-    thrust::host_vector<real3> hA(demaux.nparts);
-    for (size_t i = 0; i < demaux.nparts; i++) 
-        hA[i]    = make_real3(A[i](0), A[i](1), A[i](2));
-    
-    bA    = hA;
-    pA    = thrust::raw_pointer_cast(bA.data());
-
-thrust::host_vector<real3> hWdot(demaux.nparts);
-for (size_t i = 0; i < demaux.nparts; i++)
-    hWdot[i] = make_real3(Wdot[i](0), Wdot[i](1), Wdot[i](2));
-bWdot = hWdot;
-pWdot = thrust::raw_pointer_cast(bWdot.data());
-
+        
     }
    
+
+ // ===== ALWAYS upload the current accelerations =====
+    thrust::host_vector<real3> hA(demaux.nparts);
+    for (size_t i = 0; i < demaux.nparts; i++)
+        hA[i] = make_real3(A[i](0), A[i](1), A[i](2));
+
+    bA.resize(hA.size());
+    thrust::copy(hA.begin(), hA.end(), bA.begin());
+    pA = thrust::raw_pointer_cast(bA.data());
+    //gpuErrchk(cudaGetLastError());
+
+    thrust::host_vector<real3> hWdot(demaux.nparts);
+    for (size_t i = 0; i < demaux.nparts; i++)
+        hWdot[i] = make_real3(Wdot[i](0), Wdot[i](1), Wdot[i](2));
+
+    bWdot.resize(hWdot.size());
+    thrust::copy(hWdot.begin(), hWdot.end(), bWdot.begin());
+    pWdot = thrust::raw_pointer_cast(bWdot.data());
+    //gpuErrchk(cudaGetLastError());
+
+
+
+
+
+
+
+
     demaux.nvvint = 0;
     demaux.neeint = 0;
     demaux.nvfint = 0;
@@ -3346,7 +3457,9 @@ pWdot = thrust::raw_pointer_cast(bWdot.data());
     //if (!first) cudaFree  (pdemaux);
     if (iter!=0) cudaFree  (pdemaux);
     cudaMalloc(&pdemaux, sizeof(dem_aux));
+    //gpuErrchk( cudaGetLastError() ); 
     cudaMemcpy(pdemaux, &demaux, sizeof(dem_aux), cudaMemcpyHostToDevice);
+    //gpuErrchk( cudaGetLastError() );
     //std::cout << "4" << std::endl;
     //
 }
@@ -3376,11 +3489,6 @@ inline void Domain::DnLoadDevice(size_t Nc, bool force)
             Particles[ip]->Faces[ic]->UpdatedL();
         }
     }
-    thrust::host_vector<real3> hWdot = bWdot;
-#pragma omp parallel for schedule(static) num_threads(Nc)
-for (size_t ip = 0; ip < Particles.Size(); ip++) {
-    Particles[ip]->wa = Vec3_t(hWdot[ip].x, hWdot[ip].y, hWdot[ip].z);
-}
 
     if (force)
     {

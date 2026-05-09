@@ -21,6 +21,8 @@
 #ifndef MECHSYS_DEM_CUH
 #define MECHSYS_DEM_CUH
 
+
+
 //Mechsys
 #include <mechsys/dem/interacton.h>
 namespace DEM
@@ -77,6 +79,12 @@ typedef void (*OrientationUpdate_ptr_t)(real3 *, ParticleCU const *, DynParticle
                                         real3 const *, dem_aux const *);
 typedef void (*FinalizeRotation_ptr_t)(ParticleCU const *, DynParticleCU *, real3 *,
                                        dem_aux const *);
+typedef void (*ZeroFixedTorque_ptr_t)(ParticleCU *, dem_aux const *);
+
+typedef void (*EnforceAngularFixity_ptr_t)(ParticleCU const *,
+                                           DynParticleCU *,
+                                           dem_aux const *);
+
 // Quaternion exponential map (body‑frame angular velocity → rotation increment)
 __device__ inline real4 Exp_GPU(real3 w, real dt)
 {
@@ -104,18 +112,30 @@ __device__ inline real4 QMult(real4 q1, real4 q2)
         q1.w*q2.z + q1.x*q2.y - q1.y*q2.x + q1.z*q2.w
     );
 }
+
+
+
+
+
 __global__ void VerletStep1(real3 * Verts, ParticleCU const * Par, DynParticleCU * DPar,
                             real3 const * A, dem_aux const * demaux)
 {
     size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
     if (ic >= demaux[0].nparts) return;
 
-    // half‑step velocity using stored acceleration
-    real3 v_half = make_real3(DPar[ic].v.x + 0.5f * demaux[0].dt * A[ic].x,
-                              DPar[ic].v.y + 0.5f * demaux[0].dt * A[ic].y,
-                              DPar[ic].v.z + 0.5f * demaux[0].dt * A[ic].z);
+    real3 a = A[ic];   // previous acceleration
 
-    // Position update
+    // zero acceleration components for fixed translational DOFs
+    if (Par[ic].vxf) a.x = 0.0f;
+    if (Par[ic].vyf) a.y = 0.0f;
+    if (Par[ic].vzf) a.z = 0.0f;
+
+    // half‑step velocity: v(t+½) = v(t) + ½·dt·a(t)
+    real3 v_half = make_real3(DPar[ic].v.x + 0.5f * demaux[0].dt * a.x,
+                              DPar[ic].v.y + 0.5f * demaux[0].dt * a.y,
+                              DPar[ic].v.z + 0.5f * demaux[0].dt * a.z);
+
+    // position update: x(t+dt) = x(t) + v(t+½)·dt
     real3 x_new = make_real3(
         DPar[ic].x.x + v_half.x * demaux[0].dt,
         DPar[ic].x.y + v_half.y * demaux[0].dt,
@@ -123,7 +143,7 @@ __global__ void VerletStep1(real3 * Verts, ParticleCU const * Par, DynParticleCU
     );
     real3 dis = x_new - DPar[ic].x;
 
-    // Periodic boundaries (same logic as ResetMaxD)
+    // periodic boundaries (same as before)
     bool isfree = (!Par[ic].vxf && !Par[ic].vyf && !Par[ic].vzf &&
                    !Par[ic].wxf && !Par[ic].wyf && !Par[ic].wzf) || Par[ic].FixFree;
     if (isfree) {
@@ -148,9 +168,7 @@ __global__ void VerletStep1(real3 * Verts, ParticleCU const * Par, DynParticleCU
         Verts[iv].z += dis.z;
     }
 
-    // Store half‑step velocity for finalisation
-    DPar[ic].v = v_half;
-    // angular velocity w stays unchanged (will be updated later by Rotate)
+    DPar[ic].v = v_half;   // store half‑step velocity for finalisation
 }
 
 
@@ -780,17 +798,21 @@ __global__ void FinalizeVelocity(ParticleCU const * Par, DynParticleCU * DPar,
 {
     size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
     if (ic >= demaux[0].nparts) return;
+real3 F_eff = DPar[ic].F;
+if (Par[ic].vxf) F_eff.x = 0.0f;
+if (Par[ic].vyf) F_eff.y = 0.0f;
+if (Par[ic].vzf) F_eff.z = 0.0f;
 
-    real inv_m = 1.0 / Par[ic].m;
-    real3 a_new = make_real3(DPar[ic].F.x * inv_m, DPar[ic].F.y * inv_m, DPar[ic].F.z * inv_m);
+real inv_m = 1.0 / Par[ic].m;
+real3 a_new = make_real3(F_eff.x * inv_m, F_eff.y * inv_m, F_eff.z * inv_m);
 
-    DPar[ic].v = make_real3(DPar[ic].v.x + 0.5f * demaux[0].dt * a_new.x,
-                            DPar[ic].v.y + 0.5f * demaux[0].dt * a_new.y,
-                            DPar[ic].v.z + 0.5f * demaux[0].dt * a_new.z);
-    A[ic] = a_new;
+DPar[ic].v = make_real3(
+    DPar[ic].v.x + 0.5f * demaux[0].dt * a_new.x,
+    DPar[ic].v.y + 0.5f * demaux[0].dt * a_new.y,
+    DPar[ic].v.z + 0.5f * demaux[0].dt * a_new.z
+);
+A[ic] = a_new;   // store the effective acceleration (zero on fixed axes)
 }
-
-// ------------------- Velocity‑Verlet rotation kernels -------------------
 __global__ void OrientationUpdate(real3 * Verts, ParticleCU const * Par,
                                   DynParticleCU * DPar, real3 const * Wdot,
                                   dem_aux const * demaux)
@@ -798,16 +820,22 @@ __global__ void OrientationUpdate(real3 * Verts, ParticleCU const * Par,
     size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
     if (ic >= demaux[0].nparts) return;
 
-    // half‑step angular velocity ω(t+½)
-    real3 w_half;
-    w_half.x = DPar[ic].w.x + 0.5f * demaux[0].dt * Wdot[ic].x;
-    w_half.y = DPar[ic].w.y + 0.5f * demaux[0].dt * Wdot[ic].y;
-    w_half.z = DPar[ic].w.z + 0.5f * demaux[0].dt * Wdot[ic].z;
+    real3 wdot = Wdot[ic];  // previous angular acceleration
 
-    // rotation increment Δq = Exp( ω(t+½) , dt )
+    // zero angular acceleration components for fixed rotational DOFs
+    if (Par[ic].wxf) wdot.x = 0.0f;
+    if (Par[ic].wyf) wdot.y = 0.0f;
+    if (Par[ic].wzf) wdot.z = 0.0f;
+
+    // half‑step angular velocity: ω(t+½) = ω(t) + ½·dt·ω̇(t)
+    real3 w_half;
+    w_half.x = DPar[ic].w.x + 0.5f * demaux[0].dt * wdot.x;
+    w_half.y = DPar[ic].w.y + 0.5f * demaux[0].dt * wdot.y;
+    w_half.z = DPar[ic].w.z + 0.5f * demaux[0].dt * wdot.z;
+
+    // rotation increment using ω(t+½)
     real4 dq = Exp_GPU(w_half, demaux[0].dt);
 
-    // update quaternion: Qnew = Qold * dq, then normalise
     real4 Q_old = DPar[ic].Q;
     real4 Q_new = QMult(Q_old, dq);
     real inv_norm = rsqrt(Q_new.w*Q_new.w + Q_new.x*Q_new.x +
@@ -815,21 +843,38 @@ __global__ void OrientationUpdate(real3 * Verts, ParticleCU const * Par,
     Q_new.w *= inv_norm; Q_new.x *= inv_norm;
     Q_new.y *= inv_norm; Q_new.z *= inv_norm;
 
-    // conjugate of the *old* quaternion (world → body)
     real4 Q_old_conj = make_real4( Q_old.w, -Q_old.x, -Q_old.y, -Q_old.z );
 
-    // rotate all vertices of this particle
     for (size_t iv = Par[ic].Nvi; iv < Par[ic].Nvf; iv++) {
-        real3 xt = Verts[iv] - DPar[ic].x;      // vector from COM
+        real3 xt = Verts[iv] - DPar[ic].x;
         real3 xt_body;
-        Rotation(xt, Q_old_conj, xt_body);     // to body frame (old orientation)
+        Rotation(xt, Q_old_conj, xt_body);
         real3 xt_new;
-        Rotation(xt_body, Q_new, xt_new);      // to world frame (new orientation)
+        Rotation(xt_body, Q_new, xt_new);
         Verts[iv] = xt_new + DPar[ic].x;
     }
 
-    // store ω(t+½) for force calculations and for FinalizeRotation
-    DPar[ic].w = w_half;
+    DPar[ic].w = w_half;   // store half‑step angular velocity
+}
+
+__global__ void ZeroFixedTorque(ParticleCU * Par, dem_aux const * demaux)
+{
+    size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
+    if (ic >= demaux[0].nparts) return;
+
+    if (Par[ic].wxf) Par[ic].T.x = 0.0f;
+    if (Par[ic].wyf) Par[ic].T.y = 0.0f;
+    if (Par[ic].wzf) Par[ic].T.z = 0.0f;
+}
+
+__global__ void EnforceAngularFixity(ParticleCU const * Par, DynParticleCU * DPar,
+                                     dem_aux const * demaux)
+{
+    size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
+    if (ic >= demaux[0].nparts) return;
+    if (Par[ic].wxf) DPar[ic].w.x = 0.0f;
+    if (Par[ic].wyf) DPar[ic].w.y = 0.0f;
+    if (Par[ic].wzf) DPar[ic].w.z = 0.0f;
 }
 
 __global__ void FinalizeRotation(ParticleCU const * Par, DynParticleCU * DPar,
