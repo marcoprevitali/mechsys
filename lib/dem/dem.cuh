@@ -115,63 +115,6 @@ __device__ inline real4 QMult(real4 q1, real4 q2)
 
 
 
-
-
-__global__ void VerletStep1(real3 * Verts, ParticleCU const * Par, DynParticleCU * DPar,
-                            real3 const * A, dem_aux const * demaux)
-{
-    size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
-    if (ic >= demaux[0].nparts) return;
-
-    real3 a = A[ic];   // previous acceleration
-
-    // zero acceleration components for fixed translational DOFs
-    if (Par[ic].vxf) a.x = 0.0f;
-    if (Par[ic].vyf) a.y = 0.0f;
-    if (Par[ic].vzf) a.z = 0.0f;
-
-    // half‑step velocity: v(t+½) = v(t) + ½·dt·a(t)
-    real3 v_half = make_real3(DPar[ic].v.x + 0.5f * demaux[0].dt * a.x,
-                              DPar[ic].v.y + 0.5f * demaux[0].dt * a.y,
-                              DPar[ic].v.z + 0.5f * demaux[0].dt * a.z);
-
-    // position update: x(t+dt) = x(t) + v(t+½)·dt
-    real3 x_new = make_real3(
-        DPar[ic].x.x + v_half.x * demaux[0].dt,
-        DPar[ic].x.y + v_half.y * demaux[0].dt,
-        DPar[ic].x.z + v_half.z * demaux[0].dt
-    );
-    real3 dis = x_new - DPar[ic].x;
-
-    // periodic boundaries (same as before)
-    bool isfree = (!Par[ic].vxf && !Par[ic].vyf && !Par[ic].vzf &&
-                   !Par[ic].wxf && !Par[ic].wyf && !Par[ic].wzf) || Par[ic].FixFree;
-    if (isfree) {
-        if (demaux[0].px) {
-            if (x_new.x <  demaux[0].Xmin) { dis.x += demaux[0].Xmax - demaux[0].Xmin; x_new.x += demaux[0].Xmax - demaux[0].Xmin; }
-            if (x_new.x >= demaux[0].Xmax) { dis.x += demaux[0].Xmin - demaux[0].Xmax; x_new.x += demaux[0].Xmin - demaux[0].Xmax; }
-        }
-        if (demaux[0].py) {
-            if (x_new.y <  demaux[0].Ymin) { dis.y += demaux[0].Ymax - demaux[0].Ymin; x_new.y += demaux[0].Ymax - demaux[0].Ymin; }
-            if (x_new.y >= demaux[0].Ymax) { dis.y += demaux[0].Ymin - demaux[0].Ymax; x_new.y += demaux[0].Ymin - demaux[0].Ymax; }
-        }
-        if (demaux[0].pz) {
-            if (x_new.z <  demaux[0].Zmin) { dis.z += demaux[0].Zmax - demaux[0].Zmin; x_new.z += demaux[0].Zmax - demaux[0].Zmin; }
-            if (x_new.z >= demaux[0].Zmax) { dis.z += demaux[0].Zmin - demaux[0].Zmax; x_new.z += demaux[0].Zmin - demaux[0].Zmax; }
-        }
-    }
-
-    DPar[ic].x = x_new;
-    for (size_t iv = Par[ic].Nvi; iv < Par[ic].Nvf; iv++) {
-        Verts[iv].x += dis.x;
-        Verts[iv].y += dis.y;
-        Verts[iv].z += dis.z;
-    }
-
-    DPar[ic].v = v_half;   // store half‑step velocity for finalisation
-}
-
-
 __global__ void CalcForceVV(InteractonCU const * Int, ComInteractonCU * CInt, DynInteractonCU * DIntVV, ParticleCU * Par,
         DynParticleCU * DPar, dem_aux const * demaux, void * extraparams)
 {
@@ -654,6 +597,43 @@ __global__ void CalcForceFV(size_t const * Faces, size_t const * Facid, real3 co
 }
 
 
+
+
+
+__global__ void VerletStep1(real3 * Verts, ParticleCU const * Par, DynParticleCU * DPar,
+                            real3 const * A, dem_aux const * demaux)
+{
+    size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
+    if (ic >= demaux[0].nparts) return;
+
+    real3 a = A[ic];
+    if (Par[ic].vxf) a.x = 0.0f;
+    if (Par[ic].vyf) a.y = 0.0f;
+    if (Par[ic].vzf) a.z = 0.0f;
+
+    // v(t+0.5) = v(t) + 0.5 dt·a(t)
+    real3 v_half = make_real3(DPar[ic].v.x + 0.5f * demaux[0].dt * a.x,
+                              DPar[ic].v.y + 0.5f * demaux[0].dt * a.y,
+                              DPar[ic].v.z + 0.5f * demaux[0].dt * a.z);
+
+    // x(t+dt) = x(t) + v(t+0.5)·dt  
+    real3 x_new = make_real3(DPar[ic].x.x + v_half.x * demaux[0].dt,
+                             DPar[ic].x.y + v_half.y * demaux[0].dt,
+                             DPar[ic].x.z + v_half.z * demaux[0].dt);
+
+    real3 dis = x_new - DPar[ic].x;
+    DPar[ic].x = x_new;
+
+    // Move only Verts 
+    for (size_t iv = Par[ic].Nvi; iv < Par[ic].Nvf; iv++) {
+        Verts[iv].x += dis.x;
+        Verts[iv].y += dis.y;
+        Verts[iv].z += dis.z;
+    }
+
+    DPar[ic].v = v_half;   // store half‑step velocity
+}
+
 // OLD EXPLICIT EULER TRANSLATE AND ROTATE METHODS
 /* 
 __global__ void Translate(real3 * Verts, ParticleCU const * Par, DynParticleCU * DPar, dem_aux const * demaux, void * extraparams)
@@ -791,7 +771,39 @@ __global__ void MaxD(real3 const * Verts, real3 const * Vertso, real * maxd, dem
         //printf("md %g \n",maxd[ic]);
     //}
 }
+/*
+__global__ void MaxD(real3 const * Verts, real3 const * Vertso, real * maxd, dem_aux * demaux)
+{
+    size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
+    if (ic >= demaux[0].nverts) return;
 
+    real3 dx;
+    dx.x = Verts[ic].x - Vertso[ic].x;
+    dx.y = Verts[ic].y - Vertso[ic].y;
+    dx.z = Verts[ic].z - Vertso[ic].z;
+
+    // Apply periodic correction to the displacement
+    if (demaux[0].px) {
+        if      (dx.x >  demaux[0].Per.x * 0.5) dx.x -= demaux[0].Per.x;
+        else if (dx.x < -demaux[0].Per.x * 0.5) dx.x += demaux[0].Per.x;
+    }
+    if (demaux[0].py) {
+        if      (dx.y >  demaux[0].Per.y * 0.5) dx.y -= demaux[0].Per.y;
+        else if (dx.y < -demaux[0].Per.y * 0.5) dx.y += demaux[0].Per.y;
+    }
+    if (demaux[0].pz) {
+        if      (dx.z >  demaux[0].Per.z * 0.5) dx.z -= demaux[0].Per.z;
+        else if (dx.z < -demaux[0].Per.z * 0.5) dx.z += demaux[0].Per.z;
+    }
+
+    maxd[ic] = sqrt(dx.x*dx.x + dx.y*dx.y + dx.z*dx.z);
+
+    if (ic == 0) {
+        demaux[0].Time += demaux[0].dt;
+        demaux[0].iter++;
+    }
+}
+*/
 
 __global__ void FinalizeVelocity(ParticleCU const * Par, DynParticleCU * DPar,
                                  real3 * A, dem_aux const * demaux)
@@ -813,6 +825,9 @@ DPar[ic].v = make_real3(
 );
 A[ic] = a_new;   // store the effective acceleration (zero on fixed axes)
 }
+
+
+
 __global__ void OrientationUpdate(real3 * Verts, ParticleCU const * Par,
                                   DynParticleCU * DPar, real3 const * Wdot,
                                   dem_aux const * demaux)

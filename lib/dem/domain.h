@@ -784,7 +784,7 @@ MaxD<<<demaux.nverts/Nthread+1, Nthread>>>(pVertsCU, pVertsoCU, pMaxDCU, pdemaux
             numup++;
             iter_t+= iter - iter_b;
             iter_b = iter;
-            printf("We are resetting contacts..\n");
+            printf("We are resetting contacts because maxdis %g is greater than alpha %g\n",maxdis,Alpha);
             UpdateContactsDevice();
             //cudaDeviceSynchronize();
         }
@@ -820,20 +820,6 @@ for (size_t i = 0; i < Particles.Size(); i++) {
     // --- translation ---
     Vec3_t old_x = Particles[i]->x;
     Particles[i]->x += Particles[i]->v * Dt;
-
-    // periodic wrapping
-    if (px && Particles[i]->IsFree()) {
-        if (Particles[i]->x(0) >= Xmax) Particles[i]->x(0) += Xmin - Xmax;
-        if (Particles[i]->x(0) <  Xmin) Particles[i]->x(0) += Xmax - Xmin;
-    }
-    if (py && Particles[i]->IsFree()) {
-        if (Particles[i]->x(1) >= Ymax) Particles[i]->x(1) += Ymin - Ymax;
-        if (Particles[i]->x(1) <  Ymin) Particles[i]->x(1) += Ymax - Ymin;
-    }
-    if (pz && Particles[i]->IsFree()) {
-        if (Particles[i]->x(2) >= Zmax) Particles[i]->x(2) += Zmin - Zmax;
-        if (Particles[i]->x(2) <  Zmin) Particles[i]->x(2) += Zmax - Zmin;
-    }
 
     // move vertices by the same displacement
     Vec3_t dis = Particles[i]->x - old_x;
@@ -3622,6 +3608,7 @@ inline void Domain::UpdateContactsDevice()
     Zmax = dev_aux.Zmax;
     Per = Vec3_t(Xmax - Xmin, Ymax - Ymin, Zmax - Zmin);
 
+    ResetMaxD<<<demaux.nparts/Nthread+1,Nthread>>>(pVertsCU, pVertsoCU, pMaxDCU, pParticlesCU, pDynParticlesCU, pdemaux);
 
     UpdateContacts();
     UpLoadDevice(Nproc,false);
