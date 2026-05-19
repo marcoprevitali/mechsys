@@ -784,6 +784,7 @@ MaxD<<<demaux.nverts/Nthread+1, Nthread>>>(pVertsCU, pVertsoCU, pMaxDCU, pdemaux
             numup++;
             iter_t+= iter - iter_b;
             iter_b = iter;
+            printf("We are resetting contacts..\n");
             UpdateContactsDevice();
             //cudaDeviceSynchronize();
         }
@@ -2482,9 +2483,9 @@ inline void Domain::UpdateLinkedCells()
         size_t i2 = std::max(FreePar[i],NoFreePar[j]);
         MTD[omp_get_thread_num()].LPP.Push(std::make_pair(i1,i2));
     }
-    bool px = (Xmax-Xmin)>Alpha;
-    bool py = (Ymax-Ymin)>Alpha;
-    bool pz = (Zmax-Zmin)>Alpha;
+    bool px = (Xmax-Xmin)>1.0e-12;
+    bool py = (Ymax-Ymin)>1.0e-12;
+    bool pz = (Zmax-Zmin)>1.0e-12;
     #pragma omp parallel for schedule(static) num_threads(Nproc)
     for (size_t idx=0;idx<LinkedCell.Size();idx++)
     {
@@ -3257,7 +3258,18 @@ inline void Domain::UpLoadDevice(size_t Nc, bool first)
 
 
 
-
+        demaux.Per.x  = Per(0);
+        demaux.Per.y  = Per(1);
+        demaux.Per.z  = Per(2);
+        demaux.Xmin   = Xmin;
+        demaux.Ymin   = Ymin;
+        demaux.Zmin   = Zmin;
+        demaux.Xmax   = Xmax;
+        demaux.Ymax   = Ymax;
+        demaux.Zmax   = Zmax;
+        demaux.px     = (Xmax-Xmin)>1e-12;
+        demaux.py     = (Ymax-Ymin)>1e-12;
+        demaux.pz     = (Zmax-Zmin)>1e-12;
 
     demaux.nvvint = 0;
     demaux.neeint = 0;
@@ -3597,6 +3609,20 @@ inline void Domain::UpdateContactsDevice()
 {
     ResetMaxD<<<demaux.nparts/Nthread+1,Nthread>>>(pVertsCU, pVertsoCU, pMaxDCU, pParticlesCU, pDynParticlesCU, pdemaux);
     DnLoadDevice(Nproc,true);
+
+    // added to update box dimensions
+    dem_aux dev_aux;
+    cudaMemcpy(&dev_aux, pdemaux, sizeof(dem_aux), cudaMemcpyDeviceToHost);
+    // Update host-side domain box
+    Xmin = dev_aux.Xmin;
+    Xmax = dev_aux.Xmax;
+    Ymin = dev_aux.Ymin;
+    Ymax = dev_aux.Ymax;
+    Zmin = dev_aux.Zmin;
+    Zmax = dev_aux.Zmax;
+    Per = Vec3_t(Xmax - Xmin, Ymax - Ymin, Zmax - Zmin);
+
+
     UpdateContacts();
     UpLoadDevice(Nproc,false);
 }
