@@ -230,6 +230,7 @@ public:
     double                                            Ymin;                        ///< Minimun distance along the Y axis (Periodic Boundary)
     double                                            Zmax;                        ///< Maximun distance along the Z axis (Periodic Boundary)
     double                                            Zmin;                        ///< Minimun distance along the Z axis (Periodic Boundary)
+    double                                            ThermostatInteractionRange;  ///< Just to output the contact data in case the thermostat is active
     Vec3_t                                            Per;                         ///< Periodic distance vector
     double                                            MaxDmax;                     ///< Maximun value for the radious of the spheres surronding each particle
     void *                                            UserData;                    ///< Some user data
@@ -295,7 +296,7 @@ public:
     ForceEE_ptr_t      pForceEE;                                            ///< pointer to the force calculation for edge edge
     ForceVF_ptr_t      pForceVF;                                            ///< pointer to the force calculation for vertex face
     ForceFV_ptr_t      pForceFV;                                            ///< pointer to the force calculation for face vertex
-    //Translate_ptr_t    pTranslate;                                          ///< pointer to the translation function
+    Translate_ptr_t    pTranslate;                                          ///< pointer to the translation function
     Rotate_ptr_t       pRotate;                                             ///< pointer to the rotation function
     Reset_ptr_t        pReset;                                              ///< pointer to the reset function
     void             * pExtraParams;                                        ///< pointer to a structure of extra parameters for force calculation
@@ -348,6 +349,7 @@ inline Domain::Domain (void * UD, size_t contactlaw)
     UserData = UD;
     MostlySpheres = false;
     Xmax = Xmin = Ymax = Ymin = Zmax = Zmin =0.0;
+    ThermostatInteractionRange = 0.0;
     ContactLaw = contactlaw;
 #ifdef USE_OMP
     omp_init_lock(&lck);
@@ -358,7 +360,7 @@ inline Domain::Domain (void * UD, size_t contactlaw)
     pForceEE   = CalcForceEE;
     pForceVF   = CalcForceVF;
     pForceFV   = CalcForceFV;
-    //pTranslate = Translate;  // euler integration removed
+    pTranslate = Translate;  // euler integration removed
     pRotate    = Rotate;     // euler integration removed
     pReset     = Reset;
 
@@ -736,13 +738,13 @@ pReset<<<(demaux.nparts+demaux.ncoint)/Nthread+1, Nthread>>>(
 //gpuErrchk(cudaDeviceSynchronize());
 
 // 2. Translation half‑step (position update)
-pVerletStep1<<<demaux.nparts/Nthread+1, Nthread>>>(pVertsCU, pParticlesCU, pDynParticlesCU, pA,pdemaux);
+//pVerletStep1<<<demaux.nparts/Nthread+1, Nthread>>>(pVertsCU, pParticlesCU, pDynParticlesCU, pA,pdemaux);
 ////gpuErrchk(cudaDeviceSynchronize());
 
-pOrientationUpdate<<<demaux.nparts/Nthread+1, Nthread>>>(    pVertsCU, pParticlesCU, pDynParticlesCU, pWdot, pdemaux);
+//pOrientationUpdate<<<demaux.nparts/Nthread+1, Nthread>>>(    pVertsCU, pParticlesCU, pDynParticlesCU, pWdot, pdemaux);
 //gpuErrchk(cudaDeviceSynchronize());
 
-pEnforceAngularFixity<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pParticlesCU, pDynParticlesCU, pdemaux);
+//pEnforceAngularFixity<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pParticlesCU, pDynParticlesCU, pdemaux);
 //gpuErrchk(cudaDeviceSynchronize());
 
 // 3. Compute forces (using half‑step v and old w)
@@ -752,19 +754,23 @@ pForceEE<<<demaux.neeint/Nthread+1, Nthread>>>(pEdgesCU, pVertsCU, pInteractons,
 pForceVF<<<demaux.nvfint/Nthread+1, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsVF, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
 pForceFV<<<demaux.nfvint/Nthread+1, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsFV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
 
+// OLD CODE
+
+pTranslate<<<demaux.nparts/Nthread+1,Nthread>>>(pVertsCU, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
+if (RotPar) pRotate   <<<demaux.nparts/Nthread+1,Nthread>>>(pVertsCU, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
 // 4. Rotate (original Euler) – updates Q, w, and rotates vertices
 //pRotate<<<demaux.nparts/Nthread+1, Nthread>>>(pVertsCU, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
-pZeroFixedTorque<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pParticlesCU, pdemaux);
+//pZeroFixedTorque<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pParticlesCU, pdemaux);
 //gpuErrchk(cudaDeviceSynchronize());
 
 // 5. Finalise translational velocity (Verlet corrector)
-pFinalizeVelocity<<<demaux.nparts/Nthread+1, Nthread>>>(pParticlesCU, pDynParticlesCU, pA,pdemaux);
+//pFinalizeVelocity<<<demaux.nparts/Nthread+1, Nthread>>>(pParticlesCU, pDynParticlesCU, pA,pdemaux);
 //gpuErrchk(cudaDeviceSynchronize());
 
-pFinalizeRotation<<<demaux.nparts/Nthread+1, Nthread>>>(pParticlesCU, pDynParticlesCU, pWdot, pdemaux);
+//pFinalizeRotation<<<demaux.nparts/Nthread+1, Nthread>>>(pParticlesCU, pDynParticlesCU, pWdot, pdemaux);
 //gpuErrchk(cudaDeviceSynchronize());
 
-pEnforceAngularFixity<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pParticlesCU, pDynParticlesCU, pdemaux);
+//pEnforceAngularFixity<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pParticlesCU, pDynParticlesCU, pdemaux);
 //gpuErrchk(cudaDeviceSynchronize());
 
 // 6. Max displacement for contact trigger
@@ -784,84 +790,28 @@ MaxD<<<demaux.nverts/Nthread+1, Nthread>>>(pVertsCU, pVertsoCU, pMaxDCU, pdemaux
             numup++;
             iter_t+= iter - iter_b;
             iter_b = iter;
-            printf("We are resetting contacts because maxdis %g is greater than alpha %g\n",maxdis,Alpha);
+            printf("Resetting contacts because maxdis %g is greater than alpha %g\n",maxdis,Alpha);
             UpdateContactsDevice();
             //cudaDeviceSynchronize();
         }
 #else
-     // ---------- VELOCITY VERLET STEP (CPU) ----------
-        // 1. Half‑step velocities (store in Particle::v, Particle::w)
 
-        // fix particles (i.e. remove accelerations)
+
+        //Calculate forces
         #pragma omp parallel for schedule(static) num_threads(Nproc)
-        for (size_t i = 0; i < Particles.Size(); i++) {
-            if (Particles[i]->vxf) A[i](0) = 0.0;
-            if (Particles[i]->vyf) A[i](1) = 0.0;
-            if (Particles[i]->vzf) A[i](2) = 0.0;
-            if (Particles[i]->wxf) Wdot[i](0) = 0.0;
-            if (Particles[i]->wyf) Wdot[i](1) = 0.0;
-            if (Particles[i]->wzf) Wdot[i](2) = 0.0;
-        }
+        for (size_t i=0; i<Interactons.Size(); i++)
+        {
 
-        #pragma omp parallel for schedule(static) num_threads(Nproc)
-        for (size_t i = 0; i < Particles.Size(); i++) {
-            Particles[i]->v += 0.5 * A[i] * Dt;
-            Particles[i]->w += 0.5 * Wdot[i] * Dt;
-
-            // --- FIX: enforce rotational fixity immediately after update ---
-            if (Particles[i]->wxf) Particles[i]->w(0) = 0.0;
-            if (Particles[i]->wyf) Particles[i]->w(1) = 0.0;
-            if (Particles[i]->wzf) Particles[i]->w(2) = 0.0;
-        }
-
-        // 2. Position & orientation update
-    #pragma omp parallel for schedule(static) num_threads(Nproc)
-for (size_t i = 0; i < Particles.Size(); i++) {
-    // --- translation ---
-    Vec3_t old_x = Particles[i]->x;
-    Particles[i]->x += Particles[i]->v * Dt;
-
-    // move vertices by the same displacement
-    Vec3_t dis = Particles[i]->x - old_x;
-    for (size_t j = 0; j < Particles[i]->Verts.Size(); j++)
-        *Particles[i]->Verts[j] += dis;
-
-    // --- rotation ---
-    Quaternion_t dq = Exp(Particles[i]->w, Dt);
-    // rotate vertices around the new centre
-    Particles[i]->Rotate(dq, Particles[i]->x);
-    // update stored orientation
-    Particles[i]->Q = Particles[i]->Q * dq;
-    Particles[i]->Q = Particles[i]->Q / norm(Particles[i]->Q);
-}
-        // 3. Check for contact‑list update
-        double maxdis = 0.0;
-        #pragma omp parallel for schedule(static) num_threads(Nproc)
-        for (size_t i = 0; i < Nproc; i++)
-            MTD[i].Dmx = 0.0;
-
-        #pragma omp parallel for schedule(static) num_threads(Nproc)
-        for (size_t i = 0; i < Particles.Size(); i++) {
-            double md = Particles[i]->MaxDisplacement();
-            if (md > MTD[omp_get_thread_num()].Dmx)
-                MTD[omp_get_thread_num()].Dmx = md;
-        }
-        for (size_t i = 0; i < Nproc; i++)
-            if (maxdis < MTD[i].Dmx) maxdis = MTD[i].Dmx;
-
-        if (maxdis > Alpha)    // alpha is the Verlet distance
-            UpdateContacts();
-
-        // 4. Compute forces at new positions (using half‑step velocities)
-        #pragma omp parallel for schedule(static) num_threads(Nproc)
-        for (size_t i = 0; i < Particles.Size(); i++) {
-            Particles[i]->F = Particles[i]->Ff;
-            Particles[i]->T = Particles[i]->Tf;
-        }
-
-        #pragma omp parallel for schedule(static) num_threads(Nproc)
-        for (size_t i = 0; i < Interactons.Size(); i++) {
-            Interactons[i]->CalcForce(Dt, Per, iter, ContactLaw);
+		    if (Interactons[i]->CalcForce(Dt,Per,iter,ContactLaw))
+            {
+                String f_error(FileKey+"_error");
+                Save     (f_error.CStr());
+                WriteXDMF(f_error.CStr());
+                std::cout << "Maximun overlap detected between particles at time " << Time << std::endl;
+                std::cout << "Iteration number                                   " << iter << std::endl;
+                sleep(1);
+                throw new Fatal("Maximun overlap detected between particles");
+            }
             omp_set_lock  (&Interactons[i]->P1->lck);
             Interactons[i]->P1->F += Interactons[i]->F1;
             Interactons[i]->P1->T += Interactons[i]->T1;
@@ -870,53 +820,45 @@ for (size_t i = 0; i < Particles.Size(); i++) {
             Interactons[i]->P2->F += Interactons[i]->F2;
             Interactons[i]->P2->T += Interactons[i]->T2;
             omp_unset_lock(&Interactons[i]->P2->lck);
+
         }
 
-        if (MostlySpheres) CalcForceSphere();
-
-        // zero force components for fixed degrees of freedom
+        if(MostlySpheres) CalcForceSphere();
         #pragma omp parallel for schedule(static) num_threads(Nproc)
-        for (size_t i = 0; i < Particles.Size(); i++) {
-            if (Particles[i]->vxf) Particles[i]->F(0) = 0.0;
-            if (Particles[i]->vyf) Particles[i]->F(1) = 0.0;
-            if (Particles[i]->vzf) Particles[i]->F(2) = 0.0;
-            if (Particles[i]->wxf) Particles[i]->T(0) = 0.0;
-            if (Particles[i]->wyf) Particles[i]->T(1) = 0.0;
-            if (Particles[i]->wzf) Particles[i]->T(2) = 0.0;
+        for (size_t i=0;i<Nproc;i++)
+        {
+            MTD[i].Dmx = 0.0;
         }
 
-        // 5. Finalise velocities and compute new accelerations
-        #pragma omp parallel for schedule(static) num_threads(Nproc)
-        for (size_t i = 0; i < Particles.Size(); i++) {
-            Vec3_t a_new = Particles[i]->F / Particles[i]->Props.m;
-            double Ix = Particles[i]->I(0), Iy = Particles[i]->I(1), Iz = Particles[i]->I(2);
-            Vec3_t w_half = Particles[i]->w;   // still the half‑step ω
+        if (RotPar)
+        {
+            #pragma omp parallel for schedule(static) num_threads(Nproc)
+            for (size_t i=0; i<Particles.Size(); i++)
+            {
+		        Particles[i]->Translate(Dt);
+		        Particles[i]->Rotate(Dt);
+                if (Particles[i]->MaxDisplacement()>MTD[omp_get_thread_num()].Dmx) MTD[omp_get_thread_num()].Dmx = Particles[i]->MaxDisplacement();
+            }
+        }
+        else
+        {
+            #pragma omp parallel for schedule(static) num_threads(Nproc)
+            for (size_t i=0; i<Particles.Size(); i++)
+            {
+		        Particles[i]->Translate(Dt);
+                if (Particles[i]->MaxDisplacement()>MTD[omp_get_thread_num()].Dmx) MTD[omp_get_thread_num()].Dmx = Particles[i]->MaxDisplacement();
+            }
+        }
 
-            Vec3_t wdot_new;
-            wdot_new(0) = (Particles[i]->T(0) - (Iz - Iy)*w_half(1)*w_half(2)) / Ix;
-            wdot_new(1) = (Particles[i]->T(1) - (Ix - Iz)*w_half(2)*w_half(0)) / Iy;
-            wdot_new(2) = (Particles[i]->T(2) - (Iy - Ix)*w_half(0)*w_half(1)) / Iz;
+        double maxdis = 0.0;
+        for (size_t i=0;i<Nproc;i++)
+        {
+            if (maxdis<MTD[i].Dmx) maxdis = MTD[i].Dmx;
+        }
 
-            // --- FIX: zero fixed components before final update ---
-            if (Particles[i]->vxf) a_new(0) = 0.0;
-            if (Particles[i]->vyf) a_new(1) = 0.0;
-            if (Particles[i]->vzf) a_new(2) = 0.0;
-            if (Particles[i]->wxf) wdot_new(0) = 0.0;
-            if (Particles[i]->wyf) wdot_new(1) = 0.0;
-            if (Particles[i]->wzf) wdot_new(2) = 0.0;
-
-            // update velocities
-            Particles[i]->v += 0.5 * a_new * Dt;
-            Particles[i]->w += 0.5 * wdot_new * Dt;
-
-            // --- FIX: enforce rotational fixity again after final update ---
-            if (Particles[i]->wxf) Particles[i]->w(0) = 0.0;
-            if (Particles[i]->wyf) Particles[i]->w(1) = 0.0;
-            if (Particles[i]->wzf) Particles[i]->w(2) = 0.0;
-
-            // store accelerations for next step
-            A[i] = a_new;
-            Wdot[i] = wdot_new;
+        if (maxdis>Alpha)
+        {
+            UpdateContacts();
         }
 #endif
         Time += Dt;
@@ -958,13 +900,14 @@ inline void Domain::WriteBF (char const * FileKey)
     size_t n_rl = 0;
     double delta = -1.0;
     double fdvv_norm = -1.0;
+    bool thermostat_active = false;
 
 for (auto it=PairtoCInt.begin();it!=PairtoCInt.end();++it)
 {        
     // Compute normal overlap
     double dist = Distance(it->second->P1->x, it->second->P2->x, Per);
     delta = it->second->P1->Props.R + it->second->P2->Props.R - dist;
-    
+    thermostat_active = (dist < ThermostatInteractionRange);
     // Tangential overlap magnitude (only for sphere-sphere contacts)
     if (it->second->P1->Verts.Size()==1 && it->second->P2->Verts.Size()==1)
     {
@@ -973,7 +916,7 @@ for (auto it=PairtoCInt.begin();it!=PairtoCInt.end();++it)
     }
     
     // Only count if at last one overlap are above threshold
-    if (delta> 1e-12)
+    if (delta> 1e-12 || thermostat_active)
     {
         n_fn++;
         if (it->second->P1->Verts.Size()==1 && it->second->P2->Verts.Size()==1) n_rl++;
@@ -990,6 +933,8 @@ for (auto it=PairtoCInt.begin();it!=PairtoCInt.end();++it)
     float  *  Fnnet = new float[3*n_fn];
     float  *  Ftnet = new float[3*n_fn];
     float  *  Froll = new float[3*n_fn];
+    float  *  Fdpot = new float[3*n_fn];
+    float  *  Fther = new float[3*n_fn];
     float  * Branch = new float[3*n_fn];
     float  *   Orig = new float[3*n_fn];
     float  *   Fdvv = new float[3*n_fn];
@@ -1005,7 +950,9 @@ for (auto it=PairtoCInt.begin();it!=PairtoCInt.end();++it)
         //if ((norm(CInteractons[i]->Fnet)>1.0e-12)&&(CInteractons[i]->P1->IsFree()&&CInteractons[i]->P2->IsFree()))
 double dist = Distance(it->second->P1->x, it->second->P2->x, Per);
 double delta = it->second->P1->Props.R + it->second->P2->Props.R - dist;
-if (delta > 1e-12)
+    thermostat_active = (dist < ThermostatInteractionRange);
+
+if (delta > 1e-12 || thermostat_active)
         {
             Fnnet [3*idx  ] = float(it->second->Fnet  (0));
             Fnnet [3*idx+1] = float(it->second->Fnet  (1));
@@ -1013,6 +960,12 @@ if (delta > 1e-12)
             Ftnet [3*idx  ] = float(it->second->Ftnet (0));
             Ftnet [3*idx+1] = float(it->second->Ftnet (1));
             Ftnet [3*idx+2] = float(it->second->Ftnet (2));
+            Fdpot [3*idx  ] = float(it->second->Fdpot (0));
+            Fdpot [3*idx+1] = float(it->second->Fdpot (1));
+            Fdpot [3*idx+2] = float(it->second->Fdpot (2));
+            Fther [3*idx  ] = float(it->second->Fther (0));
+            Fther [3*idx+1] = float(it->second->Fther (1));
+            Fther [3*idx+2] = float(it->second->Fther (2));
             if (n_rl>0)
             {
             Froll [3*idx  ] = float(it->second->Fn    (0));
@@ -1072,7 +1025,10 @@ if (delta > 1e-12)
     H5LTmake_dataset_float(file_id,dsname.CStr(),1,dims,Orig);
     dsname.Printf("TangentialOverlap");
     H5LTmake_dataset_float(file_id,dsname.CStr(),1,dims,Fdvv );
-    
+    dsname.Printf("DashpotForce");
+    H5LTmake_dataset_float(file_id,dsname.CStr(),1,dims,Fdpot );
+    dsname.Printf("ThermostatForce");
+    H5LTmake_dataset_float(file_id,dsname.CStr(),1,dims,Fther );
     dims[0] = n_fn;
     dsname.Printf("ID1");
     H5LTmake_dataset_int  (file_id,dsname.CStr(),1,dims,ID1   );
@@ -1087,7 +1043,8 @@ if (delta > 1e-12)
     delete [] ID1;
     delete [] ID2;
     delete [] Fdvv; // delete the allocated tang overlap
-
+    delete [] Fdpot;
+    delete [] Fther;
     //Saving Cohesive forces
     if (BInteractons.Size()>0)
     {
@@ -1193,12 +1150,28 @@ if (delta > 1e-12)
     oss << "        " << fn.CStr() <<":/ID2 \n";
     oss << "       </DataItem>\n";
     oss << "     </Attribute>\n";
+
     oss << "     <Attribute Name=\"Tangential Overlap\" AttributeType=\"Vector\" Center=\"Node\">\n";
     oss << "       <DataItem Dimensions=\"" << n_fn << " 3\" NumberType=\"Float\" Precision=\"4\" Format=\"HDF\">\n";
     oss << "        " << fn.CStr() <<":/Tangential Overlap \n";
     oss << "       </DataItem>\n";
     oss << "     </Attribute>\n";
+
+    oss << "     <Attribute Name=\"Dashpot Force\" AttributeType=\"Vector\" Center=\"Node\">\n";
+    oss << "       <DataItem Dimensions=\"" << n_fn << " 3\" NumberType=\"Float\" Precision=\"4\" Format=\"HDF\">\n";
+    oss << "        " << fn.CStr() <<":/Dashpot Force\n";
+    oss << "       </DataItem>\n";
+    oss << "     </Attribute>\n";
+
+    oss << "     <Attribute Name=\"Thermostat Force\" AttributeType=\"Vector\" Center=\"Node\">\n";
+    oss << "       <DataItem Dimensions=\"" << n_fn << " 3\" NumberType=\"Float\" Precision=\"4\" Format=\"HDF\">\n";
+    oss << "        " << fn.CStr() <<":/Thermostat Force\n";
+    oss << "       </DataItem>\n";
+    oss << "     </Attribute>\n";
+
     oss << "   </Grid>\n";
+
+    
     if (BInteractons.Size()>0)
     {
     oss << "   <Grid Name=\"CohesiveForce\" GridType=\"Uniform\">\n";
@@ -1675,7 +1648,7 @@ inline void Domain::WriteFrac (char const * FileKey)
     float  * Verts   = new float [3*N_Verts];
     int    * FaceCon = new int   [3*N_Faces];
 
-    //Atributes
+    //Attributes
     int    * Tags    = new int   [  N_Faces];
        
     size_t n_verts = 0;
@@ -2401,7 +2374,6 @@ inline void Domain::ResetInteractons()
         }
     }
 }
-// --- FIXED ResetDisplacements: periodic wrapping BEFORE storing reference ---
 inline void Domain::ResetDisplacements()
 {
     #pragma omp parallel for schedule(static) num_threads(Nproc)
@@ -3575,6 +3547,12 @@ inline void Domain::DnLoadDevice(size_t Nc, bool force)
             Ci->Ftnet(0) = hComInteractons[ii].Ftnet.x;
             Ci->Ftnet(1) = hComInteractons[ii].Ftnet.y;
             Ci->Ftnet(2) = hComInteractons[ii].Ftnet.z;
+            Ci->Fdpot(0) = hComInteractons[ii].Fdpot.x;
+            Ci->Fdpot(1) = hComInteractons[ii].Fdpot.y;
+            Ci->Fdpot(2) = hComInteractons[ii].Fdpot.z;
+            Ci->Fther(0) = hComInteractons[ii].Fther.x;
+            Ci->Fther(1) = hComInteractons[ii].Fther.y;
+            Ci->Fther(2) = hComInteractons[ii].Fther.z;
             if (Ci->BothFree) // I had to do this due to the two definitions for BranchVec function
             {
                 BranchVec(Ci->P2->x,Ci->P1->x,Ci->Branch,Per);

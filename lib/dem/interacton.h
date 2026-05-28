@@ -91,6 +91,8 @@ public:
     Vec3_t         Fn;        ///< Normal force between elements
     Vec3_t         Fnet;      ///< Net normal force
     Vec3_t         Ftnet;     ///< Net tangential force
+    Vec3_t         Fdpot;     ///< Dashpot forces
+    Vec3_t         Fther;    // thermostat forces
     //Vec3_t         Xc;        ///< Net Position of the contact
     Vec3_t         Branch;    ///< Branch vector
     ListContacts_t Lee;       ///< List of edge-edge contacts 
@@ -721,9 +723,9 @@ if (contactlaw == 0)
         Fn_total = Vec3_t(0.0, 0.0, 0.0);
     
    // printf("GN: %g, GT:%g\n",Gn,Gt);
-    // accumulate total normal force into Fnet (including dashpot and tensile cap)
-    Fnet += Fn_total;
-
+    // accumulate total normal force into Fnet (ONLY ELASTIC)
+    Fnet += Fn;
+    Fdpot+= Fn_dash;
     // tangential displacement increment
     Fdvv += vt * dt;
     Fdvv -= dot(Fdvv, n) * n;                     // keep tangential component only
@@ -757,7 +759,8 @@ if (contactlaw == 0)
     }
 
     // ftnet now includes both
-    Ftnet += Ft_elastic + Ft_dashpot;
+    Ftnet += Ft_elastic;
+    Fdpot += Ft_dashpot;
 
     
     double Kr = beta * Kt;
@@ -1109,6 +1112,9 @@ struct ComInteractonCU
     size_t         I2;        ///< Index of the second particle
     real3          Fnnet;     ///< Normal force between particles
     real3          Ftnet;     ///< Net tangential force
+    real3          Fdpot;     // dashpot forces
+    real3          Fther;       // thermostat forces 
+
 };
 
 struct DynInteractonCU

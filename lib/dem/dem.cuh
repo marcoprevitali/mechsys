@@ -217,13 +217,20 @@ __global__ void CalcForceVV(InteractonCU const * Int, ComInteractonCU * CInt, Dy
         Rotation(Tt, q, T);
         T2 = T;
 
-        // accumulate into contact net for output
-        atomicAdd(&CInt[id].Fnnet.x, Fn_total.x);
-        atomicAdd(&CInt[id].Fnnet.y, Fn_total.y);
-        atomicAdd(&CInt[id].Fnnet.z, Fn_total.z);
-        atomicAdd(&CInt[id].Ftnet.x, Ft_total.x);
-        atomicAdd(&CInt[id].Ftnet.y, Ft_total.y);
-        atomicAdd(&CInt[id].Ftnet.z, Ft_total.z);
+        // accumulate ELASTIC into contact net for output
+        atomicAdd(&CInt[id].Fnnet.x, Fn_elastic.x);
+        atomicAdd(&CInt[id].Fnnet.y, Fn_elastic.y);
+        atomicAdd(&CInt[id].Fnnet.z, Fn_elastic.z);
+        atomicAdd(&CInt[id].Ftnet.x, Ft_elastic.x);
+        atomicAdd(&CInt[id].Ftnet.y, Ft_elastic.y);
+        atomicAdd(&CInt[id].Ftnet.z, Ft_elastic.z);
+
+        // accumulate DASHPOT into contact dpot for output
+        atomicAdd(&CInt[id].Fdpot.x, Fn_dashpot.x + Ft_dashpot.x);
+        atomicAdd(&CInt[id].Fdpot.y, Fn_dashpot.y + Ft_dashpot.y);
+        atomicAdd(&CInt[id].Fdpot.z, Fn_dashpot.z + Ft_dashpot.z);
+
+        // ignore the Fthermostat component, only updated if there is a thermostat active that overloads this function
 
         atomicAdd(&DPar[i1].F.x, -DIntVV[ic].F.x);
         atomicAdd(&DPar[i1].F.y, -DIntVV[ic].F.y);
@@ -634,8 +641,8 @@ __global__ void VerletStep1(real3 * Verts, ParticleCU const * Par, DynParticleCU
     DPar[ic].v = v_half;   // store half‑step velocity
 }
 
-// OLD EXPLICIT EULER TRANSLATE AND ROTATE METHODS
-/* 
+
+// OLD TRANSLATE AND ROTATE METHODS
 __global__ void Translate(real3 * Verts, ParticleCU const * Par, DynParticleCU * DPar, dem_aux const * demaux, void * extraparams)
 {
     size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
@@ -660,7 +667,7 @@ __global__ void Translate(real3 * Verts, ParticleCU const * Par, DynParticleCU *
         Verts [iv] = Verts [iv] + temp;
     }
 }
-*/
+
 __global__ void Rotate(real3 * Verts, ParticleCU const * Par, DynParticleCU * DPar, dem_aux const * demaux, void * extraparams)
 {
     size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
@@ -751,6 +758,8 @@ __global__ void Reset (ParticleCU * Par, DynParticleCU * DPar, InteractonCU cons
         size_t id = ic-demaux[0].nparts;
         CInt[id].Fnnet = Int[id].Fnf;
         CInt[id].Ftnet = Int[id].Ftf;
+        CInt[id].Fdpot = make_real3(0.0,0.0,0.0);
+        CInt[id].Fther = make_real3(0.0,0.0,0.0);
     }
     else return;
 }
