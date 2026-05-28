@@ -129,6 +129,7 @@ public:
     //ListContacts_t Lvv;                            ///< List of edge-edge contacts 
     //FrictionMap_t  Fdvv;      ///< Static friction displacement for pair of edges
     Vec3_t         Fdvv;                           ///< Static Friction displacement for the vertex vertex pair
+    Vec3_t         vt_prev;                       // ^ previous increment
     Vec3_t         Fdr;                            ///< Rolling displacement 
     double         beta;                           ///< Rolling stiffness coefficient
     double         eta;                            ///< Plastic moment coefficient
@@ -654,6 +655,7 @@ inline bool CInteractonSphere::CalcForce(double dt, Vec3_t const & Per, size_t c
     if (delta<=0.0){
  //   printf("Reset overlap..\n");
     Fdvv = Vec3_t(0.0, 0.0, 0.0);
+    vt_prev = Vec3_t(0.0, 0.0, 0.0);
     }
 
     if (delta>0.0)
@@ -727,9 +729,10 @@ if (contactlaw == 0)
     Fnet += Fn;
     Fdpot+= Fn_dash;
     // tangential displacement increment
-    Fdvv += vt * dt;
+    // updated to use trapezoidal integration
+    Fdvv += 0.5 * (vt_prev+vt) * dt;
     Fdvv -= dot(Fdvv, n) * n;                     // keep tangential component only
-
+    vt_prev = vt;
 
     Vec3_t Ft_elastic = Kt * Fdvv;
     Vec3_t Ft_dashpot = Gt * vt;
