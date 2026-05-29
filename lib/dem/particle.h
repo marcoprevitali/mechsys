@@ -1322,6 +1322,8 @@ struct ParticleCU
     real           R;                                               ///< Spheroradious of particle
     real           m;                                               ///< Mass of particle
     real           Dmax;                                            ///< Maximun Diameter
+    real            Gv;                                             // linear velocity damping coefficient (numerical damping, not used)
+    real            Gm;                                             // angular velocity damping coefficient (numerical damping, not used)
     real3          Ff;                                              ///< Fixed Force over the particle
     real3          Flbmf;                                           ///< Fixed Force over the particle by lbm fluid
     real3          T;                                               ///< Torque over the particle
@@ -1333,6 +1335,7 @@ struct ParticleCU
     size_t         Nef;
     size_t         Nfi;
     size_t         Nff;
+
 };
 
 struct DynParticleCU
@@ -1365,6 +1368,8 @@ __host__ void UploadParticle(DEM::DynParticleCU & DPc, DEM::ParticleCU & Pcu,DEM
     Pcu.R               = Par.Props.R;
     Pcu.m               = Par.Props.m;
     Pcu.Dmax            = Par.Dmax;
+    Pcu.Gv              = Par.Props.Gv;
+    Pcu.Gm              = Par.Props.Gm;
     Pcu.Ff.x            = Par.Ff(0);
     Pcu.Ff.y            = Par.Ff(1);
     Pcu.Ff.z            = Par.Ff(2);

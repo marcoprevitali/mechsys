@@ -91,7 +91,8 @@ public:
     Vec3_t         Fn;        ///< Normal force between elements
     Vec3_t         Fnet;      ///< Net normal force
     Vec3_t         Ftnet;     ///< Net tangential force
-    Vec3_t         Fdpot;     ///< Dashpot forces
+    Vec3_t         Fndpot;     ///< Dashpot forces (normal)
+    Vec3_t         Ftdpot;     ///< Dashpot forces (tangential)
     Vec3_t         Fther;    // thermostat forces
     //Vec3_t         Xc;        ///< Net Position of the contact
     Vec3_t         Branch;    ///< Branch vector
@@ -727,7 +728,7 @@ if (contactlaw == 0)
    // printf("GN: %g, GT:%g\n",Gn,Gt);
     // accumulate total normal force into Fnet (ONLY ELASTIC)
     Fnet += Fn;
-    Fdpot+= Fn_dash;
+    Fndpot+= Fn_dash;
     // tangential displacement increment
     // updated to use trapezoidal integration
     Fdvv += vt*dt;//0.5 * (vt_prev+vt) * dt;
@@ -763,7 +764,7 @@ if (contactlaw == 0)
 
     // ftnet now includes both
     Ftnet += Ft_elastic;
-    Fdpot += Ft_dashpot;
+    Ftdpot += Ft_dashpot;
 
     
     double Kr = beta * Kt;
@@ -876,7 +877,7 @@ inline void CInteractonSphere::UpdateParameters (size_t contactlaw)
         {
             if (fabs(Gn)>1.0) throw new Fatal("CInteractonSphere the restitution coefficient is greater than 1");
             Gn = 2.0*sqrt((pow(log(-Gn),2.0)*(Kn/me))/(M_PI*M_PI+pow(log(-Gn),2.0)));
-            Gt = 0.0;
+            Gt = 2.0*sqrt(2.0/7.0 * (pow(log(-Gt),2.0)*(Kt/me))/(M_PI*M_PI+pow(log(-Gt),2.0)));
         }
         Gn *= me;
         Gt *= me;
@@ -1115,7 +1116,8 @@ struct ComInteractonCU
     size_t         I2;        ///< Index of the second particle
     real3          Fnnet;     ///< Normal force between particles
     real3          Ftnet;     ///< Net tangential force
-    real3          Fdpot;     // dashpot forces
+    real3          Fndpot;     // dashpot forces (normal)
+    real3          Ftdpot;     // dashpot forces (normal)
     real3          Fther;       // thermostat forces 
 
 };
