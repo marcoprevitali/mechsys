@@ -730,7 +730,7 @@ if (contactlaw == 0)
     Fdpot+= Fn_dash;
     // tangential displacement increment
     // updated to use trapezoidal integration
-    Fdvv += 0.5 * (vt_prev+vt) * dt;
+    Fdvv += vt*dt;//0.5 * (vt_prev+vt) * dt;
     Fdvv -= dot(Fdvv, n) * n;                     // keep tangential component only
     vt_prev = vt;
 
