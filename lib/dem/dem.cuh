@@ -614,6 +614,8 @@ __global__ void VerletStep1(real3 * Verts, ParticleCU const * Par, DynParticleCU
     size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
     if (ic >= demaux[0].nparts) return;
 
+
+
     // Use the acceleration from the previous step (already includes damping)
     real3 a_prev = A[ic];
     if (Par[ic].vxf) a_prev.x = 0.0f;
@@ -656,6 +658,13 @@ __global__ void OrientationUpdate(real3 * Verts, ParticleCU const * Par,
     if (Par[ic].wzf) wdot_prev.z = 0.0f;
 
     real3 w = DPar[ic].w;
+    // Enforce angular fixity on the current angular velocity
+    if (Par[ic].wxf) w.x = 0.0f;
+    if (Par[ic].wyf) w.y = 0.0f;
+    if (Par[ic].wzf) w.z = 0.0f;
+    DPar[ic].w = w;
+
+
     real3 w_half;
     w_half.x = w.x + 0.5f * demaux[0].dt * wdot_prev.x;
     w_half.y = w.y + 0.5f * demaux[0].dt * wdot_prev.y;
@@ -670,7 +679,9 @@ __global__ void OrientationUpdate(real3 * Verts, ParticleCU const * Par,
     Q_new.w *= inv_norm; Q_new.x *= inv_norm;
     Q_new.y *= inv_norm; Q_new.z *= inv_norm;
 
-    // rotate vertices
+    // rotate vertices only if angular velocity is non-zero
+    if (w_half.x != 0.0f || w_half.y != 0.0f || w_half.z != 0.0f)
+    {
     real4 Q_old_conj = make_real4(Q_old.w, -Q_old.x, -Q_old.y, -Q_old.z);
     for (size_t iv = Par[ic].Nvi; iv < Par[ic].Nvf; iv++) {
         real3 xt = make_real3(Verts[iv].x - DPar[ic].x.x,
@@ -683,6 +694,7 @@ __global__ void OrientationUpdate(real3 * Verts, ParticleCU const * Par,
         Verts[iv].x = xt_new.x + DPar[ic].x.x;
         Verts[iv].y = xt_new.y + DPar[ic].x.y;
         Verts[iv].z = xt_new.z + DPar[ic].x.z;
+    }
     }
 
     DPar[ic].Q = Q_new;
@@ -893,11 +905,17 @@ __global__ void MaxD(real3 const * Verts, real3 const * Vertso, real * maxd, dem
         demaux[0].iter++;
     }
     maxd[ic] = norm(Vertso[ic]-Verts[ic]);
-    //if (maxd[ic]>0.0)
-    //{
-        //printf("ic %d \n",ic);
-        //printf("md %g \n",maxd[ic]);
-    //}
+
+    /*
+    if (maxd[ic] > 1.0)
+        printf("DEBUG MaxD_BIG: ic=%d Vso=(%g,%g,%g) Vs=(%g,%g,%g) d=%g\n",
+               (int)ic, Vertso[ic].x,Vertso[ic].y,Vertso[ic].z,
+               Verts[ic].x,Verts[ic].y,Verts[ic].z, maxd[ic]);
+    if (ic == 0)
+        printf("DEBUG MaxD: it=%lu Vso=(%g,%g,%g) Vs=(%g,%g,%g) d=%g\n",
+               demaux[0].iter, Vertso[ic].x,Vertso[ic].y,Vertso[ic].z,
+               Verts[ic].x,Verts[ic].y,Verts[ic].z, maxd[ic]);
+               */
 }
 __global__ void ResetMaxD(real3 * Verts, real3 * Vertso, real * maxd, ParticleCU const * Par, DynParticleCU * DPar, dem_aux const * demaux)
 {
@@ -937,6 +955,19 @@ __global__ void ResetMaxD(real3 * Verts, real3 * Vertso, real * maxd, ParticleCU
         maxd  [iv] = 0.0;
     }
 
+}
+
+// Zero out accelerations AND velocities on device after contact rebuilding + wrapping.
+// This prevents VerletStep1 from producing a large displacement from stale velocities
+// computed from the pre-wrap force state.
+__global__ void ZeroAccel(real3 * A, real3 * Wdot, DynParticleCU * DPar, dem_aux const * demaux)
+{
+    size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
+    if (ic >= demaux[0].nparts) return;
+    A[ic]        = make_real3(0.0, 0.0, 0.0);
+    Wdot[ic]     = make_real3(0.0, 0.0, 0.0);
+    DPar[ic].v   = make_real3(0.0, 0.0, 0.0);
+    DPar[ic].w   = make_real3(0.0, 0.0, 0.0);
 }
 
 }

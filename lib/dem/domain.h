@@ -744,10 +744,13 @@ if (RotPar) pRotate   <<<demaux.nparts/Nthread+1,Nthread>>>(pVertsCU, pParticles
 
 // 4., calculate max displacement / recalculate the verlet list if needed
 MaxD<<<demaux.nverts/Nthread+1, Nthread>>>(pVertsCU, pVertsoCU, pMaxDCU, pdemaux);
-//gpuErrchk(cudaDeviceSynchronize());
+//cudaDeviceSynchronize();
+
+
         real maxdis = 0.0;
         thrust::device_vector<real>::iterator it=thrust::max_element(bMaxDCU.begin(),bMaxDCU.end());
         maxdis = *it;
+
         //std::cout << "9" << std::endl;
         //std::cout << iter << std::endl;
         //Update Pair lists
@@ -758,8 +761,9 @@ MaxD<<<demaux.nverts/Nthread+1, Nthread>>>(pVertsCU, pVertsoCU, pMaxDCU, pdemaux
             //std::cout << iter << std::endl;
             numup++;
             iter_t+= iter - iter_b;
+            printf("MaxDiplacement %g > %g (alpha), recalculating the Verlet list. Current step: %i, %i steps have elapsed since the list was recalculated.\n",maxdis,Alpha,iter,iter-iter_b);
+
             iter_b = iter;
-            printf("Resetting contacts because maxdis %g is greater than alpha %g\n",maxdis,Alpha);
             UpdateContactsDevice();
             //cudaDeviceSynchronize();
         }
@@ -832,6 +836,10 @@ if (UseVelocityVerlet){
         }
 
         if (MostlySpheres) CalcForceSphere();
+
+        // 3b. Reset per-thread max displacement before measuring
+      //  #pragma omp parallel for schedule(static) num_threads(Nproc)
+     //   for (size_t i = 0; i < Nproc; i++) MTD[i].Dmx = 0.0;
 
         // 5. Full‑step velocity updates using forces computed in step 4
         #pragma omp parallel for schedule(static) num_threads(Nproc)
@@ -3684,7 +3692,34 @@ inline void Domain::UpdateContactsDevice()
     ResetMaxD<<<demaux.nparts/Nthread+1,Nthread>>>(pVertsCU, pVertsoCU, pMaxDCU, pParticlesCU, pDynParticlesCU, pdemaux);
 
     UpdateContacts();
-    UpLoadDevice(Nproc,false,!UseVelocityVerlet);
+    // Re-upload particle dynamic state from host to device after host-side
+    // ResetDisplacements wrapping, so device positions/velocities match the host.
+    // Also re-upload A and Wdot (via updateState=true) from their current host values.
+    {
+        // Download static particle data from device (unchanged since initialization)
+        thrust::host_vector<ParticleCU> hParticlesCU = bParticlesCU;
+        thrust::host_vector<DynParticleCU> hDynParticlesCU_new(Particles.Size());
+        thrust::host_vector<real3>         hVertsCU_new(demaux.nverts);
+        #pragma omp parallel for schedule(static) num_threads(Nproc)
+        for (size_t ip = 0; ip < Particles.Size(); ip++)
+        {
+            UploadParticle(hDynParticlesCU_new[ip], hParticlesCU[ip], *Particles[ip]);
+            for (size_t iv = 0; iv < Particles[ip]->Verts.Size(); iv++)
+            {
+                size_t idv = Particles[ip]->Nvi + iv;
+                hVertsCU_new[idv].x = (*Particles[ip]->Verts[iv])(0);
+                hVertsCU_new[idv].y = (*Particles[ip]->Verts[iv])(1);
+                hVertsCU_new[idv].z = (*Particles[ip]->Verts[iv])(2);
+            }
+        }
+        thrust::copy(hDynParticlesCU_new.begin(), hDynParticlesCU_new.end(), bDynParticlesCU.begin());
+        thrust::copy(hVertsCU_new       .begin(), hVertsCU_new       .end(), bVertsCU       .begin());
+        thrust::copy(hVertsCU_new       .begin(), hVertsCU_new       .end(), bVertsoCU      .begin());
+    }
+    UpLoadDevice(Nproc,false,true);
+    // Zero out accelerations on device so VerletStep1 does not produce a large
+    // erroneous half-step from stale acceleration values
+    ZeroAccel<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pA, pWdot, pDynParticlesCU, pdemaux);
 }
 #endif
 }; // namespace DEM
