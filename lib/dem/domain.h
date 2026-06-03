@@ -738,6 +738,21 @@ pForceVF<<<(demaux.nActiveVF+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, 
 pForceFV<<<(demaux.nActiveFV+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsFV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
 } else {
 // ORIGINAL: full-scan force computation (no compaction)
+// Set nActive* counters on host and upload to device (force kernels read from device memory)
+demaux.nActiveVV = demaux.nvvint;
+demaux.nActiveEE = demaux.neeint;
+demaux.nActiveVF = demaux.nvfint;
+demaux.nActiveFV = demaux.nfvint;
+cudaMemcpy(&pdemaux->nActiveVV, &demaux.nActiveVV, sizeof(size_t), cudaMemcpyHostToDevice);
+cudaMemcpy(&pdemaux->nActiveEE, &demaux.nActiveEE, sizeof(size_t), cudaMemcpyHostToDevice);
+cudaMemcpy(&pdemaux->nActiveVF, &demaux.nActiveVF, sizeof(size_t), cudaMemcpyHostToDevice);
+cudaMemcpy(&pdemaux->nActiveFV, &demaux.nActiveFV, sizeof(size_t), cudaMemcpyHostToDevice);
+// Use GPU kernels to fill d_active* arrays with sequential indices
+FillSequentialIndicesVV<<<(demaux.nvvint+Nthread-1)/Nthread, Nthread>>>(pdemaux);
+FillSequentialIndicesEE<<<(demaux.neeint+Nthread-1)/Nthread, Nthread>>>(pdemaux);
+FillSequentialIndicesVF<<<(demaux.nvfint+Nthread-1)/Nthread, Nthread>>>(pdemaux);
+FillSequentialIndicesFV<<<(demaux.nfvint+Nthread-1)/Nthread, Nthread>>>(pdemaux);
+
 pForceVV<<<(demaux.nvvint+Nthread-1)/Nthread, Nthread>>>(pInteractons, pComInteractons, pDynInteractonsVV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
 pForceEE<<<(demaux.neeint+Nthread-1)/Nthread, Nthread>>>(pEdgesCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsEE, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
 pForceVF<<<(demaux.nvfint+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsVF, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
@@ -782,6 +797,21 @@ pForceVF<<<(demaux.nActiveVF+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, 
 pForceFV<<<(demaux.nActiveFV+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsFV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
 } else {
 // ORIGINAL: full-scan force computation (no compaction)
+// Set nActive* counters on host and upload to device (force kernels read from device memory)
+demaux.nActiveVV = demaux.nvvint;
+demaux.nActiveEE = demaux.neeint;
+demaux.nActiveVF = demaux.nvfint;
+demaux.nActiveFV = demaux.nfvint;
+cudaMemcpy(&pdemaux->nActiveVV, &demaux.nActiveVV, sizeof(size_t), cudaMemcpyHostToDevice);
+cudaMemcpy(&pdemaux->nActiveEE, &demaux.nActiveEE, sizeof(size_t), cudaMemcpyHostToDevice);
+cudaMemcpy(&pdemaux->nActiveVF, &demaux.nActiveVF, sizeof(size_t), cudaMemcpyHostToDevice);
+cudaMemcpy(&pdemaux->nActiveFV, &demaux.nActiveFV, sizeof(size_t), cudaMemcpyHostToDevice);
+// Use GPU kernels to fill d_active* arrays with sequential indices
+FillSequentialIndicesVV<<<(demaux.nvvint+Nthread-1)/Nthread, Nthread>>>(pdemaux);
+FillSequentialIndicesEE<<<(demaux.neeint+Nthread-1)/Nthread, Nthread>>>(pdemaux);
+FillSequentialIndicesVF<<<(demaux.nvfint+Nthread-1)/Nthread, Nthread>>>(pdemaux);
+FillSequentialIndicesFV<<<(demaux.nfvint+Nthread-1)/Nthread, Nthread>>>(pdemaux);
+
 pForceVV<<<(demaux.nvvint+Nthread-1)/Nthread, Nthread>>>(pInteractons, pComInteractons, pDynInteractonsVV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
 pForceEE<<<(demaux.neeint+Nthread-1)/Nthread, Nthread>>>(pEdgesCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsEE, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
 pForceVF<<<(demaux.nvfint+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsVF, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);

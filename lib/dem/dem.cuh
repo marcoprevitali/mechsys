@@ -136,6 +136,40 @@ __global__ void ResetActiveCounters(dem_aux * demaux)
     demaux[0].nActiveFV = 0;
 }
 
+// Fill active contact arrays with sequential indices (for non-compacted mode)
+// This allows the force kernels to work correctly when UseContactCompaction = false
+__global__ void FillSequentialIndicesVV(dem_aux * demaux)
+{
+    size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
+    if (ic >= demaux[0].nvvint) return;
+    demaux[0].d_activeVV[ic] = ic;
+    if (ic == 0) demaux[0].nActiveVV = demaux[0].nvvint;
+}
+
+__global__ void FillSequentialIndicesEE(dem_aux * demaux)
+{
+    size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
+    if (ic >= demaux[0].neeint) return;
+    demaux[0].d_activeEE[ic] = ic;
+    if (ic == 0) demaux[0].nActiveEE = demaux[0].neeint;
+}
+
+__global__ void FillSequentialIndicesVF(dem_aux * demaux)
+{
+    size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
+    if (ic >= demaux[0].nvfint) return;
+    demaux[0].d_activeVF[ic] = ic;
+    if (ic == 0) demaux[0].nActiveVF = demaux[0].nvfint;
+}
+
+__global__ void FillSequentialIndicesFV(dem_aux * demaux)
+{
+    size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
+    if (ic >= demaux[0].nfvint) return;
+    demaux[0].d_activeFV[ic] = ic;
+    if (ic == 0) demaux[0].nActiveFV = demaux[0].nfvint;
+}
+
 // Detect active VV contacts (sphere-sphere)
 // For each potential contact, compute overlap. If δ>0, record the index.
 __global__ void DetectVV(InteractonCU const * Int, ComInteractonCU * CInt, DynInteractonCU * DIntVV, ParticleCU * Par,
@@ -894,11 +928,13 @@ __global__ void FinalizeVelocity(ParticleCU const * Par, DynParticleCU * DPar,
     if (Par[ic].vzf) F.z = 0.0f;
 
     // damping uses half‑step velocity (stored in DPar[ic].v)
+    // Only apply damping to FREE velocity components (not fixed ones)
     real3 v_half = DPar[ic].v;
     if (Par[ic].Gv>0){
-    F.x -= Par[ic].Gv * Par[ic].m * v_half.x;
-    F.y -= Par[ic].Gv * Par[ic].m * v_half.y;
-    F.z -= Par[ic].Gv * Par[ic].m * v_half.z;}
+        if (!Par[ic].vxf) F.x -= Par[ic].Gv * Par[ic].m * v_half.x;
+        if (!Par[ic].vyf) F.y -= Par[ic].Gv * Par[ic].m * v_half.y;
+        if (!Par[ic].vzf) F.z -= Par[ic].Gv * Par[ic].m * v_half.z;
+    }
 
     real3 a_new = make_real3(F.x / Par[ic].m,
                              F.y / Par[ic].m,
