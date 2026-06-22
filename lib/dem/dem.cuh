@@ -94,7 +94,8 @@ typedef void (*ZeroFixedTorque_ptr_t)(ParticleCU *, dem_aux const *);
 typedef void (*EnforceAngularFixity_ptr_t)(ParticleCU const *,
                                            DynParticleCU *,
                                            dem_aux const *);
-
+typedef void (*RecomputeAccelerations_ptr_t)(ParticleCU const *, DynParticleCU const *,
+                                             real3 *, real3 *, dem_aux const *);
 // Quaternion exponential map (body‑frame angular velocity → rotation increment)
 __device__ inline real4 Exp_GPU(real3 w, real dt)
 {
@@ -1184,9 +1185,51 @@ __global__ void ZeroAccel(real3 * A, real3 * Wdot, DynParticleCU * DPar, dem_aux
     if (ic >= demaux[0].nparts) return;
     A[ic]        = make_real3(0.0, 0.0, 0.0);
     Wdot[ic]     = make_real3(0.0, 0.0, 0.0);
-    DPar[ic].v   = make_real3(0.0, 0.0, 0.0);
-    DPar[ic].w   = make_real3(0.0, 0.0, 0.0);
+    //DPar[ic].v   = make_real3(0.0, 0.0, 0.0);
+    //DPar[ic].w   = make_real3(0.0, 0.0, 0.0);
 }
+
+// Recompute translational and angular accelerations from current forces/torques
+// after a contact list rebuild. This prevents stale accelerations from being used
+// in the next Verlet half‑step.
+__global__ void RecomputeAccelerations(ParticleCU const * Par,
+                                       DynParticleCU const * DPar,
+                                       real3 * A,
+                                       real3 * Wdot,
+                                       dem_aux const * demaux)
+{
+    size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
+    if (ic >= demaux[0].nparts) return;
+
+    // Translational acceleration from current net force
+    real3 F = DPar[ic].F;
+    if (Par[ic].vxf) F.x = 0.0f;
+    if (Par[ic].vyf) F.y = 0.0f;
+    if (Par[ic].vzf) F.z = 0.0f;
+
+    // (No damping – damping is already included in DPar[ic].F from force calculation)
+    A[ic] = make_real3(F.x / Par[ic].m,
+                       F.y / Par[ic].m,
+                       F.z / Par[ic].m);
+
+    // Angular acceleration from current torque (body‑frame)
+    real3 T = Par[ic].T;
+    if (Par[ic].wxf) T.x = 0.0f;
+    if (Par[ic].wyf) T.y = 0.0f;
+    if (Par[ic].wzf) T.z = 0.0f;
+
+    // Use current angular velocity (DPar[ic].w) for the inertia cross terms
+    real3 w = DPar[ic].w;
+    real Ix = Par[ic].I.x, Iy = Par[ic].I.y, Iz = Par[ic].I.z;
+
+    real3 wdot_new;
+    wdot_new.x = (T.x + (Iy - Iz) * w.y * w.z) / Ix;
+    wdot_new.y = (T.y + (Iz - Ix) * w.z * w.x) / Iy;
+    wdot_new.z = (T.z + (Ix - Iy) * w.x * w.y) / Iz;
+
+    Wdot[ic] = wdot_new;
+}
+
 
 }
 #endif //MECHSYS_DEM_CUH

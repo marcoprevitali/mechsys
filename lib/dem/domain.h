@@ -305,8 +305,9 @@ public:
     real3                     * pWdot;
     OrientationUpdate_ptr_t     pOrientationUpdate;
     FinalizeRotation_ptr_t      pFinalizeRotation;
-    EnforceAngularFixity_ptr_t pEnforceAngularFixity;
-    ZeroFixedTorque_ptr_t    pZeroFixedTorque;
+    EnforceAngularFixity_ptr_t  pEnforceAngularFixity;
+    ZeroFixedTorque_ptr_t       pZeroFixedTorque;
+    RecomputeAccelerations_ptr_t pRecomputeAccelerations;
 #endif
     
 };
@@ -336,7 +337,7 @@ inline Domain::Domain (void * UD, size_t contactlaw)
     Dilate = false;
     RotPar = true;
     UseVelocityVerlet = true;
-    UseContactCompaction = true;
+    UseContactCompaction = false;
     Time = 0.0;
     iter = 0;
     Alpha = 0.05;
@@ -365,7 +366,7 @@ inline Domain::Domain (void * UD, size_t contactlaw)
     pFinalizeRotation  = FinalizeRotation;
     pExtraParams = NULL;
     pEnforceAngularFixity = EnforceAngularFixity;
-
+    pRecomputeAccelerations = RecomputeAccelerations;
 #endif
 }
 
@@ -737,7 +738,7 @@ pForceEE<<<(demaux.nActiveEE+Nthread-1)/Nthread, Nthread>>>(pEdgesCU, pVertsCU, 
 pForceVF<<<(demaux.nActiveVF+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsVF, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
 pForceFV<<<(demaux.nActiveFV+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsFV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
 } else {
-// ORIGINAL: full-scan force computation (no compaction)
+// full-scan force computation (no compaction)
 // Set nActive* counters on host and upload to device (force kernels read from device memory)
 demaux.nActiveVV = demaux.nvvint;
 demaux.nActiveEE = demaux.neeint;
@@ -796,7 +797,7 @@ pForceEE<<<(demaux.nActiveEE+Nthread-1)/Nthread, Nthread>>>(pEdgesCU, pVertsCU, 
 pForceVF<<<(demaux.nActiveVF+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsVF, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
 pForceFV<<<(demaux.nActiveFV+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsFV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
 } else {
-// ORIGINAL: full-scan force computation (no compaction)
+// full-scan force computation (no compaction)
 // Set nActive* counters on host and upload to device (force kernels read from device memory)
 demaux.nActiveVV = demaux.nvvint;
 demaux.nActiveEE = demaux.neeint;
@@ -845,7 +846,7 @@ MaxD<<<demaux.nverts/Nthread+1, Nthread>>>(pVertsCU, pVertsoCU, pMaxDCU, pdemaux
             //std::cout << iter << std::endl;
             numup++;
             iter_t+= iter - iter_b;
-            printf("MaxDiplacement %g > %g (alpha), recalculating the Verlet list. Current step: %i, %i steps have elapsed since the list was recalculated.\n",maxdis,Alpha,iter,iter-iter_b);
+            //printf("MaxDiplacement %g > %g (alpha), recalculating the Verlet list. Current step: %i, %i steps have passed since the list was last calculated.\n",maxdis,Alpha,iter,iter-iter_b);
 
             iter_b = iter;
             UpdateContactsDevice();
@@ -1074,14 +1075,12 @@ inline void Domain::WriteBF (char const * FileKey)
     size_t n_rl = 0;
     double delta = -1.0;
     double fdvv_norm = -1.0;
-    bool thermostat_active = false;
 
 for (auto it=PairtoCInt.begin();it!=PairtoCInt.end();++it)
 {        
     // Compute normal overlap
     double dist = Distance(it->second->P1->x, it->second->P2->x, Per);
     delta = it->second->P1->Props.R + it->second->P2->Props.R - dist;
-    thermostat_active = (dist < ThermostatInteractionRange);
     // Tangential overlap magnitude (only for sphere-sphere contacts)
     if (it->second->P1->Verts.Size()==1 && it->second->P2->Verts.Size()==1)
     {
@@ -1090,7 +1089,7 @@ for (auto it=PairtoCInt.begin();it!=PairtoCInt.end();++it)
     }
     
     // Only count if at last one overlap are above threshold
-    if (delta> 1e-12 || thermostat_active)
+    if (delta> 1e-12)
     {
         n_fn++;
         if (it->second->P1->Verts.Size()==1 && it->second->P2->Verts.Size()==1) n_rl++;
@@ -1109,7 +1108,6 @@ for (auto it=PairtoCInt.begin();it!=PairtoCInt.end();++it)
     float  *  Froll = new float[3*n_fn];
     float  *  Fndpot = new float[3*n_fn];
     float  *  Ftdpot = new float[3*n_fn];
-    float  *  Fther = new float[3*n_fn];
     float  * Branch = new float[3*n_fn];
     float  *   Orig = new float[3*n_fn];
     float  *   Fdvv = new float[3*n_fn];
@@ -1125,9 +1123,8 @@ for (auto it=PairtoCInt.begin();it!=PairtoCInt.end();++it)
         //if ((norm(CInteractons[i]->Fnet)>1.0e-12)&&(CInteractons[i]->P1->IsFree()&&CInteractons[i]->P2->IsFree()))
 double dist = Distance(it->second->P1->x, it->second->P2->x, Per);
 double delta = it->second->P1->Props.R + it->second->P2->Props.R - dist;
-    thermostat_active = (dist < ThermostatInteractionRange);
 
-if (delta > 1e-12 || thermostat_active)
+if (delta > 1e-12)
         {
             Fnnet [3*idx  ] = float(it->second->Fnet  (0));
             Fnnet [3*idx+1] = float(it->second->Fnet  (1));
@@ -1141,9 +1138,6 @@ if (delta > 1e-12 || thermostat_active)
             Ftdpot[3*idx  ] = float(it->second->Ftdpot (0));
             Ftdpot[3*idx+1] = float(it->second->Ftdpot (1));
             Ftdpot[3*idx+2] = float(it->second->Ftdpot (2));
-            Fther [3*idx  ] = float(it->second->Fther (0));
-            Fther [3*idx+1] = float(it->second->Fther (1));
-            Fther [3*idx+2] = float(it->second->Fther (2));
             if (n_rl>0)
             {
             Froll [3*idx  ] = float(it->second->Fn    (0));
@@ -1207,8 +1201,7 @@ if (delta > 1e-12 || thermostat_active)
     H5LTmake_dataset_float(file_id,dsname.CStr(),1,dims,Fndpot );
     dsname.Printf("DashpotForceTangential");
     H5LTmake_dataset_float(file_id,dsname.CStr(),1,dims,Ftdpot );
-    dsname.Printf("ThermostatForce");
-    H5LTmake_dataset_float(file_id,dsname.CStr(),1,dims,Fther );
+
     dims[0] = n_fn;
     dsname.Printf("ID1");
     H5LTmake_dataset_int  (file_id,dsname.CStr(),1,dims,ID1   );
@@ -1227,7 +1220,6 @@ if (delta > 1e-12 || thermostat_active)
     delete [] Fdvv;
     delete [] Fndpot;
     delete [] Ftdpot;
-    delete [] Fther;
 
     //Saving Cohesive forces
     if (BInteractons.Size()>0)
@@ -1347,11 +1339,7 @@ if (delta > 1e-12 || thermostat_active)
     oss << "       </DataItem>\n";
     oss << "     </Attribute>\n";
 
-    oss << "     <Attribute Name=\"Thermostat Force\" AttributeType=\"Vector\" Center=\"Node\">\n";
-    oss << "       <DataItem Dimensions=\"" << n_fn << " 3\" NumberType=\"Float\" Precision=\"4\" Format=\"HDF\">\n";
-    oss << "        " << fn.CStr() <<":/Thermostat Force\n";
-    oss << "       </DataItem>\n";
-    oss << "     </Attribute>\n";
+
 
     oss << "   </Grid>\n";
 
@@ -3818,7 +3806,9 @@ inline void Domain::UpdateContactsDevice()
     UpLoadDevice(Nproc,false,true);
     // Zero out accelerations on device so VerletStep1 does not produce a large
     // erroneous half-step from stale acceleration values
-    ZeroAccel<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pA, pWdot, pDynParticlesCU, pdemaux);
+    //ZeroAccel<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pA, pWdot, pDynParticlesCU, pdemaux);
+    RecomputeAccelerations<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>
+    (pParticlesCU, pDynParticlesCU, pA, pWdot, pdemaux);
 }
 #endif
 }; // namespace DEM
