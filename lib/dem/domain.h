@@ -718,7 +718,7 @@ pOrientationUpdate<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pVertsCU, pPa
 if (UseContactCompaction) {
 // 2a. Detect active contacts (overlap check only, no forces)
 ResetActiveCounters<<<1,1>>>(pdemaux);
-if (ContactLaw==0)
+            if (ContactLaw==0)
     DetectVV<<<(demaux.nvvint+Nthread-1)/Nthread, Nthread>>>(pInteractons, pComInteractons, pDynInteractonsVV, pParticlesCU, pDynParticlesCU, pdemaux);
 else
     DetectVV_Hertz<<<(demaux.nvvint+Nthread-1)/Nthread, Nthread>>>(pInteractons, pComInteractons, pDynInteractonsVV, pParticlesCU, pDynParticlesCU, pdemaux);
@@ -726,11 +726,15 @@ DetectEE<<<(demaux.neeint+Nthread-1)/Nthread, Nthread>>>(pEdgesCU, pVertsCU, pIn
 DetectVF<<<(demaux.nvfint+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsVF, pParticlesCU, pDynParticlesCU, pdemaux);
 DetectFV<<<(demaux.nfvint+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsFV, pParticlesCU, pDynParticlesCU, pdemaux);
 
+cudaDeviceSynchronize();
+
 // 2b. Copy only the active counters back to host (not the entire dem_aux struct)
 cudaMemcpy(&demaux.nActiveVV, &pdemaux->nActiveVV, sizeof(size_t), cudaMemcpyDeviceToHost);
 cudaMemcpy(&demaux.nActiveEE, &pdemaux->nActiveEE, sizeof(size_t), cudaMemcpyDeviceToHost);
 cudaMemcpy(&demaux.nActiveVF, &pdemaux->nActiveVF, sizeof(size_t), cudaMemcpyDeviceToHost);
 cudaMemcpy(&demaux.nActiveFV, &pdemaux->nActiveFV, sizeof(size_t), cudaMemcpyDeviceToHost);
+printf("[DEBUG] After detect: nActiveVV=%zu nActiveEE=%zu nActiveVF=%zu nActiveFV=%zu (nvfint=%zu nfvint=%zu)\n",
+    demaux.nActiveVV, demaux.nActiveEE, demaux.nActiveVF, demaux.nActiveFV, demaux.nvfint, demaux.nfvint);
 
 // 2c. Compute forces using compacted active lists
 pForceVV<<<(demaux.nActiveVV+Nthread-1)/Nthread, Nthread>>>(pInteractons, pComInteractons, pDynInteractonsVV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
@@ -763,7 +767,6 @@ pForceFV<<<(demaux.nfvint+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVe
 // 3. Finalise velocities (full step)
 pFinalizeVelocity<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pParticlesCU, pDynParticlesCU, pA, pdemaux);
 pFinalizeRotation<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pParticlesCU, pDynParticlesCU, pWdot, pdemaux);
-pEnforceAngularFixity<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pParticlesCU, pDynParticlesCU, pdemaux);
 
 }
 

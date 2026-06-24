@@ -53,6 +53,8 @@ struct dem_aux
     bool   px     = false;
     bool   py     = false;
     bool   pz     = false;
+    real   strain = 0.0;   ///< Accumulated shear strain (gamma = gamma_dot * t)
+    real   shear_rate = 0.0; ///< Shear rate gamma_dot (1/T)
 
     // --- Compaction arrays for active contact detection ---
     size_t *d_activeVV;  ///< device pointer to array of active VV contact indices
@@ -261,8 +263,20 @@ __global__ void DetectEE(size_t const * Edges, real3 const * Verts, InteractonCU
 __global__ void DetectVF(size_t const * Faces, size_t const * Facid, real3 const * Verts, InteractonCU const * Int, ComInteractonCU * CInt,
         DynInteractonCU * DIntVF, ParticleCU * Par, DynParticleCU * DPar, dem_aux * demaux)
 {
+    if (threadIdx.x==0 && blockIdx.x==0) printf("DetectVF LAUNCHED: nvfint=%zu nActiveVF=%zu\n", demaux[0].nvfint, demaux[0].nActiveVF);
     size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
     if (ic >= demaux[0].nvfint) return;
+    if (ic==0) printf("DetectVF[0]: nvfint=%zu id=%zu i1=%zu i2=%zu f1=%zu f2=%zu\n", demaux[0].nvfint, DIntVF[ic].Idx, CInt[DIntVF[ic].Idx].I1, CInt[DIntVF[ic].Idx].I2, DIntVF[ic].IF1, DIntVF[ic].IF2);
+    if (ic < 5)
+    {
+        size_t id = DIntVF[ic].Idx;
+        size_t i1 = CInt  [id].I1;
+        size_t i2 = CInt  [id].I2;
+        real3 xi = DPar[i1].x;
+        real3 xf = DPar[i2].x;
+        printf("DetectVF[%zu]: id=%zu i1=%zu i2=%zu xi=(%g,%g,%g) xf=(%g,%g,%g)\n",
+               ic, id, i1, i2, xi.x, xi.y, xi.z, xf.x, xf.y, xf.z);
+    }
     size_t id = DIntVF[ic].Idx;
     size_t i1 = CInt  [id].I1;
     size_t i2 = CInt  [id].I2;
@@ -685,6 +699,10 @@ __global__ void CalcForceVF(size_t const * Faces, size_t const * Facid, real3 co
         real3 t1,t2,x1,x2;
         Rotation(DPar[i1].w,DPar[i1].Q,t1);
         Rotation(DPar[i2].w,DPar[i2].Q,t2);
+
+        printf("VF ic = %i, i2 = %i, w=(%g,%g,%g) t2=(%g,%g,%g)\n",ic,i2, DPar[i2].w.x, DPar[i2].w.y, DPar[i2].w.z, t2.x, t2.y, t2.z);
+
+
         x1 = x1c - DPar [i1].x;
         x2 = x2c - DPar [i2].x;
         real3 vrel = (DPar[i1].v+cross(t1,x1))-(DPar[i2].v+cross(t2,x2));
@@ -790,6 +808,8 @@ __global__ void CalcForceFV(size_t const * Faces, size_t const * Facid, real3 co
         }
 
         DIntFV[ic_orig].F = DIntFV[ic_orig].Fn + DIntFV[ic_orig].Ft + Int[id].Gn*dotreal3(n,vrel)*n + Int[id].Gt*vt;
+
+ 
         
         real3 T1,T2,T, Tt;
         Tt = cross (x1,DIntFV[ic_orig].F);
@@ -875,12 +895,6 @@ __global__ void OrientationUpdate(real3 * Verts, ParticleCU const * Par,
     if (Par[ic].wzf) wdot_prev.z = 0.0f;
 
     real3 w = DPar[ic].w;
-    // Enforce angular fixity on the current angular velocity
-    if (Par[ic].wxf) w.x = 0.0f;
-    if (Par[ic].wyf) w.y = 0.0f;
-    if (Par[ic].wzf) w.z = 0.0f;
-    DPar[ic].w = w;
-
 
     real3 w_half;
     w_half.x = w.x + 0.5f * demaux[0].dt * wdot_prev.x;
@@ -1159,8 +1173,16 @@ __global__ void ResetMaxD(real3 * Verts, real3 * Vertso, real * maxd, ParticleCU
         }
         if (demaux[0].pz)
         {
-            if (DPar[ic].x.z< demaux[0].Zmin) dis.z = demaux[0].Zmax - demaux[0].Zmin;
-            if (DPar[ic].x.z>=demaux[0].Zmax) dis.z = demaux[0].Zmin - demaux[0].Zmax;
+            if (DPar[ic].x.z< demaux[0].Zmin)
+            {
+                dis.z = demaux[0].Zmax - demaux[0].Zmin;
+                dis.x += demaux[0].strain * (demaux[0].Zmax - demaux[0].Zmin);
+            }
+            if (DPar[ic].x.z>=demaux[0].Zmax)
+            {
+                dis.z = demaux[0].Zmin - demaux[0].Zmax;
+                dis.x -= demaux[0].strain * (demaux[0].Zmax - demaux[0].Zmin);
+            }
         }
     }
 
