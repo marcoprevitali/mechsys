@@ -198,7 +198,6 @@ public:
     bool                                              Finished;                    ///< Has the simulation finished
     bool                                              Dilate;                      ///< True if eroded particles should be dilated for visualization
     bool                                              UseVelocityVerlet;       // use the updated velocity verlet method or the previous position verlet + leapfrog?
-    bool                                              UseContactCompaction;    // use contact compaction (detection pass + compacted force kernels) or original full-scan approach
     Array<size_t>                                     FreePar;                     ///< Particles that are free
     Array<size_t>                                     NoFreePar;                   ///< Particles that are not free
     Array<Particle*>                                  Particles;                   ///< All particles in domain
@@ -263,10 +262,6 @@ public:
     thrust::device_vector<DynInteractonCU> bDynInteractonsEE;
     thrust::device_vector<DynInteractonCU> bDynInteractonsVF;
     thrust::device_vector<DynInteractonCU> bDynInteractonsFV;
-    thrust::device_vector<size_t>          bActiveVV;                       ///< device vector of active VV contact indices
-    thrust::device_vector<size_t>          bActiveEE;                       ///< device vector of active EE contact indices
-    thrust::device_vector<size_t>          bActiveVF;                       ///< device vector of active VF contact indices
-    thrust::device_vector<size_t>          bActiveFV;                       ///< device vector of active FV contact indices
     dem_aux                                demaux;                          ///< structure with auxiliary data
     // Pointers to the GPU arrays
     ParticleCU       * pParticlesCU;                                         
@@ -337,7 +332,6 @@ inline Domain::Domain (void * UD, size_t contactlaw)
     Dilate = false;
     RotPar = true;
     UseVelocityVerlet = true;
-    UseContactCompaction = false;
     Time = 0.0;
     iter = 0;
     Alpha = 0.05;
@@ -715,54 +709,11 @@ if (UseVelocityVerlet){
 pVerletStep1<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pVertsCU, pParticlesCU, pDynParticlesCU, pA, pdemaux);
 pOrientationUpdate<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pVertsCU, pParticlesCU, pDynParticlesCU, pWdot, pdemaux);
 
-if (UseContactCompaction) {
-// 2a. Detect active contacts (overlap check only, no forces)
-ResetActiveCounters<<<1,1>>>(pdemaux);
-            if (ContactLaw==0)
-    DetectVV<<<(demaux.nvvint+Nthread-1)/Nthread, Nthread>>>(pInteractons, pComInteractons, pDynInteractonsVV, pParticlesCU, pDynParticlesCU, pdemaux);
-else
-    DetectVV_Hertz<<<(demaux.nvvint+Nthread-1)/Nthread, Nthread>>>(pInteractons, pComInteractons, pDynInteractonsVV, pParticlesCU, pDynParticlesCU, pdemaux);
-DetectEE<<<(demaux.neeint+Nthread-1)/Nthread, Nthread>>>(pEdgesCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsEE, pParticlesCU, pDynParticlesCU, pdemaux);
-DetectVF<<<(demaux.nvfint+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsVF, pParticlesCU, pDynParticlesCU, pdemaux);
-DetectFV<<<(demaux.nfvint+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsFV, pParticlesCU, pDynParticlesCU, pdemaux);
-
-cudaDeviceSynchronize();
-
-// 2b. Copy only the active counters back to host (not the entire dem_aux struct)
-cudaMemcpy(&demaux.nActiveVV, &pdemaux->nActiveVV, sizeof(size_t), cudaMemcpyDeviceToHost);
-cudaMemcpy(&demaux.nActiveEE, &pdemaux->nActiveEE, sizeof(size_t), cudaMemcpyDeviceToHost);
-cudaMemcpy(&demaux.nActiveVF, &pdemaux->nActiveVF, sizeof(size_t), cudaMemcpyDeviceToHost);
-cudaMemcpy(&demaux.nActiveFV, &pdemaux->nActiveFV, sizeof(size_t), cudaMemcpyDeviceToHost);
-printf("[DEBUG] After detect: nActiveVV=%zu nActiveEE=%zu nActiveVF=%zu nActiveFV=%zu (nvfint=%zu nfvint=%zu)\n",
-    demaux.nActiveVV, demaux.nActiveEE, demaux.nActiveVF, demaux.nActiveFV, demaux.nvfint, demaux.nfvint);
-
-// 2c. Compute forces using compacted active lists
-pForceVV<<<(demaux.nActiveVV+Nthread-1)/Nthread, Nthread>>>(pInteractons, pComInteractons, pDynInteractonsVV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
-pForceEE<<<(demaux.nActiveEE+Nthread-1)/Nthread, Nthread>>>(pEdgesCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsEE, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
-pForceVF<<<(demaux.nActiveVF+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsVF, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
-pForceFV<<<(demaux.nActiveFV+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsFV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
-} else {
-// full-scan force computation (no compaction)
-// Set nActive* counters on host and upload to device (force kernels read from device memory)
-demaux.nActiveVV = demaux.nvvint;
-demaux.nActiveEE = demaux.neeint;
-demaux.nActiveVF = demaux.nvfint;
-demaux.nActiveFV = demaux.nfvint;
-cudaMemcpy(&pdemaux->nActiveVV, &demaux.nActiveVV, sizeof(size_t), cudaMemcpyHostToDevice);
-cudaMemcpy(&pdemaux->nActiveEE, &demaux.nActiveEE, sizeof(size_t), cudaMemcpyHostToDevice);
-cudaMemcpy(&pdemaux->nActiveVF, &demaux.nActiveVF, sizeof(size_t), cudaMemcpyHostToDevice);
-cudaMemcpy(&pdemaux->nActiveFV, &demaux.nActiveFV, sizeof(size_t), cudaMemcpyHostToDevice);
-// Use GPU kernels to fill d_active* arrays with sequential indices
-FillSequentialIndicesVV<<<(demaux.nvvint+Nthread-1)/Nthread, Nthread>>>(pdemaux);
-FillSequentialIndicesEE<<<(demaux.neeint+Nthread-1)/Nthread, Nthread>>>(pdemaux);
-FillSequentialIndicesVF<<<(demaux.nvfint+Nthread-1)/Nthread, Nthread>>>(pdemaux);
-FillSequentialIndicesFV<<<(demaux.nfvint+Nthread-1)/Nthread, Nthread>>>(pdemaux);
-
 pForceVV<<<(demaux.nvvint+Nthread-1)/Nthread, Nthread>>>(pInteractons, pComInteractons, pDynInteractonsVV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
 pForceEE<<<(demaux.neeint+Nthread-1)/Nthread, Nthread>>>(pEdgesCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsEE, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
 pForceVF<<<(demaux.nvfint+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsVF, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
 pForceFV<<<(demaux.nfvint+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsFV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
-}
+
 
 // 3. Finalise velocities (full step)
 pFinalizeVelocity<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pParticlesCU, pDynParticlesCU, pA, pdemaux);
@@ -777,50 +728,11 @@ else {
 // OLD CODE, POSITION VERLET + LEAPFROG
 // 1. reset forces
 
-if (UseContactCompaction) {
-// 2a. Detect active contacts (overlap check only, no forces)
-ResetActiveCounters<<<1,1>>>(pdemaux);
-if (ContactLaw==0)
-    DetectVV<<<(demaux.nvvint+Nthread-1)/Nthread, Nthread>>>(pInteractons, pComInteractons, pDynInteractonsVV, pParticlesCU, pDynParticlesCU, pdemaux);
-else
-    DetectVV_Hertz<<<(demaux.nvvint+Nthread-1)/Nthread, Nthread>>>(pInteractons, pComInteractons, pDynInteractonsVV, pParticlesCU, pDynParticlesCU, pdemaux);
-DetectEE<<<(demaux.neeint+Nthread-1)/Nthread, Nthread>>>(pEdgesCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsEE, pParticlesCU, pDynParticlesCU, pdemaux);
-DetectVF<<<(demaux.nvfint+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsVF, pParticlesCU, pDynParticlesCU, pdemaux);
-DetectFV<<<(demaux.nfvint+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsFV, pParticlesCU, pDynParticlesCU, pdemaux);
-
-// 2b. Copy only the active counters back to host (not the entire dem_aux struct)
-cudaMemcpy(&demaux.nActiveVV, &pdemaux->nActiveVV, sizeof(size_t), cudaMemcpyDeviceToHost);
-cudaMemcpy(&demaux.nActiveEE, &pdemaux->nActiveEE, sizeof(size_t), cudaMemcpyDeviceToHost);
-cudaMemcpy(&demaux.nActiveVF, &pdemaux->nActiveVF, sizeof(size_t), cudaMemcpyDeviceToHost);
-cudaMemcpy(&demaux.nActiveFV, &pdemaux->nActiveFV, sizeof(size_t), cudaMemcpyDeviceToHost);
-
-// 2c. calculate new forces (single step) using compacted active lists
-pForceVV<<<(demaux.nActiveVV+Nthread-1)/Nthread, Nthread>>>(pInteractons, pComInteractons, pDynInteractonsVV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
-pForceEE<<<(demaux.nActiveEE+Nthread-1)/Nthread, Nthread>>>(pEdgesCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsEE, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
-pForceVF<<<(demaux.nActiveVF+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsVF, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
-pForceFV<<<(demaux.nActiveFV+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsFV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
-} else {
-// full-scan force computation (no compaction)
-// Set nActive* counters on host and upload to device (force kernels read from device memory)
-demaux.nActiveVV = demaux.nvvint;
-demaux.nActiveEE = demaux.neeint;
-demaux.nActiveVF = demaux.nvfint;
-demaux.nActiveFV = demaux.nfvint;
-cudaMemcpy(&pdemaux->nActiveVV, &demaux.nActiveVV, sizeof(size_t), cudaMemcpyHostToDevice);
-cudaMemcpy(&pdemaux->nActiveEE, &demaux.nActiveEE, sizeof(size_t), cudaMemcpyHostToDevice);
-cudaMemcpy(&pdemaux->nActiveVF, &demaux.nActiveVF, sizeof(size_t), cudaMemcpyHostToDevice);
-cudaMemcpy(&pdemaux->nActiveFV, &demaux.nActiveFV, sizeof(size_t), cudaMemcpyHostToDevice);
-// Use GPU kernels to fill d_active* arrays with sequential indices
-FillSequentialIndicesVV<<<(demaux.nvvint+Nthread-1)/Nthread, Nthread>>>(pdemaux);
-FillSequentialIndicesEE<<<(demaux.neeint+Nthread-1)/Nthread, Nthread>>>(pdemaux);
-FillSequentialIndicesVF<<<(demaux.nvfint+Nthread-1)/Nthread, Nthread>>>(pdemaux);
-FillSequentialIndicesFV<<<(demaux.nfvint+Nthread-1)/Nthread, Nthread>>>(pdemaux);
-
 pForceVV<<<(demaux.nvvint+Nthread-1)/Nthread, Nthread>>>(pInteractons, pComInteractons, pDynInteractonsVV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
 pForceEE<<<(demaux.neeint+Nthread-1)/Nthread, Nthread>>>(pEdgesCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsEE, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
 pForceVF<<<(demaux.nvfint+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsVF, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
 pForceFV<<<(demaux.nfvint+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsFV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
-}
+
 
 // 3. update positions/rotations
 pTranslate<<<demaux.nparts/Nthread+1,Nthread>>>(pVertsCU, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
@@ -3584,11 +3496,6 @@ inline void Domain::UpLoadDevice(size_t Nc, bool first,bool updateState)
     bDynInteractonsEE.resize(hDynInteractonsEE.size());
     bDynInteractonsVF.resize(hDynInteractonsVF.size());
     bDynInteractonsFV.resize(hDynInteractonsFV.size());
-    // Allocate active contact compaction arrays (max size = full potential contacts)
-    bActiveVV.resize(demaux.nvvint);
-    bActiveEE.resize(demaux.neeint);
-    bActiveVF.resize(demaux.nvfint);
-    bActiveFV.resize(demaux.nfvint);
 
     thrust::copy(hInteractons     .begin(),hInteractons     .end(),bInteractons     .begin());
     thrust::copy(hComInteractons  .begin(),hComInteractons  .end(),bComInteractons  .begin());
@@ -3603,16 +3510,6 @@ inline void Domain::UpLoadDevice(size_t Nc, bool first,bool updateState)
     pDynInteractonsEE = thrust::raw_pointer_cast(bDynInteractonsEE.data());
     pDynInteractonsVF = thrust::raw_pointer_cast(bDynInteractonsVF.data());
     pDynInteractonsFV = thrust::raw_pointer_cast(bDynInteractonsFV.data());
-
-    // Set demaux device pointers for active contact arrays
-    demaux.d_activeVV = thrust::raw_pointer_cast(bActiveVV.data());
-    demaux.d_activeEE = thrust::raw_pointer_cast(bActiveEE.data());
-    demaux.d_activeVF = thrust::raw_pointer_cast(bActiveVF.data());
-    demaux.d_activeFV = thrust::raw_pointer_cast(bActiveFV.data());
-    demaux.nActiveVV  = 0;
-    demaux.nActiveEE  = 0;
-    demaux.nActiveVF  = 0;
-    demaux.nActiveFV  = 0;
 
     //if (!first) cudaFree  (pdemaux);
     if (iter!=0) cudaFree  (pdemaux);

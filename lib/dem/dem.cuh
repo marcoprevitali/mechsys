@@ -56,16 +56,6 @@ struct dem_aux
     real   strain = 0.0;   ///< Accumulated shear strain (gamma = gamma_dot * t)
     real   shear_rate = 0.0; ///< Shear rate gamma_dot (1/T)
 
-    // --- Compaction arrays for active contact detection ---
-    size_t *d_activeVV;  ///< device pointer to array of active VV contact indices
-    size_t *d_activeEE;  ///< device pointer to array of active EE contact indices
-    size_t *d_activeVF;  ///< device pointer to array of active VF contact indices
-    size_t *d_activeFV;  ///< device pointer to array of active FV contact indices
-    size_t nActiveVV;    ///< number of active VV contacts (set by detection kernel)
-    size_t nActiveEE;    ///< number of active EE contacts
-    size_t nActiveVF;    ///< number of active VF contacts
-    size_t nActiveFV;    ///< number of active FV contacts
-
 };
 
 typedef void (*ForceVV_ptr_t)(InteractonCU const *, ComInteractonCU *, DynInteractonCU *, ParticleCU *
@@ -126,228 +116,18 @@ __device__ inline real4 QMult(real4 q1, real4 q2)
     );
 }
 
-// =========================================================================
-// Contact detection kernels (no force computation, only overlap check)
-// =========================================================================
 
-// Zero out the active contact counters on the device
-__global__ void ResetActiveCounters(dem_aux * demaux)
-{
-    demaux[0].nActiveVV = 0;
-    demaux[0].nActiveEE = 0;
-    demaux[0].nActiveVF = 0;
-    demaux[0].nActiveFV = 0;
-}
-
-// Fill active contact arrays with sequential indices (for non-compacted mode)
-// This allows the force kernels to work correctly when UseContactCompaction = false
-__global__ void FillSequentialIndicesVV(dem_aux * demaux)
-{
-    size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
-    if (ic >= demaux[0].nvvint) return;
-    demaux[0].d_activeVV[ic] = ic;
-    if (ic == 0) demaux[0].nActiveVV = demaux[0].nvvint;
-}
-
-__global__ void FillSequentialIndicesEE(dem_aux * demaux)
-{
-    size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
-    if (ic >= demaux[0].neeint) return;
-    demaux[0].d_activeEE[ic] = ic;
-    if (ic == 0) demaux[0].nActiveEE = demaux[0].neeint;
-}
-
-__global__ void FillSequentialIndicesVF(dem_aux * demaux)
-{
-    size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
-    if (ic >= demaux[0].nvfint) return;
-    demaux[0].d_activeVF[ic] = ic;
-    if (ic == 0) demaux[0].nActiveVF = demaux[0].nvfint;
-}
-
-__global__ void FillSequentialIndicesFV(dem_aux * demaux)
-{
-    size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
-    if (ic >= demaux[0].nfvint) return;
-    demaux[0].d_activeFV[ic] = ic;
-    if (ic == 0) demaux[0].nActiveFV = demaux[0].nfvint;
-}
-
-// Detect active VV contacts (sphere-sphere)
-// For each potential contact, compute overlap. If δ>0, record the index.
-__global__ void DetectVV(InteractonCU const * Int, ComInteractonCU * CInt, DynInteractonCU * DIntVV, ParticleCU * Par,
-        DynParticleCU * DPar, dem_aux * demaux)
-{
-    size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
-    if (ic >= demaux[0].nvvint) return;
-    size_t id = DIntVV[ic].Idx;
-    size_t i1 = CInt [id].I1;
-    size_t i2 = CInt [id].I2;
-    real   r1 = Par  [i1].R;
-    real   r2 = Par  [i2].R;
-    real3  xi = DPar [i1].x;
-    real3  xf = DPar [i2].x;
-    real3  Branch;
-    if (Int[id].BothFree) BranchVec(xf, xi, Branch, demaux[0].Per);
-    else Branch = xi - xf;
-
-    real dist  = norm(Branch);
-    real delta = r1 + r2 - dist;
-
-    if (delta > 0.0)
-    {
-        size_t idx = atomicAdd((unsigned long long *)&demaux[0].nActiveVV, 1ULL);
-        demaux[0].d_activeVV[idx] = ic;
-    }
-}
-
-__global__ void DetectVV_Hertz(InteractonCU const * Int, ComInteractonCU * CInt, DynInteractonCU * DIntVV, ParticleCU * Par,
-        DynParticleCU * DPar, dem_aux * demaux)
-{
-    size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
-    if (ic >= demaux[0].nvvint) return;
-    size_t id = DIntVV[ic].Idx;
-    size_t i1 = CInt [id].I1;
-    size_t i2 = CInt [id].I2;
-    real   r1 = Par  [i1].R;
-    real   r2 = Par  [i2].R;
-    real3  xi = DPar [i1].x;
-    real3  xf = DPar [i2].x;
-    real3  Branch;
-    if (Int[id].BothFree) BranchVec(xf,xi,Branch,demaux[0].Per);
-    else Branch = xi-xf;
-
-    real dist  = norm(Branch);
-    real delta = r1 + r2 - dist;
-
-    if (delta > 0.0)
-    {
-        size_t idx = atomicAdd((unsigned long long *)&demaux[0].nActiveVV, 1ULL);
-        demaux[0].d_activeVV[idx] = ic;
-    }
-}
-
-// Detect active EE contacts (edge-edge)
-__global__ void DetectEE(size_t const * Edges, real3 const * Verts, InteractonCU const * Int, ComInteractonCU * CInt, DynInteractonCU * DIntEE,
-        ParticleCU * Par, DynParticleCU * DPar, dem_aux * demaux)
-{
-    size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
-    if (ic >= demaux[0].neeint) return;
-    size_t id = DIntEE[ic].Idx;
-    size_t i1 = CInt  [id].I1;
-    size_t i2 = CInt  [id].I2;
-    size_t f1 = DIntEE[ic].IF1;
-    size_t f2 = DIntEE[ic].IF2;
-    real  dm1 = DIntEE[ic].Dmax1;
-    real  dm2 = DIntEE[ic].Dmax2;
-    real   r1 = Par  [i1].R;
-    real   r2 = Par  [i2].R;
-    real3  xi = DPar [i1].x;
-    real3  xf = DPar [i2].x;
-
-    real3 s;
-    real3 Pert = make_real3(0.0,0.0,0.0);
-    if (Int[id].BothFree) Pert = demaux[0].Per;
-    if (!OverlapEE(Edges,Verts,f1,f2,dm1,dm2,Pert)) return;
-    DistanceEE(Edges,Verts,f1,f2,xi,xf,s,Pert);
-    real dist  = norm(s);
-    real delta = r1 + r2 - dist;
-    if (delta > 0)
-    {
-        size_t idx = atomicAdd((unsigned long long *)&demaux[0].nActiveEE, 1ULL);
-        demaux[0].d_activeEE[idx] = ic;
-    }
-}
-
-// Detect active VF contacts (vertex-face)
-__global__ void DetectVF(size_t const * Faces, size_t const * Facid, real3 const * Verts, InteractonCU const * Int, ComInteractonCU * CInt,
-        DynInteractonCU * DIntVF, ParticleCU * Par, DynParticleCU * DPar, dem_aux * demaux)
-{
-    if (threadIdx.x==0 && blockIdx.x==0) printf("DetectVF LAUNCHED: nvfint=%zu nActiveVF=%zu\n", demaux[0].nvfint, demaux[0].nActiveVF);
-    size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
-    if (ic >= demaux[0].nvfint) return;
-    if (ic==0) printf("DetectVF[0]: nvfint=%zu id=%zu i1=%zu i2=%zu f1=%zu f2=%zu\n", demaux[0].nvfint, DIntVF[ic].Idx, CInt[DIntVF[ic].Idx].I1, CInt[DIntVF[ic].Idx].I2, DIntVF[ic].IF1, DIntVF[ic].IF2);
-    if (ic < 5)
-    {
-        size_t id = DIntVF[ic].Idx;
-        size_t i1 = CInt  [id].I1;
-        size_t i2 = CInt  [id].I2;
-        real3 xi = DPar[i1].x;
-        real3 xf = DPar[i2].x;
-        printf("DetectVF[%zu]: id=%zu i1=%zu i2=%zu xi=(%g,%g,%g) xf=(%g,%g,%g)\n",
-               ic, id, i1, i2, xi.x, xi.y, xi.z, xf.x, xf.y, xf.z);
-    }
-    size_t id = DIntVF[ic].Idx;
-    size_t i1 = CInt  [id].I1;
-    size_t i2 = CInt  [id].I2;
-    size_t f1 = DIntVF[ic].IF1;
-    size_t f2 = DIntVF[ic].IF2;
-    real  dm1 = DIntVF[ic].Dmax1;
-    real  dm2 = DIntVF[ic].Dmax2;
-    real   r1 = Par  [i1].R;
-    real   r2 = Par  [i2].R;
-    real3  xi = DPar [i1].x;
-    real3  xf = DPar [i2].x;
-
-    real3 s;
-    xi = Verts[f1];
-    real3 Pert = make_real3(0.0,0.0,0.0);
-    if (Int[id].BothFree) Pert = demaux[0].Per;
-    if (!OverlapVF(Faces,Facid,Verts,xi,f2,dm1,dm2,Pert)) return;
-    DistanceVF(Faces,Facid,Verts,xi,f2,xf,s,Pert);
-    real dist  = norm(s);
-    real delta = r1 + r2 - dist;
-    if (delta > 0)
-    {
-        size_t idx = atomicAdd((unsigned long long *)&demaux[0].nActiveVF, 1ULL);
-        demaux[0].d_activeVF[idx] = ic;
-    }
-}
-
-// Detect active FV contacts (face-vertex)
-__global__ void DetectFV(size_t const * Faces, size_t const * Facid, real3 const * Verts, InteractonCU const * Int, ComInteractonCU * CInt,
-        DynInteractonCU * DIntFV, ParticleCU * Par, DynParticleCU * DPar, dem_aux * demaux)
-{
-    size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
-    if (ic >= demaux[0].nfvint) return;
-    size_t id = DIntFV[ic].Idx;
-    size_t i1 = CInt  [id].I1;
-    size_t i2 = CInt  [id].I2;
-    size_t f1 = DIntFV[ic].IF1;
-    size_t f2 = DIntFV[ic].IF2;
-    real  dm1 = DIntFV[ic].Dmax1;
-    real  dm2 = DIntFV[ic].Dmax2;
-    real   r1 = Par  [i1].R;
-    real   r2 = Par  [i2].R;
-    real3  xi = DPar [i1].x;
-    real3  xf = DPar [i2].x;
-
-    real3 s;
-    xf = Verts[f2];
-    real3 Pert = make_real3(0.0,0.0,0.0);
-    if (Int[id].BothFree) Pert = demaux[0].Per;
-    if (!OverlapFV(Faces,Facid,Verts,f1,xf,dm1,dm2,Pert)) return;
-    DistanceFV(Faces,Facid,Verts,f1,xf,xi,s,Pert);
-    real dist  = norm(s);
-    real delta = r1 + r2 - dist;
-    if (delta > 0)
-    {
-        size_t idx = atomicAdd((unsigned long long *)&demaux[0].nActiveFV, 1ULL);
-        demaux[0].d_activeFV[idx] = ic;
-    }
-}
 
 // =========================================================================
-// Force calculation kernels (now using compacted active lists)
+// Force calculation kernels
 // =========================================================================
 
 __global__ void CalcForceVV(InteractonCU const * Int, ComInteractonCU * CInt, DynInteractonCU * DIntVV, ParticleCU * Par,
         DynParticleCU * DPar, dem_aux const * demaux, void * extraparams)
 {
     size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
-    if (ic >= demaux[0].nActiveVV) return;
-    size_t ic_orig = demaux[0].d_activeVV[ic];
-    size_t id = DIntVV[ic_orig].Idx;
+    if (ic >= demaux[0].nvvint) return;
+    size_t id = DIntVV[ic].Idx;
     size_t i1 = CInt [id].I1;
     size_t i2 = CInt [id].I2;
     real   r1 = Par  [i1].R;
@@ -361,7 +141,7 @@ __global__ void CalcForceVV(InteractonCU const * Int, ComInteractonCU * CInt, Dy
     real dist  = norm(Branch);
     real delta = r1 + r2 - dist;
 
-    DIntVV[ic_orig].Fn = make_real3(0.0, 0.0, 0.0);
+    DIntVV[ic].Fn = make_real3(0.0, 0.0, 0.0);
 
     if (delta > 0.0)
     {
@@ -389,13 +169,13 @@ __global__ void CalcForceVV(InteractonCU const * Int, ComInteractonCU * CInt, Dy
         }
 
         // total normal force (now includes dashpot)
-        DIntVV[ic_orig].Fn = Fn_total;
+        DIntVV[ic].Fn = Fn_total;
 
         // increment tangential displacement
-        DIntVV[ic_orig].Ft = DIntVV[ic_orig].Ft + (Int[id].Kt * demaux[0].dt) * vt;
-        DIntVV[ic_orig].Ft = DIntVV[ic_orig].Ft - dotreal3(DIntVV[ic_orig].Ft, n) * n;
+        DIntVV[ic].Ft = DIntVV[ic].Ft + (Int[id].Kt * demaux[0].dt) * vt;
+        DIntVV[ic].Ft = DIntVV[ic].Ft - dotreal3(DIntVV[ic].Ft, n) * n;
 
-        real3 Ft_elastic = DIntVV[ic_orig].Ft;               // elastic tangential force
+        real3 Ft_elastic = DIntVV[ic].Ft;               // elastic tangential force
         real3 Ft_dashpot = Int[id].Gt * vt;             // tangential dashpot force
 
         // tentative total tangential force (elastic + dashpot)
@@ -412,7 +192,7 @@ __global__ void CalcForceVV(InteractonCU const * Int, ComInteractonCU * CInt, Dy
 
             // cap the force to the sliding portion
             Ft_elastic = friction_limit * tan;
-            DIntVV[ic_orig].Ft = Ft_elastic;                 // update stored elastic force
+            DIntVV[ic].Ft = Ft_elastic;                 // update stored elastic force
 
             // set to zero for sliding
             Ft_dashpot = make_real3(0.0, 0.0, 0.0);
@@ -421,25 +201,25 @@ __global__ void CalcForceVV(InteractonCU const * Int, ComInteractonCU * CInt, Dy
         real3 Ft_total = Ft_elastic + Ft_dashpot;
 
         real3 vr = r1 * r2 * cross((t1 - t2), n) / (r1 + r2);
-        DIntVV[ic_orig].Fr = DIntVV[ic_orig].Fr + (Int[id].Beta * Int[id].Kt * demaux[0].dt) * vr;
-        DIntVV[ic_orig].Fr = DIntVV[ic_orig].Fr - dotreal3(DIntVV[ic_orig].Fr, n) * n;
+        DIntVV[ic].Fr = DIntVV[ic].Fr + (Int[id].Beta * Int[id].Kt * demaux[0].dt) * vr;
+        DIntVV[ic].Fr = DIntVV[ic].Fr - dotreal3(DIntVV[ic].Fr, n) * n;
 
-        tan = DIntVV[ic_orig].Fr;
+        tan = DIntVV[ic].Fr;
         if (norm(tan) > 0.0) tan = tan / norm(tan);
-        if (norm(DIntVV[ic_orig].Fr) > Int[id].Eta * Int[id].Mu * norm(DIntVV[ic_orig].Fn)) {
-            DIntVV[ic_orig].Fr = Int[id].Eta * Int[id].Mu * norm(DIntVV[ic_orig].Fn) * tan;
+        if (norm(DIntVV[ic].Fr) > Int[id].Eta * Int[id].Mu * norm(DIntVV[ic].Fn)) {
+            DIntVV[ic].Fr = Int[id].Eta * Int[id].Mu * norm(DIntVV[ic].Fn) * tan;
         }
 
         // elastic + dashpot + elastic + dashpot (if not sliding)
-        DIntVV[ic_orig].F = Fn_total + Ft_total;
+        DIntVV[ic].F = Fn_total + Ft_total;
 
         real3 T1, T2, T, Tt;
-        Tt = cross(x1, DIntVV[ic_orig].F) + r1 * cross(n, DIntVV[ic_orig].Fr);
+        Tt = cross(x1, DIntVV[ic].F) + r1 * cross(n, DIntVV[ic].Fr);
         real4 q;
         Conjugate(DPar[i1].Q, q);
         Rotation(Tt, q, T);
         T1 = -1.0 * T;
-        Tt = cross(x2, DIntVV[ic_orig].F) + r2 * cross(n, DIntVV[ic_orig].Fr);
+        Tt = cross(x2, DIntVV[ic].F) + r2 * cross(n, DIntVV[ic].Fr);
         Conjugate(DPar[i2].Q, q);
         Rotation(Tt, q, T);
         T2 = T;
@@ -463,12 +243,12 @@ __global__ void CalcForceVV(InteractonCU const * Int, ComInteractonCU * CInt, Dy
 
         // ignore the Fthermostat component, only updated if there is a thermostat active that overloads this function
 
-        atomicAdd(&DPar[i1].F.x, -DIntVV[ic_orig].F.x);
-        atomicAdd(&DPar[i1].F.y, -DIntVV[ic_orig].F.y);
-        atomicAdd(&DPar[i1].F.z, -DIntVV[ic_orig].F.z);
-        atomicAdd(&DPar[i2].F.x,  DIntVV[ic_orig].F.x);
-        atomicAdd(&DPar[i2].F.y,  DIntVV[ic_orig].F.y);
-        atomicAdd(&DPar[i2].F.z,  DIntVV[ic_orig].F.z);
+        atomicAdd(&DPar[i1].F.x, -DIntVV[ic].F.x);
+        atomicAdd(&DPar[i1].F.y, -DIntVV[ic].F.y);
+        atomicAdd(&DPar[i1].F.z, -DIntVV[ic].F.z);
+        atomicAdd(&DPar[i2].F.x,  DIntVV[ic].F.x);
+        atomicAdd(&DPar[i2].F.y,  DIntVV[ic].F.y);
+        atomicAdd(&DPar[i2].F.z,  DIntVV[ic].F.z);
         atomicAdd(&Par[i1].T.x, T1.x);
         atomicAdd(&Par[i1].T.y, T1.y);
         atomicAdd(&Par[i1].T.z, T1.z);
@@ -482,10 +262,9 @@ __global__ void CalcForceVV_Hertz(InteractonCU const * Int, ComInteractonCU * CI
         DynParticleCU * DPar, dem_aux const * demaux, void * extraparams)
 {
     size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
-    if (ic >= demaux[0].nActiveVV) return;
-    size_t ic_orig = demaux[0].d_activeVV[ic];
+    if (ic >= demaux[0].nvvint) return;
 
-    size_t id = DIntVV[ic_orig].Idx;
+    size_t id = DIntVV[ic].Idx;
     size_t i1 = CInt [id].I1;
     size_t i2 = CInt [id].I2;
     real   r1 = Par  [i1].R;
@@ -500,7 +279,7 @@ __global__ void CalcForceVV_Hertz(InteractonCU const * Int, ComInteractonCU * CI
     real dist  = norm(Branch);
     real delta = r1 + r2 - dist;
 
-    DIntVV[ic_orig].Fn = make_real3(0.0,0.0,0.0);
+    DIntVV[ic].Fn = make_real3(0.0,0.0,0.0);
 
     if (delta>0.0)
     {
@@ -518,54 +297,54 @@ __global__ void CalcForceVV_Hertz(InteractonCU const * Int, ComInteractonCU * CI
         real3 vt   = vrel - dotreal3(n,vrel)*n;
 
         real sqrtdelta = sqrt(delta);
-        DIntVV[ic_orig].Fn  = Int[id].Kn*sqrtdelta*delta*n;
-        DIntVV[ic_orig].Ft  = DIntVV[ic_orig].Ft + (Int[id].Kt*sqrtdelta*demaux[0].dt)*vt;
-        DIntVV[ic_orig].Ft  = DIntVV[ic_orig].Ft - dotreal3(DIntVV[ic_orig].Ft,n)*n;
+        DIntVV[ic].Fn  = Int[id].Kn*sqrtdelta*delta*n;
+        DIntVV[ic].Ft  = DIntVV[ic].Ft + (Int[id].Kt*sqrtdelta*demaux[0].dt)*vt;
+        DIntVV[ic].Ft  = DIntVV[ic].Ft - dotreal3(DIntVV[ic].Ft,n)*n;
 
-        real3 tan = DIntVV[ic_orig].Ft;
+        real3 tan = DIntVV[ic].Ft;
         if (norm(tan)>0.0) tan = tan/norm(tan);
-        if (norm(DIntVV[ic_orig].Ft)>Int[id].Mu*norm(DIntVV[ic_orig].Fn))
+        if (norm(DIntVV[ic].Ft)>Int[id].Mu*norm(DIntVV[ic].Fn))
         {
-            DIntVV[ic_orig].Ft = Int[id].Mu*norm(DIntVV[ic_orig].Fn)*tan;
+            DIntVV[ic].Ft = Int[id].Mu*norm(DIntVV[ic].Fn)*tan;
         }
 
         real3 vr = r1*r2*cross((t1 - t2),n)/(r1+r2);
-        DIntVV[ic_orig].Fr  = DIntVV[ic_orig].Fr + (Int[id].Beta*Int[id].Kt*sqrtdelta*demaux[0].dt)*vr;
-        DIntVV[ic_orig].Fr  = DIntVV[ic_orig].Fr - dotreal3(DIntVV[ic_orig].Fr,n)*n;
+        DIntVV[ic].Fr  = DIntVV[ic].Fr + (Int[id].Beta*Int[id].Kt*sqrtdelta*demaux[0].dt)*vr;
+        DIntVV[ic].Fr  = DIntVV[ic].Fr - dotreal3(DIntVV[ic].Fr,n)*n;
 
-        tan = DIntVV[ic_orig].Fr;
+        tan = DIntVV[ic].Fr;
         if (norm(tan)>0.0) tan = tan/norm(tan);
-        if (norm(DIntVV[ic_orig].Fr)>Int[id].Eta*Int[id].Mu*norm(DIntVV[ic_orig].Fn))
+        if (norm(DIntVV[ic].Fr)>Int[id].Eta*Int[id].Mu*norm(DIntVV[ic].Fn))
         {
-            DIntVV[ic_orig].Fr = Int[id].Eta*Int[id].Mu*norm(DIntVV[ic_orig].Fn)*tan;
+            DIntVV[ic].Fr = Int[id].Eta*Int[id].Mu*norm(DIntVV[ic].Fn)*tan;
         }
         
-        DIntVV[ic_orig].F = DIntVV[ic_orig].Fn + DIntVV[ic_orig].Ft + Int[id].Gn*sqrt(sqrtdelta)*dotreal3(n,vrel)*n + Int[id].Gt*sqrt(sqrtdelta)*vt;
+        DIntVV[ic].F = DIntVV[ic].Fn + DIntVV[ic].Ft + Int[id].Gn*sqrt(sqrtdelta)*dotreal3(n,vrel)*n + Int[id].Gt*sqrt(sqrtdelta)*vt;
 
         real3 T1,T2,T, Tt;
-        Tt = cross (x1,DIntVV[ic_orig].F) + r1*cross(n,DIntVV[ic_orig].Fr);
+        Tt = cross (x1,DIntVV[ic].F) + r1*cross(n,DIntVV[ic].Fr);
         real4 q;
         Conjugate (DPar[i1].Q,q);
         Rotation  (Tt,q,T);
         T1 = -1.0*T;
-        Tt = cross (x2,DIntVV[ic_orig].F) + r2*cross(n,DIntVV[ic_orig].Fr);
+        Tt = cross (x2,DIntVV[ic].F) + r2*cross(n,DIntVV[ic].Fr);
         Conjugate (DPar[i2].Q,q);
         Rotation  (Tt,q,T);
         T2 =      T;
 
-        atomicAdd(&CInt[id].Fnnet.x, DIntVV[ic_orig].Fn.x);
-        atomicAdd(&CInt[id].Fnnet.y, DIntVV[ic_orig].Fn.y);
-        atomicAdd(&CInt[id].Fnnet.z, DIntVV[ic_orig].Fn.z);
-        atomicAdd(&CInt[id].Ftnet.x, DIntVV[ic_orig].Ft.x);
-        atomicAdd(&CInt[id].Ftnet.y, DIntVV[ic_orig].Ft.y);
-        atomicAdd(&CInt[id].Ftnet.z, DIntVV[ic_orig].Ft.z);
+        atomicAdd(&CInt[id].Fnnet.x, DIntVV[ic].Fn.x);
+        atomicAdd(&CInt[id].Fnnet.y, DIntVV[ic].Fn.y);
+        atomicAdd(&CInt[id].Fnnet.z, DIntVV[ic].Fn.z);
+        atomicAdd(&CInt[id].Ftnet.x, DIntVV[ic].Ft.x);
+        atomicAdd(&CInt[id].Ftnet.y, DIntVV[ic].Ft.y);
+        atomicAdd(&CInt[id].Ftnet.z, DIntVV[ic].Ft.z);
 
-        atomicAdd(&DPar[i1].F.x,-DIntVV[ic_orig].F .x);
-        atomicAdd(&DPar[i1].F.y,-DIntVV[ic_orig].F .y);
-        atomicAdd(&DPar[i1].F.z,-DIntVV[ic_orig].F .z);
-        atomicAdd(&DPar[i2].F.x, DIntVV[ic_orig].F .x);
-        atomicAdd(&DPar[i2].F.y, DIntVV[ic_orig].F .y);
-        atomicAdd(&DPar[i2].F.z, DIntVV[ic_orig].F .z);
+        atomicAdd(&DPar[i1].F.x,-DIntVV[ic].F .x);
+        atomicAdd(&DPar[i1].F.y,-DIntVV[ic].F .y);
+        atomicAdd(&DPar[i1].F.z,-DIntVV[ic].F .z);
+        atomicAdd(&DPar[i2].F.x, DIntVV[ic].F .x);
+        atomicAdd(&DPar[i2].F.y, DIntVV[ic].F .y);
+        atomicAdd(&DPar[i2].F.z, DIntVV[ic].F .z);
         atomicAdd(& Par[i1].T.x,            T1.x);
         atomicAdd(& Par[i1].T.y,            T1.y);
         atomicAdd(& Par[i1].T.z,            T1.z);
@@ -579,21 +358,20 @@ __global__ void CalcForceEE(size_t const * Edges, real3 const * Verts, Interacto
         ParticleCU * Par, DynParticleCU * DPar, dem_aux const * demaux, void * extraparams)
 {
     size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
-    if (ic >= demaux[0].nActiveEE) return;
-    size_t ic_orig = demaux[0].d_activeEE[ic];
-    size_t id = DIntEE[ic_orig].Idx;
+    if (ic >= demaux[0].neeint) return;
+    size_t id = DIntEE[ic].Idx;
     size_t i1 = CInt  [id].I1;
     size_t i2 = CInt  [id].I2;
-    size_t f1 = DIntEE[ic_orig].IF1;
-    size_t f2 = DIntEE[ic_orig].IF2;
-    real  dm1 = DIntEE[ic_orig].Dmax1;
-    real  dm2 = DIntEE[ic_orig].Dmax2;
+    size_t f1 = DIntEE[ic].IF1;
+    size_t f2 = DIntEE[ic].IF2;
+    real  dm1 = DIntEE[ic].Dmax1;
+    real  dm2 = DIntEE[ic].Dmax2;
     real   r1 = Par  [i1].R;
     real   r2 = Par  [i2].R;
     real3  xi = DPar [i1].x;
     real3  xf = DPar [i2].x;
     
-    DIntEE[ic_orig].Fn = make_real3(0.0,0.0,0.0);
+    DIntEE[ic].Fn = make_real3(0.0,0.0,0.0);
     
     real3 s;
     real3 Pert = make_real3(0.0,0.0,0.0);
@@ -616,43 +394,43 @@ __global__ void CalcForceEE(size_t const * Edges, real3 const * Verts, Interacto
         real3 vrel = (DPar[i1].v+cross(t1,x1))-(DPar[i2].v+cross(t2,x2));
         real3 vt   = vrel - dotreal3(n,vrel)*n;
 
-        DIntEE[ic_orig].Fn  = Int[id].Kn*delta*n;
-        DIntEE[ic_orig].Ft  = DIntEE[ic_orig].Ft + (Int[id].Kt*demaux[0].dt)*vt;
-        DIntEE[ic_orig].Ft  = DIntEE[ic_orig].Ft - dotreal3(DIntEE[ic_orig].Ft,n)*n;
+        DIntEE[ic].Fn  = Int[id].Kn*delta*n;
+        DIntEE[ic].Ft  = DIntEE[ic].Ft + (Int[id].Kt*demaux[0].dt)*vt;
+        DIntEE[ic].Ft  = DIntEE[ic].Ft - dotreal3(DIntEE[ic].Ft,n)*n;
 
-        real3 tan = DIntEE[ic_orig].Ft;
+        real3 tan = DIntEE[ic].Ft;
         if (norm(tan)>0.0) tan = tan/norm(tan);
-        if (norm(DIntEE[ic_orig].Ft)>Int[id].Mu*norm(DIntEE[ic_orig].Fn))
+        if (norm(DIntEE[ic].Ft)>Int[id].Mu*norm(DIntEE[ic].Fn))
         {
-            DIntEE[ic_orig].Ft = Int[id].Mu*norm(DIntEE[ic_orig].Fn)*tan;
+            DIntEE[ic].Ft = Int[id].Mu*norm(DIntEE[ic].Fn)*tan;
         }
 
-        DIntEE[ic_orig].F = DIntEE[ic_orig].Fn + DIntEE[ic_orig].Ft + Int[id].Gn*dotreal3(n,vrel)*n + Int[id].Gt*vt;
+        DIntEE[ic].F = DIntEE[ic].Fn + DIntEE[ic].Ft + Int[id].Gn*dotreal3(n,vrel)*n + Int[id].Gt*vt;
 
         real3 T1,T2,T, Tt;
-        Tt = cross (x1,DIntEE[ic_orig].F);
+        Tt = cross (x1,DIntEE[ic].F);
         real4 q;
         Conjugate (DPar[i1].Q,q);
         Rotation  (Tt,q,T);
         T1 = -1.0*T;
-        Tt = cross (x2,DIntEE[ic_orig].F);
+        Tt = cross (x2,DIntEE[ic].F);
         Conjugate (DPar[i2].Q,q);
         Rotation  (Tt,q,T);
         T2 =      T;
 
-        atomicAdd(&CInt[id].Fnnet.x, DIntEE[ic_orig].Fn.x);
-        atomicAdd(&CInt[id].Fnnet.y, DIntEE[ic_orig].Fn.y);
-        atomicAdd(&CInt[id].Fnnet.z, DIntEE[ic_orig].Fn.z);
-        atomicAdd(&CInt[id].Ftnet.x, DIntEE[ic_orig].Ft.x);
-        atomicAdd(&CInt[id].Ftnet.y, DIntEE[ic_orig].Ft.y);
-        atomicAdd(&CInt[id].Ftnet.z, DIntEE[ic_orig].Ft.z);
+        atomicAdd(&CInt[id].Fnnet.x, DIntEE[ic].Fn.x);
+        atomicAdd(&CInt[id].Fnnet.y, DIntEE[ic].Fn.y);
+        atomicAdd(&CInt[id].Fnnet.z, DIntEE[ic].Fn.z);
+        atomicAdd(&CInt[id].Ftnet.x, DIntEE[ic].Ft.x);
+        atomicAdd(&CInt[id].Ftnet.y, DIntEE[ic].Ft.y);
+        atomicAdd(&CInt[id].Ftnet.z, DIntEE[ic].Ft.z);
 
-        atomicAdd(&DPar[i1].F.x,-DIntEE[ic_orig].F .x);
-        atomicAdd(&DPar[i1].F.y,-DIntEE[ic_orig].F .y);
-        atomicAdd(&DPar[i1].F.z,-DIntEE[ic_orig].F .z);
-        atomicAdd(&DPar[i2].F.x, DIntEE[ic_orig].F .x);
-        atomicAdd(&DPar[i2].F.y, DIntEE[ic_orig].F .y);
-        atomicAdd(&DPar[i2].F.z, DIntEE[ic_orig].F .z);
+        atomicAdd(&DPar[i1].F.x,-DIntEE[ic].F .x);
+        atomicAdd(&DPar[i1].F.y,-DIntEE[ic].F .y);
+        atomicAdd(&DPar[i1].F.z,-DIntEE[ic].F .z);
+        atomicAdd(&DPar[i2].F.x, DIntEE[ic].F .x);
+        atomicAdd(&DPar[i2].F.y, DIntEE[ic].F .y);
+        atomicAdd(&DPar[i2].F.z, DIntEE[ic].F .z);
         atomicAdd(& Par[i1].T.x,            T1.x);
         atomicAdd(& Par[i1].T.y,            T1.y);
         atomicAdd(& Par[i1].T.z,            T1.z);
@@ -666,21 +444,20 @@ __global__ void CalcForceVF(size_t const * Faces, size_t const * Facid, real3 co
         DynInteractonCU * DIntVF, ParticleCU * Par, DynParticleCU * DPar, dem_aux const * demaux, void * extraparams)
 {
     size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
-    if (ic >= demaux[0].nActiveVF) return;
-    size_t ic_orig = demaux[0].d_activeVF[ic];
-    size_t id = DIntVF[ic_orig].Idx;
+    if (ic >= demaux[0].nvfint) return;
+    size_t id = DIntVF[ic].Idx;
     size_t i1 = CInt  [id].I1;
     size_t i2 = CInt  [id].I2;
-    size_t f1 = DIntVF[ic_orig].IF1;
-    size_t f2 = DIntVF[ic_orig].IF2;
-    real  dm1 = DIntVF[ic_orig].Dmax1;
-    real  dm2 = DIntVF[ic_orig].Dmax2;
+    size_t f1 = DIntVF[ic].IF1;
+    size_t f2 = DIntVF[ic].IF2;
+    real  dm1 = DIntVF[ic].Dmax1;
+    real  dm2 = DIntVF[ic].Dmax2;
     real   r1 = Par  [i1].R;
     real   r2 = Par  [i2].R;
     real3  xi = DPar [i1].x;
     real3  xf = DPar [i2].x;
     
-    DIntVF[ic_orig].Fn = make_real3(0.0,0.0,0.0);
+    DIntVF[ic].Fn = make_real3(0.0,0.0,0.0);
 
     real3 s;
     xi = Verts[f1];
@@ -708,43 +485,43 @@ __global__ void CalcForceVF(size_t const * Faces, size_t const * Facid, real3 co
         real3 vrel = (DPar[i1].v+cross(t1,x1))-(DPar[i2].v+cross(t2,x2));
         real3 vt   = vrel - dotreal3(n,vrel)*n;
 
-        DIntVF[ic_orig].Fn  = Int[id].Kn*delta*n;
-        DIntVF[ic_orig].Ft  = DIntVF[ic_orig].Ft + (Int[id].Kt*demaux[0].dt)*vt;
-        DIntVF[ic_orig].Ft  = DIntVF[ic_orig].Ft - dotreal3(DIntVF[ic_orig].Ft,n)*n;
+        DIntVF[ic].Fn  = Int[id].Kn*delta*n;
+        DIntVF[ic].Ft  = DIntVF[ic].Ft + (Int[id].Kt*demaux[0].dt)*vt;
+        DIntVF[ic].Ft  = DIntVF[ic].Ft - dotreal3(DIntVF[ic].Ft,n)*n;
 
-        real3 tan = DIntVF[ic_orig].Ft;
+        real3 tan = DIntVF[ic].Ft;
         if (norm(tan)>0.0) tan = tan/norm(tan);
-        if (norm(DIntVF[ic_orig].Ft)>Int[id].Mu*norm(DIntVF[ic_orig].Fn))
+        if (norm(DIntVF[ic].Ft)>Int[id].Mu*norm(DIntVF[ic].Fn))
         {
-            DIntVF[ic_orig].Ft = Int[id].Mu*norm(DIntVF[ic_orig].Fn)*tan;
+            DIntVF[ic].Ft = Int[id].Mu*norm(DIntVF[ic].Fn)*tan;
         }
 
-        DIntVF[ic_orig].F = DIntVF[ic_orig].Fn + DIntVF[ic_orig].Ft + Int[id].Gn*dotreal3(n,vrel)*n + Int[id].Gt*vt;
+        DIntVF[ic].F = DIntVF[ic].Fn + DIntVF[ic].Ft + Int[id].Gn*dotreal3(n,vrel)*n + Int[id].Gt*vt;
 
         real3 T1,T2,T, Tt;
-        Tt = cross (x1,DIntVF[ic_orig].F);
+        Tt = cross (x1,DIntVF[ic].F);
         real4 q;
         Conjugate (DPar[i1].Q,q);
         Rotation  (Tt,q,T);
         T1 = -1.0*T;
-        Tt = cross (x2,DIntVF[ic_orig].F);
+        Tt = cross (x2,DIntVF[ic].F);
         Conjugate (DPar[i2].Q,q);
         Rotation  (Tt,q,T);
         T2 =      T;
 
-        atomicAdd(&CInt[id].Fnnet.x, DIntVF[ic_orig].Fn.x);
-        atomicAdd(&CInt[id].Fnnet.y, DIntVF[ic_orig].Fn.y);
-        atomicAdd(&CInt[id].Fnnet.z, DIntVF[ic_orig].Fn.z);
-        atomicAdd(&CInt[id].Ftnet.x, DIntVF[ic_orig].Ft.x);
-        atomicAdd(&CInt[id].Ftnet.y, DIntVF[ic_orig].Ft.y);
-        atomicAdd(&CInt[id].Ftnet.z, DIntVF[ic_orig].Ft.z);
+        atomicAdd(&CInt[id].Fnnet.x, DIntVF[ic].Fn.x);
+        atomicAdd(&CInt[id].Fnnet.y, DIntVF[ic].Fn.y);
+        atomicAdd(&CInt[id].Fnnet.z, DIntVF[ic].Fn.z);
+        atomicAdd(&CInt[id].Ftnet.x, DIntVF[ic].Ft.x);
+        atomicAdd(&CInt[id].Ftnet.y, DIntVF[ic].Ft.y);
+        atomicAdd(&CInt[id].Ftnet.z, DIntVF[ic].Ft.z);
 
-        atomicAdd(&DPar[i1].F.x,-DIntVF[ic_orig].F .x);
-        atomicAdd(&DPar[i1].F.y,-DIntVF[ic_orig].F .y);
-        atomicAdd(&DPar[i1].F.z,-DIntVF[ic_orig].F .z);
-        atomicAdd(&DPar[i2].F.x, DIntVF[ic_orig].F .x);
-        atomicAdd(&DPar[i2].F.y, DIntVF[ic_orig].F .y);
-        atomicAdd(&DPar[i2].F.z, DIntVF[ic_orig].F .z);
+        atomicAdd(&DPar[i1].F.x,-DIntVF[ic].F .x);
+        atomicAdd(&DPar[i1].F.y,-DIntVF[ic].F .y);
+        atomicAdd(&DPar[i1].F.z,-DIntVF[ic].F .z);
+        atomicAdd(&DPar[i2].F.x, DIntVF[ic].F .x);
+        atomicAdd(&DPar[i2].F.y, DIntVF[ic].F .y);
+        atomicAdd(&DPar[i2].F.z, DIntVF[ic].F .z);
         atomicAdd(& Par[i1].T.x,            T1.x);
         atomicAdd(& Par[i1].T.y,            T1.y);
         atomicAdd(& Par[i1].T.z,            T1.z);
@@ -758,21 +535,20 @@ __global__ void CalcForceFV(size_t const * Faces, size_t const * Facid, real3 co
         DynInteractonCU * DIntFV, ParticleCU * Par, DynParticleCU * DPar, dem_aux const * demaux, void * extraparams)
 {
     size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
-    if (ic >= demaux[0].nActiveFV) return;
-    size_t ic_orig = demaux[0].d_activeFV[ic];
-    size_t id = DIntFV[ic_orig].Idx;
+    if (ic >= demaux[0].nfvint) return;
+    size_t id = DIntFV[ic].Idx;
     size_t i1 = CInt  [id].I1;
     size_t i2 = CInt  [id].I2;
-    size_t f1 = DIntFV[ic_orig].IF1;
-    size_t f2 = DIntFV[ic_orig].IF2;
-    real  dm1 = DIntFV[ic_orig].Dmax1;
-    real  dm2 = DIntFV[ic_orig].Dmax2;
+    size_t f1 = DIntFV[ic].IF1;
+    size_t f2 = DIntFV[ic].IF2;
+    real  dm1 = DIntFV[ic].Dmax1;
+    real  dm2 = DIntFV[ic].Dmax2;
     real   r1 = Par  [i1].R;
     real   r2 = Par  [i2].R;
     real3  xi = DPar [i1].x;
     real3  xf = DPar [i2].x;
     
-    DIntFV[ic_orig].Fn = make_real3(0.0,0.0,0.0);
+    DIntFV[ic].Fn = make_real3(0.0,0.0,0.0);
 
     real3 s;
     xf = Verts[f2];
@@ -796,45 +572,45 @@ __global__ void CalcForceFV(size_t const * Faces, size_t const * Facid, real3 co
         real3 vrel = (DPar[i1].v+cross(t1,x1))-(DPar[i2].v+cross(t2,x2));
         real3 vt   = vrel - dotreal3(n,vrel)*n;
 
-        DIntFV[ic_orig].Fn  = Int[id].Kn*delta*n;
-        DIntFV[ic_orig].Ft  = DIntFV[ic_orig].Ft + (Int[id].Kt*demaux[0].dt)*vt;
-        DIntFV[ic_orig].Ft  = DIntFV[ic_orig].Ft - dotreal3(DIntFV[ic_orig].Ft,n)*n;
+        DIntFV[ic].Fn  = Int[id].Kn*delta*n;
+        DIntFV[ic].Ft  = DIntFV[ic].Ft + (Int[id].Kt*demaux[0].dt)*vt;
+        DIntFV[ic].Ft  = DIntFV[ic].Ft - dotreal3(DIntFV[ic].Ft,n)*n;
 
-        real3 tan = DIntFV[ic_orig].Ft;
+        real3 tan = DIntFV[ic].Ft;
         if (norm(tan)>0.0) tan = tan/norm(tan);
-        if (norm(DIntFV[ic_orig].Ft)>Int[id].Mu*norm(DIntFV[ic_orig].Fn))
+        if (norm(DIntFV[ic].Ft)>Int[id].Mu*norm(DIntFV[ic].Fn))
         {
-            DIntFV[ic_orig].Ft = Int[id].Mu*norm(DIntFV[ic_orig].Fn)*tan;
+            DIntFV[ic].Ft = Int[id].Mu*norm(DIntFV[ic].Fn)*tan;
         }
 
-        DIntFV[ic_orig].F = DIntFV[ic_orig].Fn + DIntFV[ic_orig].Ft + Int[id].Gn*dotreal3(n,vrel)*n + Int[id].Gt*vt;
+        DIntFV[ic].F = DIntFV[ic].Fn + DIntFV[ic].Ft + Int[id].Gn*dotreal3(n,vrel)*n + Int[id].Gt*vt;
 
  
         
         real3 T1,T2,T, Tt;
-        Tt = cross (x1,DIntFV[ic_orig].F);
+        Tt = cross (x1,DIntFV[ic].F);
         real4 q;
         Conjugate (DPar[i1].Q,q);
         Rotation  (Tt,q,T);
         T1 = -1.0*T;
-        Tt = cross (x2,DIntFV[ic_orig].F);
+        Tt = cross (x2,DIntFV[ic].F);
         Conjugate (DPar[i2].Q,q);
         Rotation  (Tt,q,T);
         T2 =      T;
 
-        atomicAdd(&CInt[id].Fnnet.x, DIntFV[ic_orig].Fn.x);
-        atomicAdd(&CInt[id].Fnnet.y, DIntFV[ic_orig].Fn.y);
-        atomicAdd(&CInt[id].Fnnet.z, DIntFV[ic_orig].Fn.z);
-        atomicAdd(&CInt[id].Ftnet.x, DIntFV[ic_orig].Ft.x);
-        atomicAdd(&CInt[id].Ftnet.y, DIntFV[ic_orig].Ft.y);
-        atomicAdd(&CInt[id].Ftnet.z, DIntFV[ic_orig].Ft.z);
+        atomicAdd(&CInt[id].Fnnet.x, DIntFV[ic].Fn.x);
+        atomicAdd(&CInt[id].Fnnet.y, DIntFV[ic].Fn.y);
+        atomicAdd(&CInt[id].Fnnet.z, DIntFV[ic].Fn.z);
+        atomicAdd(&CInt[id].Ftnet.x, DIntFV[ic].Ft.x);
+        atomicAdd(&CInt[id].Ftnet.y, DIntFV[ic].Ft.y);
+        atomicAdd(&CInt[id].Ftnet.z, DIntFV[ic].Ft.z);
 
-        atomicAdd(&DPar[i1].F.x,-DIntFV[ic_orig].F .x);
-        atomicAdd(&DPar[i1].F.y,-DIntFV[ic_orig].F .y);
-        atomicAdd(&DPar[i1].F.z,-DIntFV[ic_orig].F .z);
-        atomicAdd(&DPar[i2].F.x, DIntFV[ic_orig].F .x);
-        atomicAdd(&DPar[i2].F.y, DIntFV[ic_orig].F .y);
-        atomicAdd(&DPar[i2].F.z, DIntFV[ic_orig].F .z);
+        atomicAdd(&DPar[i1].F.x,-DIntFV[ic].F .x);
+        atomicAdd(&DPar[i1].F.y,-DIntFV[ic].F .y);
+        atomicAdd(&DPar[i1].F.z,-DIntFV[ic].F .z);
+        atomicAdd(&DPar[i2].F.x, DIntFV[ic].F .x);
+        atomicAdd(&DPar[i2].F.y, DIntFV[ic].F .y);
+        atomicAdd(&DPar[i2].F.z, DIntFV[ic].F .z);
         atomicAdd(& Par[i1].T.x,            T1.x);
         atomicAdd(& Par[i1].T.y,            T1.y);
         atomicAdd(& Par[i1].T.z,            T1.z);
@@ -1171,17 +947,18 @@ __global__ void ResetMaxD(real3 * Verts, real3 * Vertso, real * maxd, ParticleCU
             if (DPar[ic].x.y< demaux[0].Ymin) dis.y = demaux[0].Ymax - demaux[0].Ymin;
             if (DPar[ic].x.y>=demaux[0].Ymax) dis.y = demaux[0].Ymin - demaux[0].Ymax;
         }
-        if (demaux[0].pz)
+        if (demaux[0].pz && fabs(demaux[0].Per.z) > 0.0)
         {
+            real shear_shift = demaux[0].strain * (demaux[0].Zmax - demaux[0].Zmin);
             if (DPar[ic].x.z< demaux[0].Zmin)
             {
                 dis.z = demaux[0].Zmax - demaux[0].Zmin;
-                dis.x += demaux[0].strain * (demaux[0].Zmax - demaux[0].Zmin);
+                dis.x += shear_shift;
             }
             if (DPar[ic].x.z>=demaux[0].Zmax)
             {
                 dis.z = demaux[0].Zmin - demaux[0].Zmax;
-                dis.x -= demaux[0].strain * (demaux[0].Zmax - demaux[0].Zmin);
+                dis.x -= shear_shift;
             }
         }
     }
