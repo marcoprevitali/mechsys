@@ -287,6 +287,7 @@ public:
     Translate_ptr_t    pTranslate;                                          ///< pointer to the translation function
     Rotate_ptr_t       pRotate;                                             ///< pointer to the rotation function
     Reset_ptr_t        pReset;                                              ///< pointer to the reset function
+    WrapZ_ptr_t        pWrapZ;                                             ///< pointer to the Lees-Edwards z-wrapping function
     void             * pExtraParams;                                        ///< pointer to a structure of extra parameters for force calculation
     
 
@@ -353,6 +354,7 @@ inline Domain::Domain (void * UD, size_t contactlaw)
     pTranslate = Translate;  // euler integration removed
     pRotate    = Rotate;     // euler integration removed
     pReset     = Reset;
+    pWrapZ     = NULL;
 
     pVerletStep1 = VerletStep1;
     pFinalizeVelocity = FinalizeVelocity;
@@ -635,13 +637,23 @@ inline void Domain::Solve (double tf, double dt, double dtOut, ptFun_t ptSetup, 
 
     #pragma omp parallel for schedule(static) num_threads(Nproc)
     for (size_t i = 0; i < Particles.Size(); i++) {
-        A[i] = Particles[i]->F / Particles[i]->Props.m;
+        Vec3_t Ft = Particles[i]->F;
+        if (Particles[i]->vxf) Ft(0) = 0.0;
+        if (Particles[i]->vyf) Ft(1) = 0.0;
+        if (Particles[i]->vzf) Ft(2) = 0.0;
+        Ft -= Particles[i]->Props.Gv * Particles[i]->Props.m * Particles[i]->v;
+        A[i] = Ft / Particles[i]->Props.m;
 
         double Ix = Particles[i]->I(0), Iy = Particles[i]->I(1), Iz = Particles[i]->I(2);
+        Vec3_t Tt = Particles[i]->T;
         Vec3_t w = Particles[i]->w;    // current body‑frame angular velocity
-        Wdot[i](0) = (Particles[i]->T(0) - (Iz - Iy) * w(1) * w(2)) / Ix;
-        Wdot[i](1) = (Particles[i]->T(1) - (Ix - Iz) * w(2) * w(0)) / Iy;
-        Wdot[i](2) = (Particles[i]->T(2) - (Iy - Ix) * w(0) * w(1)) / Iz;
+        if (Particles[i]->wxf) Tt(0) = 0.0;
+        if (Particles[i]->wyf) Tt(1) = 0.0;
+        if (Particles[i]->wzf) Tt(2) = 0.0;
+        Tt -= Particles[i]->Props.Gm * Vec3_t(Ix*w(0), Iy*w(1), Iz*w(2));
+        Wdot[i](0) = (Tt(0) + (Iy - Iz) * w(1) * w(2)) / Ix;
+        Wdot[i](1) = (Tt(1) + (Iz - Ix) * w(0) * w(2)) / Iy;
+        Wdot[i](2) = (Tt(2) + (Ix - Iy) * w(0) * w(1)) / Iz;
     }
 
     bool px = (Xmax - Xmin) > Alpha;
@@ -735,12 +747,17 @@ pForceFV<<<(demaux.nfvint+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVe
 
 
 // 3. update positions/rotations
-pTranslate<<<demaux.nparts/Nthread+1,Nthread>>>(pVertsCU, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
+    pTranslate<<<demaux.nparts/Nthread+1,Nthread>>>(pVertsCU, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
 if (RotPar) pRotate   <<<demaux.nparts/Nthread+1,Nthread>>>(pVertsCU, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
 
     }        
 
-
+// Wrap particles and reset displacement reference for wrapped particles
+// This must be done after BOTH VelocityVerlet and old integration paths
+if (pWrapZ!=NULL) {
+    pWrapZ<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pDynParticlesCU, pParticlesCU, pdemaux);
+    ResetMaxD<<<demaux.nparts/Nthread+1,Nthread>>>(pVertsCU, pVertsoCU, pMaxDCU, pParticlesCU, pDynParticlesCU, pdemaux);
+}
 
 // 4., calculate max displacement / recalculate the verlet list if needed
 MaxD<<<demaux.nverts/Nthread+1, Nthread>>>(pVertsCU, pVertsoCU, pMaxDCU, pdemaux);

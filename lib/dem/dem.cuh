@@ -55,6 +55,9 @@ struct dem_aux
     bool   pz     = false;
     real   strain = 0.0;   ///< Accumulated shear strain (gamma = gamma_dot * t)
     real   shear_rate = 0.0; ///< Shear rate gamma_dot (1/T)
+    bool   use_wrapZ = false; ///< If true, pWrapZ handles LE shift; ResetMaxD skips it to avoid double-shifting
+    real   vZmin = 0.0;    ///< Velocity of Zmin boundary (for contact-wrapping compression)
+    real   vZmax = 0.0;    ///< Velocity of Zmax boundary (for contact-wrapping compression)
 
 };
 
@@ -88,20 +91,21 @@ typedef void (*EnforceAngularFixity_ptr_t)(ParticleCU const *,
                                            dem_aux const *);
 typedef void (*RecomputeAccelerations_ptr_t)(ParticleCU const *, DynParticleCU const *,
                                              real3 *, real3 *, dem_aux const *);
+typedef void (*WrapZ_ptr_t)(DynParticleCU *, ParticleCU const *, dem_aux const *);
 // Quaternion exponential map (body‑frame angular velocity → rotation increment)
 __device__ inline real4 Exp_GPU(real3 w, real dt)
 {
     real theta = sqrt(w.x*w.x + w.y*w.y + w.z*w.z) * dt;
     real4 q;
     if (theta < 1e-12) {
-        q = make_real4(1.0, 0.0, 0.0, 0.0);
+        q = make_real4(0.0, 0.0, 0.0, 1.0);
     } else {
         real s = sin(theta * 0.5);
         real c = cos(theta * 0.5);
         real ax = w.x / sqrt(w.x*w.x + w.y*w.y + w.z*w.z);
         real ay = w.y / sqrt(w.x*w.x + w.y*w.y + w.z*w.z);
         real az = w.z / sqrt(w.x*w.x + w.y*w.y + w.z*w.z);
-        q = make_real4(c, s*ax, s*ay, s*az);
+        q = make_real4(s*ax, s*ay, s*az, c);
     }
     return q;
 }
@@ -109,10 +113,10 @@ __device__ inline real4 Exp_GPU(real3 w, real dt)
 __device__ inline real4 QMult(real4 q1, real4 q2)
 {
     return make_real4(
-        q1.w*q2.w - q1.x*q2.x - q1.y*q2.y - q1.z*q2.z,
         q1.w*q2.x + q1.x*q2.w + q1.y*q2.z - q1.z*q2.y,
         q1.w*q2.y - q1.x*q2.z + q1.y*q2.w + q1.z*q2.x,
-        q1.w*q2.z + q1.x*q2.y - q1.y*q2.x + q1.z*q2.w
+        q1.w*q2.z + q1.x*q2.y - q1.y*q2.x + q1.z*q2.w,
+        q1.w*q2.w - q1.x*q2.x - q1.y*q2.y - q1.z*q2.z
     );
 }
 
@@ -477,9 +481,6 @@ __global__ void CalcForceVF(size_t const * Faces, size_t const * Facid, real3 co
         Rotation(DPar[i1].w,DPar[i1].Q,t1);
         Rotation(DPar[i2].w,DPar[i2].Q,t2);
 
-        printf("VF ic = %i, i2 = %i, w=(%g,%g,%g) t2=(%g,%g,%g)\n",ic,i2, DPar[i2].w.x, DPar[i2].w.y, DPar[i2].w.z, t2.x, t2.y, t2.z);
-
-
         x1 = x1c - DPar [i1].x;
         x2 = x2c - DPar [i2].x;
         real3 vrel = (DPar[i1].v+cross(t1,x1))-(DPar[i2].v+cross(t2,x2));
@@ -689,7 +690,7 @@ __global__ void OrientationUpdate(real3 * Verts, ParticleCU const * Par,
     // rotate vertices only if angular velocity is non-zero
     if (w_half.x != 0.0f || w_half.y != 0.0f || w_half.z != 0.0f)
     {
-    real4 Q_old_conj = make_real4(Q_old.w, -Q_old.x, -Q_old.y, -Q_old.z);
+    real4 Q_old_conj = make_real4(-Q_old.x, -Q_old.y, -Q_old.z, Q_old.w);
     for (size_t iv = Par[ic].Nvi; iv < Par[ic].Nvf; iv++) {
         real3 xt = make_real3(Verts[iv].x - DPar[ic].x.x,
                               Verts[iv].y - DPar[ic].x.y,
@@ -719,12 +720,11 @@ __global__ void FinalizeVelocity(ParticleCU const * Par, DynParticleCU * DPar,
     if (Par[ic].vzf) F.z = 0.0f;
 
     // damping uses half‑step velocity (stored in DPar[ic].v)
-    // Only apply damping to FREE velocity components (not fixed ones)
     real3 v_half = DPar[ic].v;
     if (Par[ic].Gv>0){
-        if (!Par[ic].vxf) F.x -= Par[ic].Gv * Par[ic].m * v_half.x;
-        if (!Par[ic].vyf) F.y -= Par[ic].Gv * Par[ic].m * v_half.y;
-        if (!Par[ic].vzf) F.z -= Par[ic].Gv * Par[ic].m * v_half.z;
+        F.x -= Par[ic].Gv * Par[ic].m * v_half.x;
+        F.y -= Par[ic].Gv * Par[ic].m * v_half.y;
+        F.z -= Par[ic].Gv * Par[ic].m * v_half.z;
     }
 
     real3 a_new = make_real3(F.x / Par[ic].m,
@@ -736,7 +736,9 @@ __global__ void FinalizeVelocity(ParticleCU const * Par, DynParticleCU * DPar,
                             v_half.y + 0.5f * demaux[0].dt * a_new.y,
                             v_half.z + 0.5f * demaux[0].dt * a_new.z);
 
-    A[ic] = a_new;   // store acceleration for next step
+    // Store the same damped acceleration used in the full-step update so the
+    // next half-step matches the CPU velocity-Verlet path.
+    A[ic] = a_new;
 }
 
 __global__ void FinalizeRotation(ParticleCU const * Par, DynParticleCU * DPar,
@@ -753,9 +755,9 @@ __global__ void FinalizeRotation(ParticleCU const * Par, DynParticleCU * DPar,
     real3 w_half = DPar[ic].w;         // half‑step angular velocity
     // damping
     if (Par[ic].Gm>0){
-    T.x -= Par[ic].Gm * Par[ic].I.x * w_half.x;
-    T.y -= Par[ic].Gm * Par[ic].I.y * w_half.y;
-    T.z -= Par[ic].Gm * Par[ic].I.z * w_half.z;
+        T.x -= Par[ic].Gm * Par[ic].I.x * w_half.x;
+        T.y -= Par[ic].Gm * Par[ic].I.y * w_half.y;
+        T.z -= Par[ic].Gm * Par[ic].I.z * w_half.z;
     }
 
     real3 wdot_new;
@@ -764,11 +766,13 @@ __global__ void FinalizeRotation(ParticleCU const * Par, DynParticleCU * DPar,
     wdot_new.z = (T.z + (Par[ic].I.x - Par[ic].I.y) * w_half.x * w_half.y) / Par[ic].I.z;
 
     // full angular velocity
-    DPar[ic].w = make_real3(w_half.x + 0.5f * demaux[0].dt * wdot_new.x,
-                            w_half.y + 0.5f * demaux[0].dt * wdot_new.y,
-                            w_half.z + 0.5f * demaux[0].dt * wdot_new.z);
+    DPar[ic].w = make_real3(
+        w_half.x + 0.5f * demaux[0].dt * wdot_new.x,
+        w_half.y + 0.5f * demaux[0].dt * wdot_new.y,
+        w_half.z + 0.5f * demaux[0].dt * wdot_new.z);
 
-    Wdot[ic] = wdot_new;   // store for next step
+    // Store the same damped angular acceleration used in the full-step update.
+    Wdot[ic] = wdot_new;
 }
 
 __global__ void EnforceAngularFixity(ParticleCU const * Par, DynParticleCU * DPar,
@@ -934,18 +938,19 @@ __global__ void ResetMaxD(real3 * Verts, real3 * Vertso, real * maxd, ParticleCU
     bool isfree = ((!Par[ic].vxf&&!Par[ic].vyf&&!Par[ic].vzf&&!Par[ic].wxf&&!Par[ic].wyf&&!Par[ic].wzf)||Par[ic].FixFree);
 
     real3 dis = make_real3(0.0,0.0,0.0);
+    bool wrapped = false;
 
     if (isfree)
     {
         if (demaux[0].px)
         {
-            if (DPar[ic].x.x< demaux[0].Xmin) dis.x = demaux[0].Xmax - demaux[0].Xmin;
-            if (DPar[ic].x.x>=demaux[0].Xmax) dis.x = demaux[0].Xmin - demaux[0].Xmax;
+            if (DPar[ic].x.x< demaux[0].Xmin) { dis.x = demaux[0].Xmax - demaux[0].Xmin; wrapped = true; }
+            if (DPar[ic].x.x>=demaux[0].Xmax) { dis.x = demaux[0].Xmin - demaux[0].Xmax; wrapped = true; }
         }
         if (demaux[0].py)
         {
-            if (DPar[ic].x.y< demaux[0].Ymin) dis.y = demaux[0].Ymax - demaux[0].Ymin;
-            if (DPar[ic].x.y>=demaux[0].Ymax) dis.y = demaux[0].Ymin - demaux[0].Ymax;
+            if (DPar[ic].x.y< demaux[0].Ymin) { dis.y = demaux[0].Ymax - demaux[0].Ymin; wrapped = true; }
+            if (DPar[ic].x.y>=demaux[0].Ymax) { dis.y = demaux[0].Ymin - demaux[0].Ymax; wrapped = true; }
         }
         if (demaux[0].pz && fabs(demaux[0].Per.z) > 0.0)
         {
@@ -954,11 +959,13 @@ __global__ void ResetMaxD(real3 * Verts, real3 * Vertso, real * maxd, ParticleCU
             {
                 dis.z = demaux[0].Zmax - demaux[0].Zmin;
                 dis.x += shear_shift;
+                wrapped = true;
             }
             if (DPar[ic].x.z>=demaux[0].Zmax)
             {
                 dis.z = demaux[0].Zmin - demaux[0].Zmax;
                 dis.x -= shear_shift;
+                wrapped = true;
             }
         }
     }
@@ -969,8 +976,14 @@ __global__ void ResetMaxD(real3 * Verts, real3 * Vertso, real * maxd, ParticleCU
     for (size_t iv=Par[ic].Nvi;iv<Par[ic].Nvf;iv++)
     {
         Verts [iv] = Verts [iv] + dis;
-        Vertso[iv] = Verts [iv];
-        maxd  [iv] = 0.0;
+        // Only reset displacement reference for wrapped particles.
+        // Non-wrapped particles retain their accumulated displacement so
+        // that MaxD can trigger a Verlet list rebuild when needed.
+        if (wrapped)
+        {
+            Vertso[iv] = Verts [iv];
+            maxd  [iv] = 0.0;
+        }
     }
 
 }
@@ -1006,7 +1019,12 @@ __global__ void RecomputeAccelerations(ParticleCU const * Par,
     if (Par[ic].vyf) F.y = 0.0f;
     if (Par[ic].vzf) F.z = 0.0f;
 
-    // (No damping – damping is already included in DPar[ic].F from force calculation)
+    real3 v = DPar[ic].v;
+    if (Par[ic].Gv>0){
+        F.x -= Par[ic].Gv * Par[ic].m * v.x;
+        F.y -= Par[ic].Gv * Par[ic].m * v.y;
+        F.z -= Par[ic].Gv * Par[ic].m * v.z;
+    }
     A[ic] = make_real3(F.x / Par[ic].m,
                        F.y / Par[ic].m,
                        F.z / Par[ic].m);
@@ -1019,6 +1037,11 @@ __global__ void RecomputeAccelerations(ParticleCU const * Par,
 
     // Use current angular velocity (DPar[ic].w) for the inertia cross terms
     real3 w = DPar[ic].w;
+    if (Par[ic].Gm>0){
+        T.x -= Par[ic].Gm * Par[ic].I.x * w.x;
+        T.y -= Par[ic].Gm * Par[ic].I.y * w.y;
+        T.z -= Par[ic].Gm * Par[ic].I.z * w.z;
+    }
     real Ix = Par[ic].I.x, Iy = Par[ic].I.y, Iz = Par[ic].I.z;
 
     real3 wdot_new;
