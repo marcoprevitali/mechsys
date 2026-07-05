@@ -58,6 +58,8 @@ struct dem_aux
     bool   use_wrapZ = false; ///< If true, pWrapZ handles LE shift; ResetMaxD skips it to avoid double-shifting
     real   vZmin = 0.0;    ///< Velocity of Zmin boundary (for contact-wrapping compression)
     real   vZmax = 0.0;    ///< Velocity of Zmax boundary (for contact-wrapping compression)
+    size_t sphereCoulombMode = 0;       ///< Sphere Coulomb mode: 0 default, 1 elastic, 2 total, 3 elastic tangential/total normal
+    bool   sphereTensileCutoff = true;  ///< Clamp tensile total normal force for sphere contacts
 
 };
 
@@ -98,14 +100,14 @@ __device__ inline real4 Exp_GPU(real3 w, real dt)
     real theta = sqrt(w.x*w.x + w.y*w.y + w.z*w.z) * dt;
     real4 q;
     if (theta < 1e-12) {
-        q = make_real4(0.0, 0.0, 0.0, 1.0);
+        q = MakeQuat(1.0,make_real3(0.0,0.0,0.0));
     } else {
         real s = sin(theta * 0.5);
         real c = cos(theta * 0.5);
         real ax = w.x / sqrt(w.x*w.x + w.y*w.y + w.z*w.z);
         real ay = w.y / sqrt(w.x*w.x + w.y*w.y + w.z*w.z);
         real az = w.z / sqrt(w.x*w.x + w.y*w.y + w.z*w.z);
-        q = make_real4(s*ax, s*ay, s*az, c);
+        q = MakeQuat(c,make_real3(s*ax,s*ay,s*az));
     }
     return q;
 }
@@ -113,10 +115,10 @@ __device__ inline real4 Exp_GPU(real3 w, real dt)
 __device__ inline real4 QMult(real4 q1, real4 q2)
 {
     return make_real4(
-        q1.w*q2.x + q1.x*q2.w + q1.y*q2.z - q1.z*q2.y,
-        q1.w*q2.y - q1.x*q2.z + q1.y*q2.w + q1.z*q2.x,
-        q1.w*q2.z + q1.x*q2.y - q1.y*q2.x + q1.z*q2.w,
-        q1.w*q2.w - q1.x*q2.x - q1.y*q2.y - q1.z*q2.z
+        q1.x*q2.x - q1.y*q2.y - q1.z*q2.z - q1.w*q2.w,
+        q1.x*q2.y + q1.y*q2.x + q1.z*q2.w - q1.w*q2.z,
+        q1.x*q2.z - q1.y*q2.w + q1.z*q2.x + q1.w*q2.y,
+        q1.x*q2.w + q1.y*q2.z - q1.z*q2.y + q1.w*q2.x
     );
 }
 
@@ -149,6 +151,9 @@ __global__ void CalcForceVV(InteractonCU const * Int, ComInteractonCU * CInt, Dy
 
     if (delta > 0.0)
     {
+        size_t sphereCoulombMode = demaux[0].sphereCoulombMode;
+        if (sphereCoulombMode > 3) sphereCoulombMode = 0;
+
         real3  n   = -1.0 * Branch / dist;
         real   d   = (r1*r1 - r2*r2 + dist*dist) / (2.0 * dist);
         real3  x1c = xi + d * n;
@@ -168,8 +173,9 @@ __global__ void CalcForceVV(InteractonCU const * Int, ComInteractonCU * CInt, Dy
         real3 Fn_total   = Fn_elastic + Fn_dashpot;
 
         // add tensile cap
-        if (dotreal3(Fn_total, n) < 0.0) {
+        if (demaux[0].sphereTensileCutoff && dotreal3(Fn_total, n) < 0.0) {
             Fn_total = make_real3(0.0, 0.0, 0.0);
+            Fn_dashpot = -1.0 * Fn_elastic;
         }
 
         // total normal force (now includes dashpot)
@@ -182,27 +188,43 @@ __global__ void CalcForceVV(InteractonCU const * Int, ComInteractonCU * CInt, Dy
         real3 Ft_elastic = DIntVV[ic].Ft;               // elastic tangential force
         real3 Ft_dashpot = Int[id].Gt * vt;             // tangential dashpot force
 
-        // tentative total tangential force (elastic + dashpot)
-        real3 Ft_total_tentative = Ft_elastic + Ft_dashpot;
-
-        // add dashpot force to sliding check
-        real friction_limit = Int[id].Mu * norm(Fn_total);
-        real3 tan = make_real3(0.0, 0.0, 0.0);
-
-        if (norm(Ft_total_tentative) > friction_limit) {
-
-            // sliding direction
-            tan = Ft_total_tentative / norm(Ft_total_tentative);
-
-            // cap the force to the sliding portion
-            Ft_elastic = friction_limit * tan;
-            DIntVV[ic].Ft = Ft_elastic;                 // update stored elastic force
-
-            // set to zero for sliding
-            Ft_dashpot = make_real3(0.0, 0.0, 0.0);
+        real friction_limit = Int[id].Mu * norm(Fn_elastic);
+        if (sphereCoulombMode == 2 || sphereCoulombMode == 3) {
+            friction_limit = Int[id].Mu * norm(Fn_total);
         }
 
-        real3 Ft_total = Ft_elastic + Ft_dashpot;
+        bool checkElasticTangential = sphereCoulombMode != 2;
+        bool keepTangentialDashpotDuringSliding = sphereCoulombMode == 0;
+        real3 Ft_total;
+        real3 tan = make_real3(0.0, 0.0, 0.0);
+
+        if (checkElasticTangential) {
+            real ftElasticNorm = norm(Ft_elastic);
+            if (ftElasticNorm > friction_limit) {
+                tan = Ft_elastic / ftElasticNorm;
+                Ft_elastic = friction_limit * tan;
+                DIntVV[ic].Ft = Ft_elastic;
+                if (!keepTangentialDashpotDuringSliding) {
+                    Ft_dashpot = make_real3(0.0, 0.0, 0.0);
+                }
+            }
+            Ft_total = Ft_elastic + Ft_dashpot;
+        } else {
+            real3 Ft_total_tentative = Ft_elastic + Ft_dashpot;
+            real ftTotalNorm = norm(Ft_total_tentative);
+            if (ftTotalNorm > friction_limit) {
+                tan = Ft_total_tentative / ftTotalNorm;
+
+                // cap the force to the sliding portion
+                Ft_total_tentative = friction_limit * tan;
+                Ft_elastic = Ft_total_tentative;
+                DIntVV[ic].Ft = Ft_elastic;                 // update stored elastic force
+
+                // set to zero for sliding
+                Ft_dashpot = make_real3(0.0, 0.0, 0.0);
+            }
+            Ft_total = Ft_total_tentative;
+        }
 
         real3 vr = r1 * r2 * cross((t1 - t2), n) / (r1 + r2);
         DIntVV[ic].Fr = DIntVV[ic].Fr + (Int[id].Beta * Int[id].Kt * demaux[0].dt) * vr;
@@ -682,15 +704,16 @@ __global__ void OrientationUpdate(real3 * Verts, ParticleCU const * Par,
     real4 dq = Exp_GPU(w_half, demaux[0].dt);
     real4 Q_old = DPar[ic].Q;
     real4 Q_new = QMult(Q_old, dq);
-    real inv_norm = rsqrt(Q_new.w*Q_new.w + Q_new.x*Q_new.x +
-                          Q_new.y*Q_new.y + Q_new.z*Q_new.z);
-    Q_new.w *= inv_norm; Q_new.x *= inv_norm;
-    Q_new.y *= inv_norm; Q_new.z *= inv_norm;
+    real inv_norm = rsqrt(Q_new.x*Q_new.x + Q_new.y*Q_new.y +
+                          Q_new.z*Q_new.z + Q_new.w*Q_new.w);
+    Q_new.x *= inv_norm; Q_new.y *= inv_norm;
+    Q_new.z *= inv_norm; Q_new.w *= inv_norm;
 
     // rotate vertices only if angular velocity is non-zero
     if (w_half.x != 0.0f || w_half.y != 0.0f || w_half.z != 0.0f)
     {
-    real4 Q_old_conj = make_real4(-Q_old.x, -Q_old.y, -Q_old.z, Q_old.w);
+    real4 Q_old_conj;
+    Conjugate(Q_old,Q_old_conj);
     for (size_t iv = Par[ic].Nvi; iv < Par[ic].Nvf; iv++) {
         real3 xt = make_real3(Verts[iv].x - DPar[ic].x.x,
                               Verts[iv].y - DPar[ic].x.y,
@@ -817,10 +840,10 @@ __global__ void Rotate(real3 * Verts, ParticleCU const * Par, DynParticleCU * DP
     if (ic>=demaux[0].nparts) return;
     real q0,q1,q2,q3,wx,wy,wz;
 
-    q0 = 0.5*DPar[ic].Q.w;
-    q1 = 0.5*DPar[ic].Q.x;
-    q2 = 0.5*DPar[ic].Q.y;
-    q3 = 0.5*DPar[ic].Q.z;
+    q0 = 0.5*DPar[ic].Q.x;
+    q1 = 0.5*DPar[ic].Q.y;
+    q2 = 0.5*DPar[ic].Q.z;
+    q3 = 0.5*DPar[ic].Q.w;
 
     real3 Tt = Par[ic].T;
 
@@ -843,27 +866,27 @@ __global__ void Rotate(real3 * Verts, ParticleCU const * Par, DynParticleCU * DP
     wy = DPar[ic].w.y;
     wz = DPar[ic].w.z;
     real4 dq,qm;
-    dq.w = -(q1*wx+q2*wy+q3*wz);
-    dq.x = q0*wx-q3*wy+q2*wz;
-    dq.y = q3*wx+q0*wy-q1*wz;
-    dq.z = -q2*wx+q1*wy+q0*wz;
+    dq.x = -(q1*wx+q2*wy+q3*wz);
+    dq.y = q0*wx-q3*wy+q2*wz;
+    dq.z = q3*wx+q0*wy-q1*wz;
+    dq.w = -q2*wx+q1*wy+q0*wz;
 
     DPar[ic].wb  = DPar[ic].wb+demaux[0].dt*DPar[ic].wa;
     qm  = DPar[ic].Q+(0.5*demaux[0].dt)*dq;
 
-    q0 = 0.5*qm.w;
-    q1 = 0.5*qm.x;
-    q2 = 0.5*qm.y;
-    q3 = 0.5*qm.z;
+    q0 = 0.5*qm.x;
+    q1 = 0.5*qm.y;
+    q2 = 0.5*qm.z;
+    q3 = 0.5*qm.w;
 
     wx  = DPar[ic].wb.x;
     wy  = DPar[ic].wb.y;
     wz  = DPar[ic].wb.z;
     
-    dq.w = -(q1*wx+q2*wy+q3*wz);
-    dq.x = q0*wx-q3*wy+q2*wz;
-    dq.y = q3*wx+q0*wy-q1*wz;
-    dq.z = -q2*wx+q1*wy+q0*wz;
+    dq.x = -(q1*wx+q2*wy+q3*wz);
+    dq.y = q0*wx-q3*wy+q2*wz;
+    dq.z = q3*wx+q0*wy-q1*wz;
+    dq.w = -q2*wx+q1*wy+q0*wz;
 
     real4 Qd = qm+0.5*demaux[0].dt*dq,temp;
     Conjugate(DPar[ic].Q,temp);

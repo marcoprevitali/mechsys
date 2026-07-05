@@ -226,7 +226,9 @@ public:
     size_t                                            Nproc;                       ///< Number of cores for multithreading
     size_t                                            idx_out;                     ///< Index of output
     size_t                                            iter;                        ///< Iteration counter
-    size_t                                            ContactLaw;                  ///< Contact law index                                                                                  
+    size_t                                            ContactLaw;                  ///< Contact law index
+    size_t                                            SphereCoulombMode;           ///< Sphere Coulomb mode: 0 default, 1 elastic, 2 total, 3 elastic tangential/total normal
+    bool                                              SphereTensileCutoff;         ///< Clamp tensile total normal force for sphere contacts
     std::unordered_map<size_t,CInteracton *>          PairtoCInt;                  ///< A map to identify which interacton has a given pair
     Array<Array <int> >                               Listofclusters;              ///< List of particles belonging to bounded clusters (applies only for cohesion simulations)
     MtData *                                          MTD;                         ///< Multithread data
@@ -342,6 +344,8 @@ inline Domain::Domain (void * UD, size_t contactlaw)
     Xmax = Xmin = Ymax = Ymin = Zmax = Zmin =0.0;
     ThermostatInteractionRange = 0.0;
     ContactLaw = contactlaw;
+    SphereCoulombMode = 0;
+    SphereTensileCutoff = true;
 #ifdef USE_OMP
     omp_init_lock(&lck);
 #endif
@@ -622,7 +626,7 @@ inline void Domain::Solve (double tf, double dt, double dtOut, ptFun_t ptSetup, 
 
     #pragma omp parallel for schedule(static) num_threads(Nproc)
     for (size_t i = 0; i < Interactons.Size(); i++) {
-        Interactons[i]->CalcForce(Dt, Per, iter, ContactLaw);
+        Interactons[i]->CalcForce(Dt, Per, iter, ContactLaw, SphereCoulombMode, SphereTensileCutoff);
         omp_set_lock  (&Interactons[i]->P1->lck);
         Interactons[i]->P1->F += Interactons[i]->F1;
         Interactons[i]->P1->T += Interactons[i]->T1;
@@ -841,7 +845,7 @@ if (UseVelocityVerlet){
         #pragma omp parallel for schedule(static) num_threads(Nproc)
         for (size_t i = 0; i < Interactons.Size(); i++)
         {
-        Interactons[i]->CalcForce(Dt, Per, iter, ContactLaw);
+        Interactons[i]->CalcForce(Dt, Per, iter, ContactLaw, SphereCoulombMode, SphereTensileCutoff);
         omp_set_lock  (&Interactons[i]->P1->lck);
         Interactons[i]->P1->F += Interactons[i]->F1;
         Interactons[i]->P1->T += Interactons[i]->T1;
@@ -906,7 +910,7 @@ if (UseVelocityVerlet){
             
             //DEM::Interacton * p = Interactons[i];
             //std::cout << p->I1 << " " << p->I2 << std::endl;
-		    if (Interactons[i]->CalcForce(Dt,Per,iter,ContactLaw))
+		    if (Interactons[i]->CalcForce(Dt,Per,iter,ContactLaw,SphereCoulombMode,SphereTensileCutoff))
             {
                 String f_error(FileKey+"_error");
                 Save     (f_error.CStr());
@@ -2775,6 +2779,10 @@ inline void Domain::UpdateContacts()
 
 inline void Domain::CalcForceSphere()
 {
+    size_t sphereCoulombMode = SphereCoulombMode;
+    if (sphereCoulombMode > 3) sphereCoulombMode = 0;
+    bool sphereTensileCutoff = SphereTensileCutoff;
+
     //std::cout << "Pairs size = " << ListPosPairs.Size() << std::endl;
     //std::set<std::pair<Particle *,Particle *> >::iterator it;
 #ifdef USE_OMP
@@ -2847,6 +2855,12 @@ inline void Domain::CalcForceSphere()
             Gt *= me;
 
             Vec3_t Fn = Kn*delta*n;
+            Vec3_t Fn_total = Fn + Gn*dot(n,vrel)*n;
+            if (sphereTensileCutoff && dot(Fn_total,n)<0.0)
+            {
+                Fn_total = OrthoSys::O;
+            }
+
             //std::pair<int,int> p;
             //p = std::make_pair(i,j);
             size_t p = HashFunction(i,j);
@@ -2862,13 +2876,48 @@ inline void Domain::CalcForceSphere()
             }
             FricSpheres[p] += vt*Dt;
             FricSpheres[p] -= dot(FricSpheres[p],n)*n;
-            Vec3_t tan = FricSpheres[p];
-            if (norm(tan)>0.0) tan/=norm(tan);
-            if (norm(FricSpheres[p])>Mu*norm(Fn)/Kt)
+
+            Vec3_t Ft_elastic = Kt*FricSpheres[p];
+            Vec3_t Ft_dashpot = Gt*vt;
+            Vec3_t Ft_total = Ft_elastic + Ft_dashpot;
+            double friction_limit = Mu*norm(Fn);
+            if (sphereCoulombMode == 2 || sphereCoulombMode == 3)
             {
-                FricSpheres[p] = Mu*norm(Fn)/Kt*tan;
+                friction_limit = Mu*norm(Fn_total);
             }
-            Vec3_t F = Fn + Kt*FricSpheres[p] + Gn*dot(n,vrel)*n + Gt*vt;
+
+            bool checkElasticTangential = sphereCoulombMode != 2;
+            bool keepTangentialDashpotDuringSliding = sphereCoulombMode == 0;
+
+            if (checkElasticTangential)
+            {
+                double ftElasticNorm = norm(Ft_elastic);
+                if (ftElasticNorm > friction_limit)
+                {
+                    Vec3_t tan = Ft_elastic/ftElasticNorm;
+                    Ft_elastic = friction_limit*tan;
+                    FricSpheres[p] = Kt>0.0 ? Ft_elastic/Kt : OrthoSys::O;
+                    if (!keepTangentialDashpotDuringSliding)
+                    {
+                        Ft_dashpot = OrthoSys::O;
+                    }
+                }
+                Ft_total = Ft_elastic + Ft_dashpot;
+            }
+            else
+            {
+                double ftTotalNorm = norm(Ft_total);
+                if (ftTotalNorm > friction_limit)
+                {
+                    Vec3_t tan = Ft_total/ftTotalNorm;
+                    Ft_total = friction_limit*tan;
+                    Ft_elastic = Ft_total;
+                    FricSpheres[p] = Kt>0.0 ? Ft_elastic/Kt : OrthoSys::O;
+                    Ft_dashpot = OrthoSys::O;
+                }
+            }
+
+            Vec3_t F = Fn_total + Ft_total;
             //Vec3_t F = Fn + P1->Props.Gn*dot(n,vrel)*n + P1->Props.Gt*vt;
             Vec3_t F1   = -F;
             Vec3_t F2   =  F;
@@ -2904,7 +2953,7 @@ inline void Domain::CalcForceSphere()
             }
             RollSpheres[p] += Vr*Dt;
             RollSpheres[p] -= dot(RollSpheres[p],Normal)*Normal;
-            tan = RollSpheres[p];
+            Vec3_t tan = RollSpheres[p];
             if (norm(tan)>0.0) tan/=norm(tan);
             double Kr = beta*Kt;
             if (norm(RollSpheres[p])>eta*Mu*norm(Fn)/Kr)
@@ -3332,6 +3381,9 @@ inline void Domain::UpLoadDevice(size_t Nc, bool first,bool updateState)
         demaux.px     = (Xmax-Xmin)>1e-12;
         demaux.py     = (Ymax-Ymin)>1e-12;
         demaux.pz     = (Zmax-Zmin)>1e-12;
+        demaux.sphereCoulombMode = SphereCoulombMode;
+        if (demaux.sphereCoulombMode > 3) demaux.sphereCoulombMode = 0;
+        demaux.sphereTensileCutoff = SphereTensileCutoff;
 
     demaux.nvvint = 0;
     demaux.neeint = 0;
