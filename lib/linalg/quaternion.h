@@ -98,35 +98,35 @@ inline void RotationMatrix (Quaternion_t const & B, Mat3_t & C)
 //////////////////////////////// CUDA IMPLEMENTATION /////////////////////////////
 __host__ __device__ __inline__ real QScalar(real4 const & Q)
 {
-    return Q.x;
+    return Q.w;
 }
 
 __host__ __device__ __inline__ real3 QVector(real4 const & Q)
 {
-    return make_real3(Q.y,Q.z,Q.w);
+    return make_real3(Q.x,Q.y,Q.z);
 }
 
 __host__ __device__ __inline__ real4 MakeQuat(real Scalar, real3 const & V)
 {
-    return make_real4(Scalar,V.x,V.y,V.z);
+    return make_real4(V.x,V.y,V.z,Scalar);
 }
 
 __host__ __device__ void NormalizeRotation (real Theta, real3 const & Axis, real4 & C)
 {
     //if (norm(Axis)<1.0e-12) throw new Fatal("Quaternion: the norm of the axis is too small, please chose a different one");
     real3 A = Axis/norm(Axis);
-    C.x     = cos(Theta/2.0);
-    C.y     = A.x*sin(Theta/2.0);
-    C.z     = A.y*sin(Theta/2.0);
-    C.w     = A.z*sin(Theta/2.0);
+    C.x     = A.x*sin(Theta/2.0);
+    C.y     = A.y*sin(Theta/2.0);
+    C.z     = A.z*sin(Theta/2.0);
+    C.w     = cos(Theta/2.0);
 }
 
 __host__ __device__ void Conjugate (real4 const & A, real4 & C)
 {
-    C.x =  A.x;
+    C.x = -A.x;
     C.y = -A.y;
     C.z = -A.z;
-    C.w = -A.w;
+    C.w =  A.w;
 }
 
 __host__ __device__ void GetVector (real4 const & A, real3 & C)

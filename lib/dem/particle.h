@@ -1411,10 +1411,10 @@ __host__ void UploadParticle(DEM::DynParticleCU & DPc, DEM::ParticleCU & Pcu,DEM
     DPc.Flbm.x          = Par.Flbm(0);
     DPc.Flbm.y          = Par.Flbm(1);
     DPc.Flbm.z          = Par.Flbm(2);
-    DPc.Q.x             = Par.Q(0);
-    DPc.Q.y             = Par.Q(1);
-    DPc.Q.z             = Par.Q(2);
-    DPc.Q.w             = Par.Q(3);
+    DPc.Q.x             = Par.Q(1);
+    DPc.Q.y             = Par.Q(2);
+    DPc.Q.z             = Par.Q(3);
+    DPc.Q.w             = Par.Q(0);
     }
 }
 
@@ -1445,10 +1445,10 @@ __host__ void DnloadParticle(DEM::DynParticleCU & DPc,DEM::Particle & Par)
     Par.Flbm(0)         = DPc.Flbm.x;
     Par.Flbm(1)         = DPc.Flbm.y;
     Par.Flbm(2)         = DPc.Flbm.z;
-    Par.Q(0)            = DPc.Q.x   ;
-    Par.Q(1)            = DPc.Q.y   ;
-    Par.Q(2)            = DPc.Q.z   ;
-    Par.Q(3)            = DPc.Q.w   ;
+    Par.Q(0)            = DPc.Q.w   ;
+    Par.Q(1)            = DPc.Q.x   ;
+    Par.Q(2)            = DPc.Q.y   ;
+    Par.Q(3)            = DPc.Q.z   ;
     }
     Par.Ekin = 0.5*Par.Props.m*dot(Par.v,Par.v);
     Par.Erot = 0.5*(Par.I(0)*Par.w(0)*Par.w(0)+Par.I(1)*Par.w(1)*Par.w(1)+Par.I(2)*Par.w(2)*Par.w(2));

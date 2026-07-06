@@ -114,12 +114,13 @@ __device__ inline real4 Exp_GPU(real3 w, real dt)
 
 __device__ inline real4 QMult(real4 q1, real4 q2)
 {
-    return make_real4(
-        q1.x*q2.x - q1.y*q2.y - q1.z*q2.z - q1.w*q2.w,
-        q1.x*q2.y + q1.y*q2.x + q1.z*q2.w - q1.w*q2.z,
-        q1.x*q2.z - q1.y*q2.w + q1.z*q2.x + q1.w*q2.y,
-        q1.x*q2.w + q1.y*q2.z - q1.z*q2.y + q1.w*q2.x
-    );
+    real s1 = QScalar(q1);
+    real s2 = QScalar(q2);
+    real3 v1 = QVector(q1);
+    real3 v2 = QVector(q2);
+    real scalar = s1*s2 - dotreal3(v1,v2);
+    real3 vector = s1*v2 + s2*v1 + cross(v1,v2);
+    return MakeQuat(scalar,vector);
 }
 
 
@@ -839,11 +840,13 @@ __global__ void Rotate(real3 * Verts, ParticleCU const * Par, DynParticleCU * DP
     size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
     if (ic>=demaux[0].nparts) return;
     real q0,q1,q2,q3,wx,wy,wz;
+    real3 qv;
 
-    q0 = 0.5*DPar[ic].Q.x;
-    q1 = 0.5*DPar[ic].Q.y;
-    q2 = 0.5*DPar[ic].Q.z;
-    q3 = 0.5*DPar[ic].Q.w;
+    q0 = 0.5*QScalar(DPar[ic].Q);
+    qv = QVector(DPar[ic].Q);
+    q1 = 0.5*qv.x;
+    q2 = 0.5*qv.y;
+    q3 = 0.5*qv.z;
 
     real3 Tt = Par[ic].T;
 
@@ -866,27 +869,30 @@ __global__ void Rotate(real3 * Verts, ParticleCU const * Par, DynParticleCU * DP
     wy = DPar[ic].w.y;
     wz = DPar[ic].w.z;
     real4 dq,qm;
-    dq.x = -(q1*wx+q2*wy+q3*wz);
-    dq.y = q0*wx-q3*wy+q2*wz;
-    dq.z = q3*wx+q0*wy-q1*wz;
-    dq.w = -q2*wx+q1*wy+q0*wz;
+    SetQuaternion (-(q1*wx+q2*wy+q3*wz),
+                   make_real3(q0*wx-q3*wy+q2*wz,
+                              q3*wx+q0*wy-q1*wz,
+                              -q2*wx+q1*wy+q0*wz),
+                   dq);
 
     DPar[ic].wb  = DPar[ic].wb+demaux[0].dt*DPar[ic].wa;
     qm  = DPar[ic].Q+(0.5*demaux[0].dt)*dq;
 
-    q0 = 0.5*qm.x;
-    q1 = 0.5*qm.y;
-    q2 = 0.5*qm.z;
-    q3 = 0.5*qm.w;
+    q0 = 0.5*QScalar(qm);
+    qv = QVector(qm);
+    q1 = 0.5*qv.x;
+    q2 = 0.5*qv.y;
+    q3 = 0.5*qv.z;
 
     wx  = DPar[ic].wb.x;
     wy  = DPar[ic].wb.y;
     wz  = DPar[ic].wb.z;
     
-    dq.x = -(q1*wx+q2*wy+q3*wz);
-    dq.y = q0*wx-q3*wy+q2*wz;
-    dq.z = q3*wx+q0*wy-q1*wz;
-    dq.w = -q2*wx+q1*wy+q0*wz;
+    SetQuaternion (-(q1*wx+q2*wy+q3*wz),
+                   make_real3(q0*wx-q3*wy+q2*wz,
+                              q3*wx+q0*wy-q1*wz,
+                              -q2*wx+q1*wy+q0*wz),
+                   dq);
 
     real4 Qd = qm+0.5*demaux[0].dt*dq,temp;
     Conjugate(DPar[ic].Q,temp);
