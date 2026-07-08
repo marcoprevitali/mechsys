@@ -119,6 +119,7 @@ tmpm/tmpm03
 
 
 syntax: glob
+build/
 CTestTestfile.cmake
 Testing
 CMakeCache.txt

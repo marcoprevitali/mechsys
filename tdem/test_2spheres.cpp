@@ -65,7 +65,8 @@ int main(int argc, char **argv) try
     double appliedVelocity;         // Strain rate for shearing
     double Tf;          // Final time for the test
     size_t sphereCoulombMode = 0;
-    bool tensileCutoff = true;
+    int tensileCutoff = 1;
+    int velocityVerlet = 1;
 double X1;	
 double Y1;	
 double Z1;	
@@ -97,29 +98,9 @@ double R;
         infile >> X2;		infile.ignore(200,'\n');
         infile >> Y2;		infile.ignore(200,'\n');
         infile >> Z2;		infile.ignore(200,'\n');
-        std::string optionLine;
-        while (std::getline(infile,optionLine))
-        {
-            std::stringstream ss(optionLine);
-            double optionValue;
-            if (!(ss >> optionValue)) continue;
-
-            std::string lowerLine = optionLine;
-            for (size_t i=0; i<lowerLine.size(); ++i)
-            {
-                lowerLine[i] = static_cast<char>(std::tolower(static_cast<unsigned char>(lowerLine[i])));
-            }
-
-            if (lowerLine.find("coulomb")!=std::string::npos && lowerLine.find("mode")!=std::string::npos)
-            {
-                size_t parsedMode = optionValue<0.0 ? 0 : static_cast<size_t>(optionValue);
-                sphereCoulombMode = parsedMode<=3 ? parsedMode : 0;
-            }
-            else if (lowerLine.find("tensile")!=std::string::npos && lowerLine.find("cutoff")!=std::string::npos)
-            {
-                tensileCutoff = optionValue!=0.0;
-            }
-        }
+        infile >> sphereCoulombMode; infile.ignore(200,'\n');
+        infile >> tensileCutoff; infile.ignore(200,'\n');
+        infile >> velocityVerlet; infile.ignore(200,'\n');
     }
 
     // domain and User data
@@ -128,11 +109,12 @@ double R;
 
     DEM::Domain dom(NULL,cl);
     dom.SphereCoulombMode = sphereCoulombMode;
-    dom.SphereTensileCutoff = tensileCutoff;
+    dom.SphereTensileCutoff = tensileCutoff > 0;
+    dom.UseVelocityVerlet = velocityVerlet > 0;
     dom.Alpha=verlet;
     dom.Dilate = true;
-    printf("Sphere contact mode: %zu, tensile cutoff: %s\n",
-           dom.SphereCoulombMode, dom.SphereTensileCutoff ? "on" : "off");
+    printf("Sphere contact mode: %zu, tensile cutoff: %s, velocity verlet: %s\n",
+           dom.SphereCoulombMode, dom.SphereTensileCutoff ? "on" : "off",dom.UseVelocityVerlet ? "on" : "off");
     Vec3_t Xmin(-10,-10,-10);
     Vec3_t Xmax(10,10,10);
 
