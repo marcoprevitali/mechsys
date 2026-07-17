@@ -48,7 +48,7 @@ public:
 
     // Methods
     virtual bool UpdateContacts   (double alpha, Vec3_t const & Per = OrthoSys::O, size_t const iter=0) =0;    ///< Update contacts by verlet algorithm
-    virtual bool CalcForce        (double dt = 0.0, Vec3_t const & Per = OrthoSys::O, size_t const iter=0, size_t const contactlaw=0, size_t sphereCoulombMode=0, bool sphereTensileCutoff=true) =0; ///< Calculates the contact force between particles
+    virtual bool CalcForce        (double dt = 0.0, Vec3_t const & Per = OrthoSys::O, size_t const iter=0, size_t const contactlaw=0, size_t sphereCoulombMode=0, bool sphereTensileCutoff=true, bool sphereFirstContactCorrection=false) =0; ///< Calculates the contact force between particles
     virtual void UpdateParameters (size_t contactlaw=0) =0;                ///< Update the parameters
 
     // Data
@@ -71,7 +71,7 @@ public:
 
     // Methods
     virtual bool UpdateContacts   (double alpha, Vec3_t const & Per = OrthoSys::O, size_t const iter=0);    ///< Update contacts by verlet algorithm
-    virtual bool CalcForce        (double dt = 0.0, Vec3_t const & Per = OrthoSys::O, size_t const iter=0, size_t const contaclaw = 0, size_t sphereCoulombMode=0, bool sphereTensileCutoff=true); ///< Calculates the contact force between particles
+    virtual bool CalcForce        (double dt = 0.0, Vec3_t const & Per = OrthoSys::O, size_t const iter=0, size_t const contaclaw = 0, size_t sphereCoulombMode=0, bool sphereTensileCutoff=true, bool sphereFirstContactCorrection=false); ///< Calculates the contact force between particles
     virtual void UpdateParameters (size_t contactlaw=0);              ///< Update the parameters
 
     // Data
@@ -123,7 +123,7 @@ public:
     // Methods 
     CInteractonSphere (Particle * Pt1, Particle * Pt2, size_t contaclaw=0); ///< Constructor requires pointers to both particles
     bool UpdateContacts (double alpha, Vec3_t const & Per = OrthoSys::O, size_t const iter=0);                 ///< Update contacts by verlet algorithm
-    bool CalcForce (double dt = 0.0, Vec3_t const & Per = OrthoSys::O, size_t const iter=0, size_t contactlaw=0, size_t sphereCoulombMode=0, bool sphereTensileCutoff=true);    ///< Calculates the contact force between particles
+    bool CalcForce (double dt = 0.0, Vec3_t const & Per = OrthoSys::O, size_t const iter=0, size_t contactlaw=0, size_t sphereCoulombMode=0, bool sphereTensileCutoff=true, bool sphereFirstContactCorrection=false);    ///< Calculates the contact force between particles
     void UpdateParameters (size_t contactlaw=0);                           ///< Update the parameters
 
     // Data
@@ -138,6 +138,8 @@ public:
     double         Bt;                             ///< Elastic tangential constant for the cohesion
     double         eps;                            ///< Maximun strain before fracture
     bool           cohesion;                       ///< A flag to determine if cohesion must be used for spheres or not
+    bool           InContact;                      ///< Has this sphere pair been overlapping in the previous force step?
+    double         PrevDelta;                      ///< Previous signed overlap for first-contact increment correction
 
 };
 
@@ -148,7 +150,7 @@ public:
 
     // Methods
     bool UpdateContacts (double alpha, Vec3_t const & Per = OrthoSys::O, size_t const iter=0);    ///< Update contacts by verlet algorithm
-    bool CalcForce      (double dt = 0.0, Vec3_t const & Per = OrthoSys::O, size_t const iter=0, size_t const contactlaw=0, size_t sphereCoulombMode=0, bool sphereTensileCutoff=true); ///< Calculates the contact force between particles
+    bool CalcForce      (double dt = 0.0, Vec3_t const & Per = OrthoSys::O, size_t const iter=0, size_t const contactlaw=0, size_t sphereCoulombMode=0, bool sphereTensileCutoff=true, bool sphereFirstContactCorrection=false); ///< Calculates the force between particles
     void UpdateParameters (size_t contactlaw=0);              ///< Update the parameters in case they change
 
     // Data
@@ -266,7 +268,7 @@ inline bool CInteracton::UpdateContacts (double alpha, Vec3_t const & Per, size_
     else return false;
 }
 
-inline bool CInteracton::CalcForce (double dt, Vec3_t const & Per, size_t const iter, size_t const contactlaw, size_t, bool)
+inline bool CInteracton::CalcForce (double dt, Vec3_t const & Per, size_t const iter, size_t const contactlaw, size_t, bool, bool)
 {
     bool   overlap = false;
     Epot   = 0.0;
@@ -603,6 +605,8 @@ inline CInteractonSphere::CInteractonSphere (Particle * Pt1, Particle * Pt2, siz
     Epot = 0.0;
     Fdr  = OrthoSys::O;
     Fdvv = OrthoSys::O;
+    InContact = false;
+    PrevDelta = 0.0;
 
     //std::pair<int,int> p;
     //p = std::make_pair(0,0);
@@ -611,7 +615,7 @@ inline CInteractonSphere::CInteractonSphere (Particle * Pt1, Particle * Pt2, siz
     CalcForce(0.0);
 }
 
-inline bool CInteractonSphere::CalcForce(double dt, Vec3_t const & Per, size_t const iter, size_t contactlaw, size_t sphereCoulombMode, bool sphereTensileCutoff)
+inline bool CInteractonSphere::CalcForce(double dt, Vec3_t const & Per, size_t const iter, size_t contactlaw, size_t sphereCoulombMode, bool sphereTensileCutoff, bool sphereFirstContactCorrection)
 {
     Epot   = 0.0;
     dEvis  = 0.0;
@@ -671,10 +675,14 @@ inline bool CInteractonSphere::CalcForce(double dt, Vec3_t const & Per, size_t c
  //   printf("Reset overlap..\n");
     Fdvv = Vec3_t(0.0, 0.0, 0.0);
     vt_prev = Vec3_t(0.0, 0.0, 0.0);
+    InContact = false;
+    PrevDelta = delta;
     }
 
     if (delta>0.0)
     {
+        bool newContact = !InContact;
+        InContact = true;
 #ifdef USE_CHECK_OVERLAP
         if (delta > 0.4*(P1->Props.R+P2->Props.R))
         {
@@ -722,6 +730,14 @@ inline bool CInteractonSphere::CalcForce(double dt, Vec3_t const & Per, size_t c
         x2 = x2c- xf;
         Vec3_t vrel = -((P2->v-P1->v)+cross(t2,x2)-cross(t1,x1));
         Vec3_t vt = vrel - dot(n,vrel)*n;
+        double dtTangential = dt;
+        if (sphereFirstContactCorrection && newContact && PrevDelta<0.0 && delta>PrevDelta)
+        {
+            double activationFraction = delta/(delta-PrevDelta);
+            if (activationFraction < 0.0) activationFraction = 0.0;
+            if (activationFraction > 1.0) activationFraction = 1.0;
+            dtTangential *= activationFraction;
+        }
         Vec3_t F  = OrthoSys::O;
         Vec3_t Ft = OrthoSys::O;
 
@@ -742,7 +758,7 @@ inline bool CInteractonSphere::CalcForce(double dt, Vec3_t const & Per, size_t c
             Fnet += Fn;
             Fndpot += Fn_dashpot;
 
-            Fdvv += vt*dt;
+            Fdvv += vt*dtTangential;
             Fdvv -= dot(Fdvv,n)*n;
             vt_prev = vt;
 
@@ -821,7 +837,7 @@ inline bool CInteractonSphere::CalcForce(double dt, Vec3_t const & Per, size_t c
             Fn  = Kn*sqrt(delta)*delta*n;
 
             Fnet += Fn;
-            Fdvv += vt*dt;
+            Fdvv += vt*dtTangential;
             Fdvv -= dot(Fdvv,n)*n;
             Vec3_t tan = Fdvv;
             if (norm(tan)>0.0) tan/=norm(tan);
@@ -875,6 +891,7 @@ inline bool CInteractonSphere::CalcForce(double dt, Vec3_t const & Per, size_t c
         T2 += T;
 
         Fn        = Fdr;
+        PrevDelta = delta;
     }
 
     //If there is at least a contact, increase the coordination number of the particles
@@ -1025,7 +1042,7 @@ inline bool BInteracton::UpdateContacts (double alpha, Vec3_t const & Per, size_
     return valid;
 }
 
-inline bool BInteracton::CalcForce(double dt, Vec3_t const & Per, size_t const iter, size_t const contactlaw, size_t, bool)
+inline bool BInteracton::CalcForce(double dt, Vec3_t const & Per, size_t const iter, size_t const contactlaw, size_t, bool, bool)
 {
     F1 = OrthoSys::O;
     F2 = OrthoSys::O;

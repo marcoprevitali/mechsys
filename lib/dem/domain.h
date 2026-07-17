@@ -229,6 +229,7 @@ public:
     size_t                                            ContactLaw;                  ///< Contact law index
     size_t                                            SphereCoulombMode;           ///< Sphere Coulomb mode: 0 default, 1 elastic, 2 total, 3 elastic tangential/total normal
     bool                                              SphereTensileCutoff;         ///< Clamp tensile total normal force for sphere contacts
+    bool                                              SphereFirstContactCorrection;///< Scale the first active tangential history increment by contact activation fraction
     std::unordered_map<size_t,CInteracton *>          PairtoCInt;                  ///< A map to identify which interacton has a given pair
     Array<Array <int> >                               Listofclusters;              ///< List of particles belonging to bounded clusters (applies only for cohesion simulations)
     MtData *                                          MTD;                         ///< Multithread data
@@ -236,6 +237,7 @@ public:
     // Some utilities when the interactions are mainly between spheres
     bool                                              MostlySpheres;               ///< If the simulation is mainly between spheres this should be true
     FrictionMap_t                                     FricSpheres;                 ///< The friction value for spheres only
+    std::unordered_map<size_t,double>                 PrevSphereDelta;             ///< Previous signed overlap for sphere first-contact correction
     FrictionMap_t                                     RollSpheres;                 ///< Map storing the rolling resistance between spheres
     void     CalcForceSphere();                                                    ///< Calculate force between only spheres spheres
     
@@ -346,6 +348,7 @@ inline Domain::Domain (void * UD, size_t contactlaw)
     ContactLaw = contactlaw;
     SphereCoulombMode = 0;
     SphereTensileCutoff = true;
+    SphereFirstContactCorrection = false;
 #ifdef USE_OMP
     omp_init_lock(&lck);
 #endif
@@ -626,7 +629,7 @@ inline void Domain::Solve (double tf, double dt, double dtOut, ptFun_t ptSetup, 
 
     #pragma omp parallel for schedule(static) num_threads(Nproc)
     for (size_t i = 0; i < Interactons.Size(); i++) {
-        Interactons[i]->CalcForce(Dt, Per, iter, ContactLaw, SphereCoulombMode, SphereTensileCutoff);
+        Interactons[i]->CalcForce(Dt, Per, iter, ContactLaw, SphereCoulombMode, SphereTensileCutoff, SphereFirstContactCorrection);
         omp_set_lock  (&Interactons[i]->P1->lck);
         Interactons[i]->P1->F += Interactons[i]->F1;
         Interactons[i]->P1->T += Interactons[i]->T1;
@@ -845,7 +848,7 @@ if (UseVelocityVerlet){
         #pragma omp parallel for schedule(static) num_threads(Nproc)
         for (size_t i = 0; i < Interactons.Size(); i++)
         {
-        Interactons[i]->CalcForce(Dt, Per, iter, ContactLaw, SphereCoulombMode, SphereTensileCutoff);
+        Interactons[i]->CalcForce(Dt, Per, iter, ContactLaw, SphereCoulombMode, SphereTensileCutoff, SphereFirstContactCorrection);
         omp_set_lock  (&Interactons[i]->P1->lck);
         Interactons[i]->P1->F += Interactons[i]->F1;
         Interactons[i]->P1->T += Interactons[i]->T1;
@@ -910,7 +913,7 @@ if (UseVelocityVerlet){
             
             //DEM::Interacton * p = Interactons[i];
             //std::cout << p->I1 << " " << p->I2 << std::endl;
-		    if (Interactons[i]->CalcForce(Dt,Per,iter,ContactLaw,SphereCoulombMode,SphereTensileCutoff))
+		    if (Interactons[i]->CalcForce(Dt,Per,iter,ContactLaw,SphereCoulombMode,SphereTensileCutoff,SphereFirstContactCorrection))
             {
                 String f_error(FileKey+"_error");
                 Save     (f_error.CStr());
@@ -2782,6 +2785,7 @@ inline void Domain::CalcForceSphere()
     size_t sphereCoulombMode = SphereCoulombMode;
     if (sphereCoulombMode > 3) sphereCoulombMode = 0;
     bool sphereTensileCutoff = SphereTensileCutoff;
+    bool sphereFirstContactCorrection = SphereFirstContactCorrection;
 
     //std::cout << "Pairs size = " << ListPosPairs.Size() << std::endl;
     //std::set<std::pair<Particle *,Particle *> >::iterator it;
@@ -2811,6 +2815,19 @@ inline void Domain::CalcForceSphere()
         Vec3_t xf = P2->x;
         double dist = norm(P1->x - P2->x);
         double delta = P1->Props.R + P2->Props.R - dist;
+        size_t p = HashFunction(i,j);
+        if (delta<=0.0 && sphereFirstContactCorrection)
+        {
+            FricSpheres.erase(p);
+        }
+        double prevDelta = 0.0;
+        if (sphereFirstContactCorrection)
+        {
+            auto prevIt = PrevSphereDelta.find(p);
+            if (prevIt != PrevSphereDelta.end()) prevDelta = prevIt->second;
+            PrevSphereDelta[p] = delta;
+        }
+
         if (delta>0)
         {
             //std::cout << "2" << std::endl;
@@ -2863,7 +2880,7 @@ inline void Domain::CalcForceSphere()
 
             //std::pair<int,int> p;
             //p = std::make_pair(i,j);
-            size_t p = HashFunction(i,j);
+            bool newContact = FricSpheres.count(p)==0;
             if (FricSpheres.count(p)==0) 
             {             
 #ifdef USE_OMP
@@ -2874,7 +2891,15 @@ inline void Domain::CalcForceSphere()
                 omp_unset_lock(&lck);
 #endif
             }
-            FricSpheres[p] += vt*Dt;
+            double dtTangential = Dt;
+            if (sphereFirstContactCorrection && newContact && prevDelta<0.0 && delta>prevDelta)
+            {
+                double activationFraction = delta/(delta-prevDelta);
+                if (activationFraction < 0.0) activationFraction = 0.0;
+                if (activationFraction > 1.0) activationFraction = 1.0;
+                dtTangential *= activationFraction;
+            }
+            FricSpheres[p] += vt*dtTangential;
             FricSpheres[p] -= dot(FricSpheres[p],n)*n;
 
             Vec3_t Ft_elastic = Kt*FricSpheres[p];

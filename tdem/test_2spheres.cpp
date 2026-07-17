@@ -20,6 +20,7 @@
 
 // Std Lib
 #include <cctype>
+#include <limits>
 #include <sstream>
 #include <string>
 
@@ -67,6 +68,7 @@ int main(int argc, char **argv) try
     size_t sphereCoulombMode = 0;
     int tensileCutoff = 1;
     int velocityVerlet = 1;
+    int firstContactCorrection = 0;
 double X1;	
 double Y1;	
 double Z1;	
@@ -76,31 +78,33 @@ double Z2;
 double R;
 
     {
-        infile >> verlet;       infile.ignore(200,'\n');
-        infile >> contactlaw;   infile.ignore(200,'\n');
-        infile >> RenderVideo;  infile.ignore(200,'\n');
-        infile >> Kn;           infile.ignore(200,'\n');
-        infile >> Kt;           infile.ignore(200,'\n');
-        infile >> Gn;           infile.ignore(200,'\n');
-        infile >> Gt;           infile.ignore(200,'\n');
-        infile >> Mu0;          infile.ignore(200,'\n');
-        infile >> Beta;         infile.ignore(200,'\n');
-        infile >> Eta;          infile.ignore(200,'\n');
-        infile >> dt;           infile.ignore(200,'\n');
-        infile >> dtOut;        infile.ignore(200,'\n');
-        infile >> rho;          infile.ignore(200,'\n');
-        infile >> R;          infile.ignore(200,'\n');
-        infile >> appliedVelocity;          infile.ignore(200,'\n');
-        infile >> Tf;           infile.ignore(200,'\n');
-        infile >> X1;		infile.ignore(200,'\n');
-        infile >> Y1;		infile.ignore(200,'\n');
-        infile >> Z1;		infile.ignore(200,'\n');
-        infile >> X2;		infile.ignore(200,'\n');
-        infile >> Y2;		infile.ignore(200,'\n');
-        infile >> Z2;		infile.ignore(200,'\n');
-        infile >> sphereCoulombMode; infile.ignore(200,'\n');
-        infile >> tensileCutoff; infile.ignore(200,'\n');
-        infile >> velocityVerlet; infile.ignore(200,'\n');
+        const std::streamsize lineMax = std::numeric_limits<std::streamsize>::max();
+        infile >> verlet;       infile.ignore(lineMax,'\n');
+        infile >> contactlaw;   infile.ignore(lineMax,'\n');
+        infile >> RenderVideo;  infile.ignore(lineMax,'\n');
+        infile >> Kn;           infile.ignore(lineMax,'\n');
+        infile >> Kt;           infile.ignore(lineMax,'\n');
+        infile >> Gn;           infile.ignore(lineMax,'\n');
+        infile >> Gt;           infile.ignore(lineMax,'\n');
+        infile >> Mu0;          infile.ignore(lineMax,'\n');
+        infile >> Beta;         infile.ignore(lineMax,'\n');
+        infile >> Eta;          infile.ignore(lineMax,'\n');
+        infile >> dt;           infile.ignore(lineMax,'\n');
+        infile >> dtOut;        infile.ignore(lineMax,'\n');
+        infile >> rho;          infile.ignore(lineMax,'\n');
+        infile >> R;            infile.ignore(lineMax,'\n');
+        infile >> appliedVelocity; infile.ignore(lineMax,'\n');
+        infile >> Tf;           infile.ignore(lineMax,'\n');
+        infile >> X1;           infile.ignore(lineMax,'\n');
+        infile >> Y1;           infile.ignore(lineMax,'\n');
+        infile >> Z1;           infile.ignore(lineMax,'\n');
+        infile >> X2;           infile.ignore(lineMax,'\n');
+        infile >> Y2;           infile.ignore(lineMax,'\n');
+        infile >> Z2;           infile.ignore(lineMax,'\n');
+        infile >> sphereCoulombMode; infile.ignore(lineMax,'\n');
+        infile >> tensileCutoff; infile.ignore(lineMax,'\n');
+        infile >> velocityVerlet; infile.ignore(lineMax,'\n');
+        if (infile >> firstContactCorrection) infile.ignore(lineMax,'\n');
     }
 
     // domain and User data
@@ -110,11 +114,15 @@ double R;
     DEM::Domain dom(NULL,cl);
     dom.SphereCoulombMode = sphereCoulombMode;
     dom.SphereTensileCutoff = tensileCutoff > 0;
+    dom.SphereFirstContactCorrection = firstContactCorrection > 0;
     dom.UseVelocityVerlet = velocityVerlet > 0;
     dom.Alpha=verlet;
     dom.Dilate = true;
-    printf("Sphere contact mode: %zu, tensile cutoff: %s, velocity verlet: %s\n",
-           dom.SphereCoulombMode, dom.SphereTensileCutoff ? "on" : "off",dom.UseVelocityVerlet ? "on" : "off");
+    printf("Sphere contact mode: %zu, tensile cutoff: %s, first contact correction: %s, velocity verlet: %s\n",
+           dom.SphereCoulombMode,
+           dom.SphereTensileCutoff ? "on" : "off",
+           dom.SphereFirstContactCorrection ? "on" : "off",
+           dom.UseVelocityVerlet ? "on" : "off");
     Vec3_t Xmin(-10,-10,-10);
     Vec3_t Xmax(10,10,10);
 

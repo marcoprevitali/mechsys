@@ -23,3 +23,4 @@ linear  = contact law  Contact law, right now only hertz and linear
 2 = sphere Coulomb mode: 0 elastic threshold + dashpot always, 1 elastic threshold + dashpot only no sliding, 2 total threshold + dashpot only no sliding, 3 elastic tangential vs total normal + dashpot only no sliding (i.e. what yade does)
 1 = tensile cutoff: 1 yes, 0 no
 1 = integration scheme: 1 velocity verlet, 0 position verlet
+0 = first contact correction: 1 yes, 0 no
