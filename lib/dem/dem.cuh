@@ -58,7 +58,7 @@ struct dem_aux
     bool   use_wrapZ = false; ///< If true, pWrapZ handles LE shift; ResetMaxD skips it to avoid double-shifting
     real   vZmin = 0.0;    ///< Velocity of Zmin boundary (for contact-wrapping compression)
     real   vZmax = 0.0;    ///< Velocity of Zmax boundary (for contact-wrapping compression)
-    size_t sphereCoulombMode = 0;       ///< Sphere Coulomb mode: 0 default, 1 elastic, 2 total, 3 elastic tangential/total normal
+    size_t sphereCoulombMode = 0;       ///< Sphere Coulomb mode: 0 elastic cap with dashpot, 1 elastic cap dashpot off sliding, 2 total force cap
     bool   sphereTensileCutoff = true;  ///< Clamp tensile total normal force for sphere contacts
 
 };
@@ -153,7 +153,7 @@ __global__ void CalcForceVV(InteractonCU const * Int, ComInteractonCU * CInt, Dy
     if (delta > 0.0)
     {
         size_t sphereCoulombMode = demaux[0].sphereCoulombMode;
-        if (sphereCoulombMode > 3) sphereCoulombMode = 0;
+        if (sphereCoulombMode > 2) sphereCoulombMode = 0;
 
         real3  n   = -1.0 * Branch / dist;
         real   d   = (r1*r1 - r2*r2 + dist*dist) / (2.0 * dist);
@@ -190,22 +190,20 @@ __global__ void CalcForceVV(InteractonCU const * Int, ComInteractonCU * CInt, Dy
         real3 Ft_dashpot = Int[id].Gt * vt;             // tangential dashpot force
 
         real friction_limit = Int[id].Mu * norm(Fn_elastic);
-        if (sphereCoulombMode == 2 || sphereCoulombMode == 3) {
+        if (sphereCoulombMode == 2) {
             friction_limit = Int[id].Mu * norm(Fn_total);
         }
 
-        bool checkElasticTangential = sphereCoulombMode != 2;
-        bool keepTangentialDashpotDuringSliding = sphereCoulombMode == 0;
         real3 Ft_total;
         real3 tan = make_real3(0.0, 0.0, 0.0);
 
-        if (checkElasticTangential) {
+        if (sphereCoulombMode == 0 || sphereCoulombMode == 1) {
             real ftElasticNorm = norm(Ft_elastic);
             if (ftElasticNorm > friction_limit) {
                 tan = Ft_elastic / ftElasticNorm;
                 Ft_elastic = friction_limit * tan;
                 DIntVV[ic].Ft = Ft_elastic;
-                if (!keepTangentialDashpotDuringSliding) {
+                if (sphereCoulombMode == 1) {
                     Ft_dashpot = make_real3(0.0, 0.0, 0.0);
                 }
             }
@@ -217,12 +215,10 @@ __global__ void CalcForceVV(InteractonCU const * Int, ComInteractonCU * CInt, Dy
                 tan = Ft_total_tentative / ftTotalNorm;
 
                 // cap the force to the sliding portion
-                Ft_total_tentative = friction_limit * tan;
-                Ft_elastic = Ft_total_tentative;
+                real3 Ft_cap = friction_limit * tan;
+                Ft_elastic = Ft_cap - Ft_dashpot;
                 DIntVV[ic].Ft = Ft_elastic;                 // update stored elastic force
-
-                // set to zero for sliding
-                Ft_dashpot = make_real3(0.0, 0.0, 0.0);
+                Ft_total_tentative = Ft_cap;
             }
             Ft_total = Ft_total_tentative;
         }

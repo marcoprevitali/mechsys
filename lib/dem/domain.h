@@ -227,7 +227,7 @@ public:
     size_t                                            idx_out;                     ///< Index of output
     size_t                                            iter;                        ///< Iteration counter
     size_t                                            ContactLaw;                  ///< Contact law index
-    size_t                                            SphereCoulombMode;           ///< Sphere Coulomb mode: 0 default, 1 elastic, 2 total, 3 elastic tangential/total normal
+    size_t                                            SphereCoulombMode;           ///< Sphere Coulomb mode: 0 elastic cap with dashpot, 1 elastic cap dashpot off sliding, 2 total force cap
     bool                                              SphereTensileCutoff;         ///< Clamp tensile total normal force for sphere contacts
     bool                                              SphereFirstContactCorrection;///< Scale the first active tangential history increment by contact activation fraction
     std::unordered_map<size_t,CInteracton *>          PairtoCInt;                  ///< A map to identify which interacton has a given pair
@@ -728,10 +728,10 @@ if (UseVelocityVerlet){
 pVerletStep1<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pVertsCU, pParticlesCU, pDynParticlesCU, pA, pdemaux);
 pOrientationUpdate<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pVertsCU, pParticlesCU, pDynParticlesCU, pWdot, pdemaux);
 
-pForceVV<<<(demaux.nvvint+Nthread-1)/Nthread, Nthread>>>(pInteractons, pComInteractons, pDynInteractonsVV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
-pForceEE<<<(demaux.neeint+Nthread-1)/Nthread, Nthread>>>(pEdgesCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsEE, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
-pForceVF<<<(demaux.nvfint+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsVF, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
-pForceFV<<<(demaux.nfvint+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsFV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
+if (demaux.nvvint > 0) pForceVV<<<(demaux.nvvint+Nthread-1)/Nthread, Nthread>>>(pInteractons, pComInteractons, pDynInteractonsVV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
+if (demaux.neeint > 0) pForceEE<<<(demaux.neeint+Nthread-1)/Nthread, Nthread>>>(pEdgesCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsEE, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
+if (demaux.nvfint > 0) pForceVF<<<(demaux.nvfint+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsVF, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
+if (demaux.nfvint > 0) pForceFV<<<(demaux.nfvint+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsFV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
 
 
 // 3. Finalise velocities (full step)
@@ -747,10 +747,10 @@ else {
 // OLD CODE, POSITION VERLET + LEAPFROG
 // 1. reset forces
 
-pForceVV<<<(demaux.nvvint+Nthread-1)/Nthread, Nthread>>>(pInteractons, pComInteractons, pDynInteractonsVV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
-pForceEE<<<(demaux.neeint+Nthread-1)/Nthread, Nthread>>>(pEdgesCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsEE, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
-pForceVF<<<(demaux.nvfint+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsVF, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
-pForceFV<<<(demaux.nfvint+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsFV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
+if (demaux.nvvint > 0) pForceVV<<<(demaux.nvvint+Nthread-1)/Nthread, Nthread>>>(pInteractons, pComInteractons, pDynInteractonsVV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
+if (demaux.neeint > 0) pForceEE<<<(demaux.neeint+Nthread-1)/Nthread, Nthread>>>(pEdgesCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsEE, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
+if (demaux.nvfint > 0) pForceVF<<<(demaux.nvfint+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsVF, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
+if (demaux.nfvint > 0) pForceFV<<<(demaux.nfvint+Nthread-1)/Nthread, Nthread>>>(pFacesCU, pFacidCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsFV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
 
 
 // 3. update positions/rotations
@@ -2783,7 +2783,7 @@ inline void Domain::UpdateContacts()
 inline void Domain::CalcForceSphere()
 {
     size_t sphereCoulombMode = SphereCoulombMode;
-    if (sphereCoulombMode > 3) sphereCoulombMode = 0;
+    if (sphereCoulombMode > 2) sphereCoulombMode = 0;
     bool sphereTensileCutoff = SphereTensileCutoff;
     bool sphereFirstContactCorrection = SphereFirstContactCorrection;
 
@@ -2901,28 +2901,28 @@ inline void Domain::CalcForceSphere()
             }
             FricSpheres[p] += vt*dtTangential;
             FricSpheres[p] -= dot(FricSpheres[p],n)*n;
+            Vec3_t FricSpheresTrial = FricSpheres[p];
 
             Vec3_t Ft_elastic = Kt*FricSpheres[p];
             Vec3_t Ft_dashpot = Gt*vt;
             Vec3_t Ft_total = Ft_elastic + Ft_dashpot;
             double friction_limit = Mu*norm(Fn);
-            if (sphereCoulombMode == 2 || sphereCoulombMode == 3)
+            if (sphereCoulombMode == 2)
             {
                 friction_limit = Mu*norm(Fn_total);
             }
 
-            bool checkElasticTangential = sphereCoulombMode != 2;
-            bool keepTangentialDashpotDuringSliding = sphereCoulombMode == 0;
+            Vec3_t FricSpheresNew = FricSpheresTrial;
 
-            if (checkElasticTangential)
+            if (sphereCoulombMode == 0 || sphereCoulombMode == 1)
             {
                 double ftElasticNorm = norm(Ft_elastic);
                 if (ftElasticNorm > friction_limit)
                 {
                     Vec3_t tan = Ft_elastic/ftElasticNorm;
                     Ft_elastic = friction_limit*tan;
-                    FricSpheres[p] = Kt>0.0 ? Ft_elastic/Kt : OrthoSys::O;
-                    if (!keepTangentialDashpotDuringSliding)
+                    FricSpheresNew = Kt>0.0 ? Ft_elastic/Kt : OrthoSys::O;
+                    if (sphereCoulombMode == 1)
                     {
                         Ft_dashpot = OrthoSys::O;
                     }
@@ -2935,12 +2935,13 @@ inline void Domain::CalcForceSphere()
                 if (ftTotalNorm > friction_limit)
                 {
                     Vec3_t tan = Ft_total/ftTotalNorm;
-                    Ft_total = friction_limit*tan;
-                    Ft_elastic = Ft_total;
-                    FricSpheres[p] = Kt>0.0 ? Ft_elastic/Kt : OrthoSys::O;
-                    Ft_dashpot = OrthoSys::O;
+                    Vec3_t Ft_cap = friction_limit*tan;
+                    Ft_elastic = Ft_cap - Ft_dashpot;
+                    FricSpheresNew = Kt>0.0 ? Ft_elastic/Kt : OrthoSys::O;
+                    Ft_total = Ft_cap;
                 }
             }
+            FricSpheres[p] = FricSpheresNew;
 
             Vec3_t F = Fn_total + Ft_total;
             //Vec3_t F = Fn + P1->Props.Gn*dot(n,vrel)*n + P1->Props.Gt*vt;
@@ -3407,7 +3408,7 @@ inline void Domain::UpLoadDevice(size_t Nc, bool first,bool updateState)
         demaux.py     = (Ymax-Ymin)>1e-12;
         demaux.pz     = (Zmax-Zmin)>1e-12;
         demaux.sphereCoulombMode = SphereCoulombMode;
-        if (demaux.sphereCoulombMode > 3) demaux.sphereCoulombMode = 0;
+        if (demaux.sphereCoulombMode > 2) demaux.sphereCoulombMode = 0;
         demaux.sphereTensileCutoff = SphereTensileCutoff;
 
     demaux.nvvint = 0;

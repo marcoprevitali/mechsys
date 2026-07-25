@@ -743,7 +743,7 @@ inline bool CInteractonSphere::CalcForce(double dt, Vec3_t const & Per, size_t c
 
         if (contactlaw == 0)
         {
-            if (sphereCoulombMode > 3) sphereCoulombMode = 0; // if wrong, fall back on the default behaviour
+            if (sphereCoulombMode > 2) sphereCoulombMode = 0; // if wrong, fall back on the default behaviour
 
             Fn = Kn*delta*n;
             Vec3_t Fn_dashpot = Gn*dot(n,vrel)*n;
@@ -760,6 +760,7 @@ inline bool CInteractonSphere::CalcForce(double dt, Vec3_t const & Per, size_t c
 
             Fdvv += vt*dtTangential;
             Fdvv -= dot(Fdvv,n)*n;
+            Vec3_t Fdvv_trial = Fdvv;
             vt_prev = vt;
 
             Vec3_t Ft_elastic = Kt*Fdvv;
@@ -767,26 +768,26 @@ inline bool CInteractonSphere::CalcForce(double dt, Vec3_t const & Per, size_t c
             Vec3_t Ft_total = Ft_elastic + Ft_dashpot;
 
             double friction_limit = Mu*norm(Fn); // modes 0/1, pure elastic normal threshold
-            if (sphereCoulombMode == 2 || sphereCoulombMode == 3) // modes 2/3, total normal threshold
+            if (sphereCoulombMode == 2) // mode 2, total force threshold
             {
                 friction_limit = Mu*norm(Fn_total);
             }
 
+            bool sliding = false;
             bool tangentialDashpotApplied = true;
-            bool checkElasticTangential = sphereCoulombMode != 2;
-            bool keepTangentialDashpotDuringSliding = sphereCoulombMode == 0;
+            Vec3_t Fdvv_new = Fdvv_trial;
 
-            if (checkElasticTangential)
+            if (sphereCoulombMode == 0 || sphereCoulombMode == 1)
             {
                 double ftElasticNorm = norm(Ft_elastic);
                 if (ftElasticNorm > friction_limit)
                 {
+                    sliding = true;
                     Nsc++;
                     Vec3_t tan = Ft_elastic/ftElasticNorm;
                     Ft_elastic = friction_limit*tan;
-                    Fdvv = Kt>0.0 ? Ft_elastic/Kt : OrthoSys::O;
-                    dEfric += Kt*dot(Fdvv,vt)*dt;
-                    if (!keepTangentialDashpotDuringSliding)
+                    Fdvv_new = Kt>0.0 ? Ft_elastic/Kt : OrthoSys::O;
+                    if (sphereCoulombMode == 1)
                     {
                         Ft_dashpot = OrthoSys::O;
                         tangentialDashpotApplied = false;
@@ -799,19 +800,25 @@ inline bool CInteractonSphere::CalcForce(double dt, Vec3_t const & Per, size_t c
                 double ftTotalNorm = norm(Ft_total);
                 if (ftTotalNorm > friction_limit)
                 {
+                    sliding = true;
                     Nsc++;
                     Vec3_t tan = Ft_total/ftTotalNorm;
-                    Ft_total = friction_limit*tan;
-                    Ft_elastic = Ft_total;
-                    Fdvv = Kt>0.0 ? Ft_elastic/Kt : OrthoSys::O;
-                    Ft_dashpot = OrthoSys::O;
-                    tangentialDashpotApplied = false;
-                    dEfric += Kt*dot(Fdvv,vt)*dt;
+                    Vec3_t Ft_cap = friction_limit*tan;
+                    Ft_elastic = Ft_cap - Ft_dashpot;
+                    Fdvv_new = Kt>0.0 ? Ft_elastic/Kt : OrthoSys::O;
+                    Ft_total = Ft_cap;
                 }
             }
+            if (sliding)
+            {
+                Vec3_t plastic_disp = Fdvv_trial - Fdvv_new;
+                dEfric += friction_limit*norm(plastic_disp);
+            }
+            Fdvv = Fdvv_new;
 
             Ftnet += Ft_elastic;
             Ftdpot += Ft_dashpot;
+            Epot += 0.5*Kn*delta*delta + (Kt>0.0 ? 0.5*dot(Ft_elastic,Ft_elastic)/Kt : 0.0);
 
             double Kr = beta*Kt;
             Vec3_t Vr = P1->Props.R*P2->Props.R*cross(Vec3_t(t1 - t2),n)/(P1->Props.R+P2->Props.R);
