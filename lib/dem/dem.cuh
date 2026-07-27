@@ -60,6 +60,7 @@ struct dem_aux
     real   vZmax = 0.0;    ///< Velocity of Zmax boundary (for contact-wrapping compression)
     size_t sphereCoulombMode = 0;       ///< Sphere Coulomb mode: 0 elastic cap with dashpot, 1 elastic cap dashpot off sliding, 2 total force cap
     bool   sphereTensileCutoff = true;  ///< Clamp tensile total normal force for sphere contacts
+    bool   sphereFirstContactCorrection = false; ///< Scale first active tangential increment by contact activation fraction
 
 };
 
@@ -149,11 +150,19 @@ __global__ void CalcForceVV(InteractonCU const * Int, ComInteractonCU * CInt, Dy
     real delta = r1 + r2 - dist;
 
     DIntVV[ic].Fn = make_real3(0.0, 0.0, 0.0);
+    if (delta <= 0.0) {
+        DIntVV[ic].Ft = make_real3(0.0, 0.0, 0.0);
+        DIntVV[ic].InContact = false;
+        DIntVV[ic].PrevDelta = delta;
+    }
 
     if (delta > 0.0)
     {
         size_t sphereCoulombMode = demaux[0].sphereCoulombMode;
         if (sphereCoulombMode > 2) sphereCoulombMode = 0;
+        bool newContact = !DIntVV[ic].InContact;
+        real prevDelta = DIntVV[ic].PrevDelta;
+        DIntVV[ic].InContact = true;
 
         real3  n   = -1.0 * Branch / dist;
         real   d   = (r1*r1 - r2*r2 + dist*dist) / (2.0 * dist);
@@ -183,7 +192,14 @@ __global__ void CalcForceVV(InteractonCU const * Int, ComInteractonCU * CInt, Dy
         DIntVV[ic].Fn = Fn_total;
 
         // increment tangential displacement
-        DIntVV[ic].Ft = DIntVV[ic].Ft + (Int[id].Kt * demaux[0].dt) * vt;
+        real dtTangential = demaux[0].dt;
+        if (demaux[0].sphereFirstContactCorrection && newContact && prevDelta < 0.0 && delta > prevDelta) {
+            real activationFraction = delta/(delta - prevDelta);
+            if (activationFraction < 0.0) activationFraction = 0.0;
+            if (activationFraction > 1.0) activationFraction = 1.0;
+            dtTangential *= activationFraction;
+        }
+        DIntVV[ic].Ft = DIntVV[ic].Ft + (Int[id].Kt * dtTangential) * vt;
         DIntVV[ic].Ft = DIntVV[ic].Ft - dotreal3(DIntVV[ic].Ft, n) * n;
 
         real3 Ft_elastic = DIntVV[ic].Ft;               // elastic tangential force
@@ -278,6 +294,7 @@ __global__ void CalcForceVV(InteractonCU const * Int, ComInteractonCU * CInt, Dy
         atomicAdd(&Par[i2].T.x, T2.x);
         atomicAdd(&Par[i2].T.y, T2.y);
         atomicAdd(&Par[i2].T.z, T2.z);
+        DIntVV[ic].PrevDelta = delta;
     }
 }
 
@@ -303,9 +320,17 @@ __global__ void CalcForceVV_Hertz(InteractonCU const * Int, ComInteractonCU * CI
     real delta = r1 + r2 - dist;
 
     DIntVV[ic].Fn = make_real3(0.0,0.0,0.0);
+    if (delta <= 0.0) {
+        DIntVV[ic].Ft = make_real3(0.0, 0.0, 0.0);
+        DIntVV[ic].InContact = false;
+        DIntVV[ic].PrevDelta = delta;
+    }
 
     if (delta>0.0)
     {
+        bool newContact = !DIntVV[ic].InContact;
+        real prevDelta = DIntVV[ic].PrevDelta;
+        DIntVV[ic].InContact = true;
         real3  n   = -1.0*Branch/dist;
         real   d   = (r1*r1-r2*r2+dist*dist)/(2.0*dist);
         real3  x1c = xi+d*n;
@@ -321,7 +346,14 @@ __global__ void CalcForceVV_Hertz(InteractonCU const * Int, ComInteractonCU * CI
 
         real sqrtdelta = sqrt(delta);
         DIntVV[ic].Fn  = Int[id].Kn*sqrtdelta*delta*n;
-        DIntVV[ic].Ft  = DIntVV[ic].Ft + (Int[id].Kt*sqrtdelta*demaux[0].dt)*vt;
+        real dtTangential = demaux[0].dt;
+        if (demaux[0].sphereFirstContactCorrection && newContact && prevDelta < 0.0 && delta > prevDelta) {
+            real activationFraction = delta/(delta - prevDelta);
+            if (activationFraction < 0.0) activationFraction = 0.0;
+            if (activationFraction > 1.0) activationFraction = 1.0;
+            dtTangential *= activationFraction;
+        }
+        DIntVV[ic].Ft  = DIntVV[ic].Ft + (Int[id].Kt*sqrtdelta*dtTangential)*vt;
         DIntVV[ic].Ft  = DIntVV[ic].Ft - dotreal3(DIntVV[ic].Ft,n)*n;
 
         real3 tan = DIntVV[ic].Ft;
@@ -374,6 +406,7 @@ __global__ void CalcForceVV_Hertz(InteractonCU const * Int, ComInteractonCU * CI
         atomicAdd(& Par[i2].T.x,            T2.x);
         atomicAdd(& Par[i2].T.y,            T2.y);
         atomicAdd(& Par[i2].T.z,            T2.z);
+        DIntVV[ic].PrevDelta = delta;
     }
 }
 

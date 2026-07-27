@@ -1190,6 +1190,8 @@ struct DynInteractonCU
     real3          Fn;        ///< Normal force between elements
     real3          Ft;        ///< Net tangential force
     real3          Fr;        ///< Rolling resistance tangential force
+    real           PrevDelta; ///< Previous signed overlap for first-contact increment correction
+    bool           InContact; ///< Was this interaction overlapping in the previous force step?
 };
 
 #endif

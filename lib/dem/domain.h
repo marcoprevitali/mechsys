@@ -3410,6 +3410,7 @@ inline void Domain::UpLoadDevice(size_t Nc, bool first,bool updateState)
         demaux.sphereCoulombMode = SphereCoulombMode;
         if (demaux.sphereCoulombMode > 2) demaux.sphereCoulombMode = 0;
         demaux.sphereTensileCutoff = SphereTensileCutoff;
+        demaux.sphereFirstContactCorrection = SphereFirstContactCorrection;
 
     demaux.nvvint = 0;
     demaux.neeint = 0;
@@ -3508,6 +3509,8 @@ inline void Domain::UpLoadDevice(size_t Nc, bool first,bool updateState)
                 Ft          = OrthoSys::O;
                 if (norm(Cis->Fdr) >0.0) Ft = Cis->Fdr*Cis->Kt*Cis->beta;
                 DIcu.Fr     = make_real3(Ft(0),Ft(1),Ft(2));
+                DIcu.PrevDelta = Cis->PrevDelta;
+                DIcu.InContact = Cis->InContact;
 
                 hDynInteractonsVV[Ivv[2*ii]] = DIcu;
                 //hDynInteractonsVV[idvv] = DIcu;
@@ -3525,6 +3528,8 @@ inline void Domain::UpLoadDevice(size_t Nc, bool first,bool updateState)
                 DIcu.Idx     = ii;
                 DIcu.IF1     = if1 + Particles[i1]->Nei;
                 DIcu.IF2     = if2 + Particles[i2]->Nei;
+                DIcu.PrevDelta = 0.0;
+                DIcu.InContact = false;
 
                 size_t p    = HashFunction(if1,if2);
                 Vec3_t Ft   = OrthoSys::O;
@@ -3545,6 +3550,8 @@ inline void Domain::UpLoadDevice(size_t Nc, bool first,bool updateState)
                 DIcu.Idx     = ii;
                 DIcu.IF1     = if1 + Particles[i1]->Nvi;
                 DIcu.IF2     = if2 + Particles[i2]->Nfi;
+                DIcu.PrevDelta = 0.0;
+                DIcu.InContact = false;
 
                 size_t p    = HashFunction(if1,if2);
                 Vec3_t Ft   = OrthoSys::O;
@@ -3565,6 +3572,8 @@ inline void Domain::UpLoadDevice(size_t Nc, bool first,bool updateState)
                 DIcu.Idx     = ii;
                 DIcu.IF1     = if1 + Particles[i1]->Nfi;
                 DIcu.IF2     = if2 + Particles[i2]->Nvi;
+                DIcu.PrevDelta = 0.0;
+                DIcu.InContact = false;
 
                 size_t p    = HashFunction(if1,if2);
                 Vec3_t Ft   = OrthoSys::O;
@@ -3665,6 +3674,8 @@ inline void Domain::DnLoadDevice(size_t Nc, bool force)
             Cis->Fdr (0) = hDynInteractonsVV[ivv].Fr.x/Cis->Kt;
             Cis->Fdr (1) = hDynInteractonsVV[ivv].Fr.y/Cis->Kt;
             Cis->Fdr (2) = hDynInteractonsVV[ivv].Fr.z/Cis->Kt;
+            Cis->PrevDelta = hDynInteractonsVV[ivv].PrevDelta;
+            Cis->InContact = hDynInteractonsVV[ivv].InContact;
             if (fabs(Cis->beta)>0.0)
             {
                 Cis->Fdr/=Cis->beta;
