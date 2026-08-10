@@ -158,8 +158,6 @@ __global__ void CalcForceVV(InteractonCU const * Int, ComInteractonCU * CInt, Dy
 
     if (delta > 0.0)
     {
-        size_t sphereCoulombMode = demaux[0].sphereCoulombMode;
-        if (sphereCoulombMode > 2) sphereCoulombMode = 0;
         bool newContact = !DIntVV[ic].InContact;
         real prevDelta = DIntVV[ic].PrevDelta;
         DIntVV[ic].InContact = true;
@@ -182,8 +180,8 @@ __global__ void CalcForceVV(InteractonCU const * Int, ComInteractonCU * CInt, Dy
         real3 Fn_dashpot    = Int[id].Gn * dotreal3(n, vrel) * n;
         real3 Fn_total   = Fn_elastic + Fn_dashpot;
 
-        // add tensile cap
-        if (demaux[0].sphereTensileCutoff && dotreal3(Fn_total, n) < 0.0) {
+        // always apply the tensile cutoff to the total normal force
+        if (dotreal3(Fn_total, n) < 0.0) {
             Fn_total = make_real3(0.0, 0.0, 0.0);
             Fn_dashpot = -1.0 * Fn_elastic;
         }
@@ -202,54 +200,49 @@ __global__ void CalcForceVV(InteractonCU const * Int, ComInteractonCU * CInt, Dy
         DIntVV[ic].Ft = DIntVV[ic].Ft + (Int[id].Kt * dtTangential) * vt;
         DIntVV[ic].Ft = DIntVV[ic].Ft - dotreal3(DIntVV[ic].Ft, n) * n;
 
-        real3 Ft_elastic = DIntVV[ic].Ft;               // elastic tangential force
-        real3 Ft_dashpot = Int[id].Gt * vt;             // tangential dashpot force
+        real3 Ft_elastic_trial = DIntVV[ic].Ft;          // trial elastic tangential force
+        real3 Ft_elastic = Ft_elastic_trial;
+        real3 Ft_dashpot = Int[id].Gt * vt;              // tangential dashpot force
+        real3 Ft_total = Ft_elastic + Ft_dashpot;
 
-        real friction_limit = Int[id].Mu * norm(Fn_elastic);
-        if (sphereCoulombMode == 2) {
-            friction_limit = Int[id].Mu * norm(Fn_total);
+        // The Coulomb limit is based on the total normal force and limits the
+        // total tangential force.  Keep the dashpot contribution in the
+        // capped force and update only the stored elastic history.
+        real friction_limit = Int[id].Mu * norm(Fn_total);
+        real ftTotalNorm = norm(Ft_total);
+        if (ftTotalNorm > friction_limit) {
+            real3 tan = Ft_total / ftTotalNorm;
+            real3 Ft_cap = friction_limit * tan;
+            Ft_elastic = Ft_cap - Ft_dashpot;
+            DIntVV[ic].Ft = Ft_elastic;
+            Ft_total = Ft_cap;
+
+            // The force history is Kt times the tangential displacement, so
+            // the plastic displacement is the trial-to-capped history change.
+            if (Int[id].Kt > 0.0) {
+                real3 plastic_disp = (Ft_elastic_trial - Ft_elastic) / Int[id].Kt;
+                CInt[id].dEfric = friction_limit * norm(plastic_disp);
+            }
         }
 
-        real3 Ft_total;
-        real3 tan = make_real3(0.0, 0.0, 0.0);
-
-        if (sphereCoulombMode == 0 || sphereCoulombMode == 1) {
-            real ftElasticNorm = norm(Ft_elastic);
-            if (ftElasticNorm > friction_limit) {
-                tan = Ft_elastic / ftElasticNorm;
-                Ft_elastic = friction_limit * tan;
-                DIntVV[ic].Ft = Ft_elastic;
-                if (sphereCoulombMode == 1) {
-                    Ft_dashpot = make_real3(0.0, 0.0, 0.0);
-                }
-            }
-            Ft_total = Ft_elastic + Ft_dashpot;
-        } else {
-            real3 Ft_total_tentative = Ft_elastic + Ft_dashpot;
-            real ftTotalNorm = norm(Ft_total_tentative);
-            if (ftTotalNorm > friction_limit) {
-                tan = Ft_total_tentative / ftTotalNorm;
-
-                // cap the force to the sliding portion
-                real3 Ft_cap = friction_limit * tan;
-                Ft_elastic = Ft_cap - Ft_dashpot;
-                DIntVV[ic].Ft = Ft_elastic;                 // update stored elastic force
-                Ft_total_tentative = Ft_cap;
-            }
-            Ft_total = Ft_total_tentative;
-        }
+        CInt[id].Epot = 0.5 * Int[id].Kn * delta * delta
+                        + (Int[id].Kt > 0.0
+                           ? 0.5 * dotreal3(Ft_elastic, Ft_elastic) / Int[id].Kt
+                           : 0.0);
+        CInt[id].dEvis = (Int[id].Gn * dotreal3(vrel - vt, vrel - vt)
+                          + Int[id].Gt * dotreal3(vt, vt)) * demaux[0].dt;
 
         real3 vr = r1 * r2 * cross((t1 - t2), n) / (r1 + r2);
         DIntVV[ic].Fr = DIntVV[ic].Fr + (Int[id].Beta * Int[id].Kt * demaux[0].dt) * vr;
         DIntVV[ic].Fr = DIntVV[ic].Fr - dotreal3(DIntVV[ic].Fr, n) * n;
 
-        tan = DIntVV[ic].Fr;
+        real3 tan = DIntVV[ic].Fr;
         if (norm(tan) > 0.0) tan = tan / norm(tan);
         if (norm(DIntVV[ic].Fr) > Int[id].Eta * Int[id].Mu * norm(DIntVV[ic].Fn)) {
             DIntVV[ic].Fr = Int[id].Eta * Int[id].Mu * norm(DIntVV[ic].Fn) * tan;
         }
 
-        // elastic + dashpot + elastic + dashpot (if not sliding)
+        // total normal and tangential contact force
         DIntVV[ic].F = Fn_total + Ft_total;
 
         real3 T1, T2, T, Tt;
@@ -962,6 +955,9 @@ __global__ void Reset (ParticleCU * Par, DynParticleCU * DPar, InteractonCU cons
         CInt[id].Fndpot = make_real3(0.0,0.0,0.0);
         CInt[id].Ftdpot = make_real3(0.0,0.0,0.0);
         CInt[id].Fther = make_real3(0.0,0.0,0.0);
+        CInt[id].Epot = 0.0;
+        CInt[id].dEvis = 0.0;
+        CInt[id].dEfric = 0.0;
     }
     else return;
 }

@@ -1176,6 +1176,9 @@ struct ComInteractonCU
     real3          Fndpot;     // dashpot forces (normal)
     real3          Ftdpot;     // dashpot forces (normal)
     real3          Fther;       // thermostat forces 
+    real           Epot;       ///< Elastic potential energy
+    real           dEvis;      ///< Viscous energy dissipated during the force step
+    real           dEfric;     ///< Frictional energy dissipated during the force step
 
 };
 

@@ -3491,6 +3491,9 @@ inline void Domain::UpLoadDevice(size_t Nc, bool first,bool updateState)
         Icu.Ftf     = make_real3(0.0,0.0,0.0);
         CIcu.I1     = i1;
         CIcu.I2     = i2;
+        CIcu.Epot   = 0.0;
+        CIcu.dEvis  = 0.0;
+        CIcu.dEfric = 0.0;
         if (Particles[i1]->Verts.Size()==1 && Particles[i2]->Verts.Size()==1)
         {
 
@@ -3749,6 +3752,14 @@ inline void Domain::DnLoadDevice(size_t Nc, bool force)
             Ci->Fther(0) = hComInteractons[ii].Fther.x;
             Ci->Fther(1) = hComInteractons[ii].Fther.y;
             Ci->Fther(2) = hComInteractons[ii].Fther.z;
+            if (ContactLaw == 0
+                && Ci->P1->Verts.Size() == 1
+                && Ci->P2->Verts.Size() == 1)
+            {
+                Ci->Epot   = hComInteractons[ii].Epot;
+                Ci->dEvis  = hComInteractons[ii].dEvis;
+                Ci->dEfric = hComInteractons[ii].dEfric;
+            }
             if (Ci->BothFree) // I had to do this due to the two definitions for BranchVec function
             {
                 BranchVec(Ci->P2->x,Ci->P1->x,Ci->Branch,Per);
