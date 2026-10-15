@@ -1,8 +1,8 @@
 # MechSys GPU DEM optimization — PROJECT_STATUS.md
 
-**As-of:** 2026-10-15 (P0 first measurements)
-**State:** `F0 PASS` / `V0 PARTIAL` / `P0 FIRST MEASUREMENTS COMPLETE (S-small, S-mid, P-small; registered inputs)`
-**Next authorized work:** reconcile the measured host-sync/transfer dominance against the historical rebuild/geometry percentages (larger-N registered workloads), then finish remaining `V0` oracles. Do not begin a broad rewrite.
+**As-of:** 2026-10-15 (P0 first measurements; P0-L registered)
+**State:** `F0 PASS` / `V0 PARTIAL` / `P0 FIRST MEASUREMENTS COMPLETE` / `P0-L REGISTERED — NEXT`
+**Next authorized work:** `P0-L` exact legacy benchmark reproduction (recover/verify the 18.6k/154k sphere and 77k polyhedron historical configurations, reproduce timing decompositions, classify per `AGENTS.md` §5.1). **No CUDA algorithm changes during P0-L.** Then `P0-R` reconciliation and remaining `V0` oracles. Do not begin a broad rewrite.
 **Agent:** GLM-5.3 Flash (or successor); operational rules in `AGENTS.md`.
 **Original project:** https://github.com/Axtal/mechsys
 **Fork URL / owner:** https://github.com/marcoprevitali/mechsys / `marcoprevitali` (authenticated account and public fork metadata verified 2026-10-15)
@@ -200,7 +200,58 @@ Findings: (1) fixed-list run costs ~27 ms/step wall but only ~1.60 ms/step GPU (
 
 **Consequences for work order:** the measured evidence does not support starting S1 (uniform-skin sweep) as the next optimization on these registered workloads, because rebuild cost is not yet dominant at accessible scales; the priority is to quantify how the sphere host-sync overhead and the polyhedron per-step memcpy behave at larger N (toward the historical 18.6k/154k sphere and 77k polyhedron regimes) before choosing the first optimization target. Update §4 dependencies after that reconciliation.
 
+### 5.3 `P0-L` — exact legacy benchmark reproduction (NEXT; registered 2026-10-15)
+
+Priority: HIGH — mandatory before optimization selection. Requirements and hard rules: `AGENTS.md` §5.1. **No CUDA algorithm changes during P0-L.** Historical and current P0 datasets remain separate, each with its own provenance.
+
+**Recovered historical record (Task 1, first pass — 2026-10-15):**
+
+- The canonical previous-study summary was located at `/home/msys/Documents/xwechat_files/wxid_3vuoi80voian22_571b/msg/file/2026-10/DEM_GPU_OPTIMIZATIONS.txt` (received 2026-10-14, 21,206 bytes, SHA256 `a62db59489f1a169e258f99e49c536ad37c32f676a5f386f9a4161c33131667c`) and archived in the fork at `docs/perf/history/DEM_GPU_OPTIMIZATIONS.txt` (hash in `docs/perf/history/SHA256SUMS.txt`). This supersedes the second-hand transcription in §1 as the primary historical source.
+- No original legacy input files were found: the only `test_cu_04` input in the original checkout is the unrelated `test_cu_04_reduced.inp` (207 spheres); the HPC checkout `/home/msys/HPC/storage/mechsys` is an older revision of the same branch (HEAD `fb6eee8`) with unrelated untracked diagnostics work and no legacy inputs; no legacy inputs exist in any build/sandbox directory.
+
+**Historical configuration facts extracted from the primary record:**
+
+| Benchmark | Historical facts |
+|---|---|
+| S-legacy-small (18.6k) | `test_cu_04`, sphereboxhcp; compression 6.647 s, shear 7.648 s (before change 1); 38 rebuilds averaging ~119.6 ms (pre-change-2); rebuild inner split: CPU search 67-70%, D2H ~15%, H2D 15-18%; Alpha sweep 0.01→0.02: 7.585→5.757 s, 38→17 rebuilds; run continued past iteration 20001; 154k energies bit-identical: 0 / 11.1031 / 51.104 |
+| S-legacy-large (154k) | rebuild is 91% of the shear solve; CPU search 62.8%, D2H 14.4%, H2D 22.8% |
+| P-legacy-large (77k) | 77,002 particles; 1,815,920 vertices; 1,361,939 edges; 530,981 faces; 403,764 contact pairs; per-step candidates EE 15,992,853 / VF 5,936,551 / FV 5,938,065 / VV 0; **1001 steps**; solve ~197.36 s (197.79/197.34/196.96) → ~197 ms/step; one rebuild 23.6 s (81.2% CInteracton construction, 12.3% stale erase); ListPosPairs peak 85,748,325 (~1.4 GB); final energy 369.835 deterministic over 6 runs |
+
+**Preliminary reconciliation observations (to be resolved by Tasks 2-5):**
+
+1. *Sphere rebuild share:* 38 rebuilds × ~119.6 ms = 4.54 s = **59%** of the reported 7.648 s shear solve, not the reported 84%. Either the 84% used a different window/definition, or rebuild-adjacent work (solve-loop D2H/H2D, map maintenance outside the timed bucket) was included. The Alpha sweep is roughly consistent with ~120 ms/rebuild (21 fewer rebuilds ≈ the 1.83 s saved), so per-rebuild cost and the sweep agree with each other but not with the 84% headline.
+2. *Polyhedron step count:* the record's 1001 steps is irreconcilable with current `test_cu_03.cu` defaults (dt=1e-5, Tf=10 → 1,000,001 steps). The historical run therefore used modified, never-committed parameters. A 1001-step reconstruction is possible via the `54574e0` argv parameterization, but timestep/stage equivalence must be argued explicitly or the workload classified below `LEGACY_EXACT`.
+3. *Polyhedron particle count:* current `AddVoroPack(-1, 0.1, 20,20,240, 20,20,240, 1.0, false, true, 1000, 0.8)` implies 96,000×0.8 = 76,800 grains, not the recorded 77,002. The 202-grain difference (library version, fraction semantics, or a different recorded run) must be identified empirically before any reproduction claim.
+
+**Workload classification (initial, per `AGENTS.md` §5.1):**
+
+| Benchmark | Input files | Configuration | Initial state | Classification (initial) |
+|---|---|---|---|---|
+| S-legacy-small | `LEGACY_UNAVAILABLE` | partially recoverable from record | not yet checkable | `LEGACY_UNAVAILABLE` (pending Task 2 reconstruction) |
+| S-legacy-large | `LEGACY_UNAVAILABLE` | partially recoverable | not yet checkable | `LEGACY_UNAVAILABLE` (pending) |
+| P-legacy-large | `LEGACY_UNAVAILABLE` | step count/defaults conflict noted above | counts checkable against record | `LEGACY_UNAVAILABLE` (pending) |
+
+**Comparison table skeleton (Task 5; fill during P0-L execution):** Measurement | Historical | Exact legacy reproduction | Current P0 — rows: particle count; geometry count; candidate interactions; actual contacts; Verlet distance; rebuild count; average rebuild time; rebuild percentage (84-91% spheres vs measured); GPU kernel percentage; total runtime. Current-P0 column values are in §5.2 (spheres rebuild share 1.3-3.3%).
+
+**Timing decomposition requirements (Task 4):** separate setup/initial-list, force kernels, integration, per-step sync/transfers, CPU list reconstruction, GPU uploads, allocation, finalization; report `f_rebuild = (Σ_k T_rebuild,k) / T_measured_wall` with numerator and denominator over the same interval; >=3 comparable repetitions, interleaved for A/B; never compare initialization-heavy short runs against long steady-state runs without separating components.
+
+**Acceptance (Task 6):** per-workload classification per `AGENTS.md` §5.1; only `LEGACY_EXACT` may be called an exact reproduction. If a full-size benchmark cannot run within resources, preserve the verified configuration, document the limiting resource, and report the incomplete measurement — do not silently reduce problem size.
+
+**Deliverables (Task 7):** machine-readable configuration manifests (input/executable hashes, Git commit, particle/geometry counts, all parameters) stored with raw artifacts under `/home/msys/SIMS/mechsys_p0_baseline/`; completed comparison table; timing decomposition; quantitative discrepancy explanation; final classifications; recommendation for the first optimization milestone.
+
+**Revised milestone sequence:**
+
+| Milestone | Task | Status |
+|---|---|---|
+| P0 | Initial performance measurements | Complete (§5.2) |
+| P0-L | Recover and reproduce exact legacy benchmarks | **Next** |
+| P0-R | Reconcile historical and current bottlenecks | Pending P0-L |
+| V0 | Complete numerical correctness oracles | Outstanding |
+| P1 | Select first optimization from verified bottlenecks | Blocked by P0-R and relevant V0 gates |
+
 ## 6. Git/repository topology and record
+
+
 
 
 
@@ -214,7 +265,7 @@ Upstream branch:    main (remote HEAD verified by `git ls-remote --symref`)
 Original SHA:       e4ba163ec9f32c8bccb0fd8619ba79e000d3d6d8
 Imported patch SHA: NOT IMPORTED; preserved artifact SHA256 e98dcc578695992948f3d804f572f6b212888ac2381832ae261be9c4e99132e9
 Baseline branch:    perf/gpu-baseline at c88dc99f415dbf7b7bc3b1764fdf5506f0d66c9e
-Active topic:       perf/p0-instrumentation at 54574e0 (test_cu_03 parameterization; P0 first measurements recorded in PROJECT_STATUS.md)
+Active topic:       perf/p0-instrumentation (P0 measurements + P0-L registration; see `git log` for exact SHAs; branch pushed to origin)
 Protection:         `origin` = user's fork; `upstream` fetch-only / push-disabled
 ```
 
@@ -250,13 +301,17 @@ Protection:         `origin` = user's fork; `upstream` fetch-only / push-disable
 | 2026-10-15 | Historical sphere rebuild dominance (84-91%) does NOT reproduce at registered scales; S-small/S-mid are host-synchronization-bound (GPU idle ~55%) | §5.2 rebuild shares 1.3-3.3% of wall; nsys API/kernel split | MEASURED; needs larger-N reconciliation before S1 |
 | 2026-10-15 | Registered P-small polyhedron regime is per-step-transfer-bound (cudaMemcpyAsync ~5/step), not geometry-kernel-bound | §5.2 nsys: 1.6 ms/step GPU vs 27 ms/step wall | MEASURED; needs larger-N reconciliation before P1/P2 |
 | 2026-10-15 | Do not start S1 solely from historical percentages; reconcile bottleneck scaling with N first | §5.2 consequences paragraph | PLAN REVISED |
+| 2026-10-15 | `P0-L` milestone registered with hard rules (no CUDA algorithm changes; separate dataset provenance; explicit legacy classifications) | User work order; `AGENTS.md` §5.1 | REQUIRED, NEXT |
+| 2026-10-15 | Canonical historical record recovered and archived (`DEM_GPU_OPTIMIZATIONS.txt`, SHA256 `a62db594…`); no legacy input files found anywhere on the machine | §5.3 Task-1 first pass | SOURCE VERIFIED |
+| 2026-10-15 | Historical record is internally inconsistent on the sphere rebuild share (38×119.6 ms = 59% of shear solve, not 84%) and the polyhedron config (1001 steps and 77,002 particles vs current defaults' 1,000,001 steps and 76,800 grains) | §5.3 preliminary observations | UNRESOLVED — P0-L Tasks 2-5 |
 
-### Current bounded task
+### Current bounded task (`P0-L`)
 
-1. Reconcile bottleneck scaling with N: register and measure one larger sphere workload (toward 18.6k-154k particles) and one larger polyhedron workload (toward the 77k-polyhedron legacy regime, e.g. 20x20x40 cells first), with the same uncontaminated protocol, to determine whether rebuild share (spheres) or geometry-kernel share (polyhedra) grows toward the historical percentages. Only then select the first bounded optimization experiment (S1 vs a host-sync/transfer-reduction experiment).
-2. Complete V0 oracles for candidate completeness, rebuild history continuity, periodic/moving-wall cases, restart, and one coupled LBM-DEM runtime.
-3. Decide whether the stale `PAngacceleration` and frame-0 contact diagnostics are corrected or explicitly excluded from the output contract; keep that patch separate from performance work.
-4. For any A/B comparison, exclude the ~6-7 s fixed startup window or use matching complete-solve windows, and use >=3 interleaved paired repetitions.
+1. **Task 2 — configuration recovery:** reconstruct the three legacy configurations from the primary record (`docs/perf/history/DEM_GPU_OPTIMIZATIONS.txt`) plus code reading. For the spheres, identify the `sphereboxhcp` parameters (box, R, fraction, seed, dt, stages, Alpha) that yield exactly 18,600 and 154,000 particles; for polyhedra, resolve the 1001-step and 77,002-particle conflicts against current defaults. Produce machine-readable manifests with all hashes; record every assumption explicitly.
+2. **Task 3 — initial-state verification:** run the reconstructed initializations and compare particle/vertex/edge/face counts and candidate/contact counts against the historical reference values; distinguish verified equivalence from unverifiable quantities.
+3. **Task 4 — timing reproduction:** run the legacy configurations unchanged (no CUDA algorithm modifications), decompose timings per `AGENTS.md` §5.1, compute `f_rebuild`, and test reproducibility of the 84-91% claim and the 38×119.6 ms arithmetic. >=3 repetitions, interleaved where comparing.
+4. **Task 5-7 — comparison, classification, documentation:** complete the Historical vs Legacy-reproduction vs Current-P0 table, assign `LEGACY_*` classifications, explain discrepancies quantitatively, and record the first-optimization recommendation in this file.
+5. In parallel where runs are long: continue the outstanding `V0` oracles; keep P0-L artifacts under `/home/msys/SIMS/mechsys_p0_baseline/` with manifests.
 
 **Session log template:**
 

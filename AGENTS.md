@@ -171,11 +171,49 @@ Do not unilaterally change the contact model to make a test pass. Investigate fi
 
 **Do not set a universal mandatory speedup percentage.** Promote only measured improvements whose confidence and maintenance complexity justify them; small (<~3%) wins require extra scrutiny and repeated independent runs. Never invent new benchmarks from theoretical peak bandwidth or atomic counts.
 
+### 5.1 Legacy benchmark verification (`P0-L`) — mandatory before optimization selection
+
+**Objective:** reconstruct and reproduce the original MechSys CUDA benchmarks used in the previous GPU performance study (`S-legacy-small` = `tdem/test_cu_04` sphereboxhcp 18,600 particles; `S-legacy-large` = same at 154,000; `P-legacy-large` = `tdem/test_cu_03` Voronoi column collapse 77,002 particles), and determine whether discrepancies between historical and current P0 measurements arise from simulation configuration, particle counts, execution stages, code versions, or profiling methodology.
+
+**Hard rules:**
+
+- Do **not modify CUDA algorithms** during `P0-L`. The milestone is strictly about reproducing and understanding existing performance results. Any source change is limited to benchmark harness/input parameterization that provably preserves default behavior.
+- The historical experiments and the current P0 measurements remain **separate datasets, each with its own provenance**. Never merge, average, or relabel one as the other.
+- Do **not** substitute approximately equivalent particle counts or newly constructed geometries and label them as legacy reproductions. If original inputs or initialization procedures cannot be recovered, report `LEGACY_UNAVAILABLE` (or the lower classification) explicitly; never silently reconstruct from assumptions.
+- Historical performance numbers must not be used to justify any future GPU optimization unless the supporting workload is classified `LEGACY_EXACT`, or `LEGACY_EQUIVALENT` with every difference from the historical state documented in `PROJECT_STATUS.md`.
+- Only `LEGACY_EXACT` results may be described as "exact reproductions" in any document or claim.
+
+**Classification (per workload):**
+
+- `LEGACY_EXACT` — original configuration recovered and verified, including initial state where reference data permit.
+- `LEGACY_EQUIVALENT` — relevant numerical configuration reproduced, but exact initial state or software environment cannot be independently verified.
+- `LEGACY_APPROXIMATE` — reconstructed workload differs in documented ways.
+- `LEGACY_UNAVAILABLE` — insufficient information or resources to reproduce the simulation.
+
+**Configuration-equivalence checklist (verify and record all twelve):** (1) exact particle count after initialization; (2) particle sizes, densities, material properties; (3) initial coordinates and geometries; (4) contact stiffnesses, damping, friction; (5) boundary conditions and periodic dimensions; (6) timestep and total timestep count; (7) Verlet distance (`Alpha`) and reconstruction settings; (8) precision (FP64) and compiler options; (9) random seeds and generation procedures; (10) compression/shear/column-collapse execution stages; (11) initial contact-list construction and restart conditions; (12) GPU model and source revision.
+
+**Verification gates:**
+
+- *Initial physical state (Task 3):* compare generated assemblies against the historical reference (spheres: count, packing fraction, size distribution, domain, initial coordinates where available, initial candidate/contact counts; polyhedra: particle/vertex/edge/face counts plus post-build candidate feature counts). Matching particle count alone does **not** pass this gate. Distinguish verified equivalence from quantities that cannot be checked.
+- *Timing decomposition (Task 4):* separate setup/initial-list generation, force kernels, integration, per-step synchronization and transfers, CPU list reconstruction, GPU uploads, allocation, and finalization, with numerator and denominator over the same interval. Report `f_rebuild = (sum_k T_rebuild,k) / T_measured_wall` and explicitly test whether the historical 84-91% rebuild contribution is reproducible, including the internal consistency of ~38 rebuilds at ~119.6 ms against the reported total runtime. Use >=3 comparable repetitions, interleaved for A/B; never compare an initialization-heavy short run against a long steady-state run without separating components.
+- *Comparison table (Task 5):* maintain the Historical vs Exact-legacy-reproduction vs Current-P0 table in `PROJECT_STATUS.md`, explaining discrepancies quantitatively and attributing them to workload size, stages, contact density, code differences, or profiling method.
+- *Machine-readable manifest (Task 2):* for each workload record input-file hashes, executable hash, Git commit, particle/geometry counts, and all simulation parameters; store it with the raw artifacts.
+- If the original full-size benchmark cannot run within available resources, preserve the verified configuration, document the limiting resource, and report the incomplete measurement. Do not silently reduce the problem size.
+
+**Milestone order:** `P0` (initial measurements) → `P0-L` (legacy reproduction) → `P0-R` (reconcile historical vs current bottlenecks) → `V0` completion → `P1` (first optimization selection, blocked by `P0-R` and relevant `V0` gates).
+
 ## 6. Work sequencing for this agent
+
+
 
 **Session 1 is strictly scoped to `F0` → `V0` investigation → `P0` baseline.** Produce a fork and new clone if GitHub authentication and repository access permit, preserve old edits, verify current code, and run only minimal baseline/validation tests. If `V0` FAIL, fix/disable that specific unsafe change in a separate reviewable patch before benchmarking it as accepted. Do **not** start S2/P2/P3/X1/X3 on the same session just because the plan exists.
 
+**After `P0`, the order is `P0-L` → `P0-R` → `V0` completion → `P1`;** see §5.1 for the mandatory legacy-verification rules. Historical measurements must not justify optimization work until their workloads are classified `LEGACY_EXACT` or `LEGACY_EQUIVALENT` with documented differences.
+
 Next work orders after current evidence supports them:
+
+- **P0-L** (legacy reproduction): recover/verify the exact historical benchmark configurations (18.6k/154k spheres, 77k polyhedra), reproduce their timing decomposition, classify per §5.1, and reconcile with current P0 measurements. **No CUDA algorithm changes.**
+- **P0-R** (reconciliation): quantitatively explain historical-vs-current discrepancy sources (workload size, stages, contact density, code versions, profiling method) using only P0-L-classified evidence.
 
 - **S1** (spheres): systematically sweep uniform skin with fixed physical inputs and full runtime; document validity and tradeoff with candidate count.
 - **S2** (spheres): **GPU-resident full rebuild**, not merely "device cell list + CPU objects"; binning + candidate pairs + history migration, then optional device-side rebuild control. Keep fallback CPU mode. Pilot spheres; add polyhedra only after detailed design.
