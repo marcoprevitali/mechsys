@@ -23,6 +23,7 @@
 
 // Std lib
 #include <cmath>
+#include <chrono>
 #include <stdlib.h> // for M_PI
 #include <iostream>
 #include <fstream>
@@ -249,6 +250,20 @@ public:
     //CUDA Implementation
 #ifdef USE_CUDA
     size_t Nthread = 256;                                                   ///< Number of GPU threads 
+    bool   ProfileGPURebuild;                                               ///< Enable synchronized GPU contact-rebuild stage profiling
+    size_t GPURebuildProfileCount;
+    double GPURebuildProfileDownloadSeconds;
+    double GPURebuildProfileHostContactsSeconds;
+    double GPURebuildProfileStatePackSeconds;
+    double GPURebuildProfileUploadSeconds;
+    size_t GPURebuildProfileCandidatePairSum;
+    size_t GPURebuildProfileCandidatePairMax;
+    size_t GPURebuildProfileInteractionSum;
+    size_t GPURebuildProfileInteractionMax;
+    size_t GPURebuildProfileVVSum;
+    size_t GPURebuildProfileEESum;
+    size_t GPURebuildProfileVFSum;
+    size_t GPURebuildProfileFVSum;
     void UpLoadDevice(size_t Nc=1, bool first = true, bool updatestate = true);                      ///< Upload the domain to cuda device
     void DnLoadDevice(size_t Nc=1, bool force = true);                      ///< Download the key data from device
 #ifdef USE_CUDA
@@ -356,6 +371,23 @@ inline Domain::Domain (void * UD, size_t contactlaw)
     omp_init_lock(&lck);
 #endif
 #ifdef USE_CUDA
+    char const * profile_gpu_rebuild = std::getenv("MECHSYS_PROFILE_GPU_REBUILD");
+    ProfileGPURebuild = profile_gpu_rebuild != NULL
+                     && profile_gpu_rebuild[0] != '\0'
+                     && profile_gpu_rebuild[0] != '0';
+    GPURebuildProfileCount               = 0;
+    GPURebuildProfileDownloadSeconds     = 0.0;
+    GPURebuildProfileHostContactsSeconds = 0.0;
+    GPURebuildProfileStatePackSeconds    = 0.0;
+    GPURebuildProfileUploadSeconds       = 0.0;
+    GPURebuildProfileCandidatePairSum    = 0;
+    GPURebuildProfileCandidatePairMax    = 0;
+    GPURebuildProfileInteractionSum      = 0;
+    GPURebuildProfileInteractionMax      = 0;
+    GPURebuildProfileVVSum               = 0;
+    GPURebuildProfileEESum               = 0;
+    GPURebuildProfileVFSum               = 0;
+    GPURebuildProfileFVSum               = 0;
     if (contactlaw==0) pForceVV   = CalcForceVV;
     if (contactlaw==1) pForceVV   = CalcForceVV_Hertz;
     pForceEE   = CalcForceEE;
@@ -616,6 +648,22 @@ inline void Domain::Solve (double tf, double dt, double dtOut, ptFun_t ptSetup, 
     size_t iter_b = iter;
     size_t iter_t = 0;
     size_t numup  = 0;
+
+#ifdef USE_CUDA
+    GPURebuildProfileCount               = 0;
+    GPURebuildProfileDownloadSeconds     = 0.0;
+    GPURebuildProfileHostContactsSeconds = 0.0;
+    GPURebuildProfileStatePackSeconds    = 0.0;
+    GPURebuildProfileUploadSeconds       = 0.0;
+    GPURebuildProfileCandidatePairSum    = 0;
+    GPURebuildProfileCandidatePairMax    = 0;
+    GPURebuildProfileInteractionSum      = 0;
+    GPURebuildProfileInteractionMax      = 0;
+    GPURebuildProfileVVSum               = 0;
+    GPURebuildProfileEESum               = 0;
+    GPURebuildProfileVFSum               = 0;
+    GPURebuildProfileFVSum               = 0;
+#endif
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // VELOCITY VERLET: allocate and compute initial accelerations
@@ -1006,6 +1054,25 @@ if (UseVelocityVerlet){
     {
     printf("%s  Average number of iterations between contact list updates = %zd%s\n",TERM_CLR4,iter_t/numup, TERM_RST);
     }
+#ifdef USE_CUDA
+    if (ProfileGPURebuild)
+    {
+        printf("DEM_GPU_REBUILD_PROFILE rebuilds=%zu download_s=%.9g host_contacts_s=%.9g state_pack_s=%.9g upload_s=%.9g candidate_pair_sum=%zu candidate_pair_max=%zu interaction_sum=%zu interaction_max=%zu vv_sum=%zu ee_sum=%zu vf_sum=%zu fv_sum=%zu\n",
+               GPURebuildProfileCount,
+               GPURebuildProfileDownloadSeconds,
+               GPURebuildProfileHostContactsSeconds,
+               GPURebuildProfileStatePackSeconds,
+               GPURebuildProfileUploadSeconds,
+               GPURebuildProfileCandidatePairSum,
+               GPURebuildProfileCandidatePairMax,
+               GPURebuildProfileInteractionSum,
+               GPURebuildProfileInteractionMax,
+               GPURebuildProfileVVSum,
+               GPURebuildProfileEESum,
+               GPURebuildProfileVFSum,
+               GPURebuildProfileFVSum);
+    }
+#endif
     printf("%s  Kinematic energy                                          = %g%s\n",TERM_CLR4, Ekin, TERM_RST);
     printf("%s  Potential energy                                          = %g%s\n",TERM_CLR4, Epot, TERM_RST);
     printf("%s  Total energy                                              = %g%s\n",TERM_CLR2, Etot, TERM_RST);
@@ -3795,6 +3862,17 @@ inline void Domain::DnLoadDevice(size_t Nc, bool force)
 
 inline void Domain::UpdateContactsDevice()
 {
+    typedef std::chrono::steady_clock ProfileClock;
+    ProfileClock::time_point profile_begin;
+    ProfileClock::time_point profile_after_download;
+    ProfileClock::time_point profile_after_host_contacts;
+    ProfileClock::time_point profile_after_state_pack;
+    if (ProfileGPURebuild)
+    {
+        cudaDeviceSynchronize();
+        profile_begin = ProfileClock::now();
+    }
+
     ResetMaxD<<<demaux.nparts/Nthread+1,Nthread>>>(pVertsCU, pVertsoCU, pMaxDCU, pParticlesCU, pDynParticlesCU, pdemaux);
     DnLoadDevice(Nproc,true);
 
@@ -3812,7 +3890,17 @@ inline void Domain::UpdateContactsDevice()
 
     ResetMaxD<<<demaux.nparts/Nthread+1,Nthread>>>(pVertsCU, pVertsoCU, pMaxDCU, pParticlesCU, pDynParticlesCU, pdemaux);
 
+    if (ProfileGPURebuild)
+    {
+        cudaDeviceSynchronize();
+        profile_after_download = ProfileClock::now();
+    }
+
     UpdateContacts();
+    if (ProfileGPURebuild) profile_after_host_contacts = ProfileClock::now();
+
+    size_t const profile_candidate_pairs = ListPosPairs.Size();
+    size_t const profile_interactions    = Interactons.Size();
     // Re-upload particle dynamic state from host to device after host-side
     // ResetDisplacements wrapping, so device positions/velocities match the host.
     // Also re-upload A and Wdot (via updateState=true) from their current host values.
@@ -3833,6 +3921,7 @@ inline void Domain::UpdateContactsDevice()
                 hVertsCU_new[idv].z = (*Particles[ip]->Verts[iv])(2);
             }
         }
+        if (ProfileGPURebuild) profile_after_state_pack = ProfileClock::now();
         thrust::copy(hDynParticlesCU_new.begin(), hDynParticlesCU_new.end(), bDynParticlesCU.begin());
         thrust::copy(hVertsCU_new       .begin(), hVertsCU_new       .end(), bVertsCU       .begin());
         thrust::copy(hVertsCU_new       .begin(), hVertsCU_new       .end(), bVertsoCU      .begin());
@@ -3843,6 +3932,25 @@ inline void Domain::UpdateContactsDevice()
     //ZeroAccel<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pA, pWdot, pDynParticlesCU, pdemaux);
     RecomputeAccelerations<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>
     (pParticlesCU, pDynParticlesCU, pA, pWdot, pdemaux);
+
+    if (ProfileGPURebuild)
+    {
+        cudaDeviceSynchronize();
+        ProfileClock::time_point const profile_end = ProfileClock::now();
+        GPURebuildProfileCount++;
+        GPURebuildProfileDownloadSeconds += std::chrono::duration<double>(profile_after_download-profile_begin).count();
+        GPURebuildProfileHostContactsSeconds += std::chrono::duration<double>(profile_after_host_contacts-profile_after_download).count();
+        GPURebuildProfileStatePackSeconds += std::chrono::duration<double>(profile_after_state_pack-profile_after_host_contacts).count();
+        GPURebuildProfileUploadSeconds += std::chrono::duration<double>(profile_end-profile_after_state_pack).count();
+        GPURebuildProfileCandidatePairSum += profile_candidate_pairs;
+        GPURebuildProfileCandidatePairMax = std::max(GPURebuildProfileCandidatePairMax,profile_candidate_pairs);
+        GPURebuildProfileInteractionSum += profile_interactions;
+        GPURebuildProfileInteractionMax = std::max(GPURebuildProfileInteractionMax,profile_interactions);
+        GPURebuildProfileVVSum += demaux.nvvint;
+        GPURebuildProfileEESum += demaux.neeint;
+        GPURebuildProfileVFSum += demaux.nvfint;
+        GPURebuildProfileFVSum += demaux.nfvint;
+    }
 }
 #endif
 }; // namespace DEM
