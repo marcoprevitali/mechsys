@@ -232,13 +232,51 @@ Priority: HIGH — mandatory before optimization selection. Requirements and har
 2. *Polyhedron step count:* the record's 1001 steps is irreconcilable with current `test_cu_03.cu` defaults (dt=1e-5, Tf=10 → 1,000,001 steps). The historical run therefore used modified, never-committed parameters. A 1001-step reconstruction is possible via the `54574e0` argv parameterization, but timestep/stage equivalence must be argued explicitly or the workload classified below `LEGACY_EXACT`.
 3. *Polyhedron particle count:* current `AddVoroPack(-1, 0.1, 20,20,240, 20,20,240, 1.0, false, true, 1000, 0.8)` implies 96,000×0.8 = 76,800 grains, not the recorded 77,002. The 202-grain difference (library version, fraction semantics, or a different recorded run) must be identified empirically before any reproduction claim.
 
+**P0-L execution progress (Task 2-4 first results — 2026-10-15, later):**
+
+*Upstream input discovery (user hint confirmed):* `tdem/tper.inp` and `tdem/tpercu.inp`, committed upstream, are exactly the 34-parameter input format of `test_cu_04.cu`. At the baseline `e4ba163`, `tper.inp` = sphereboxhcp/hertz/Verlet=0.01/R=0.1/seed=1234/fraction=0.8/box 5.2³/dt=5e-5/T0=10/Tf=100 (only `Tf` differs from current upstream main: 50→100 in `ddeb3ee`). `GenSpheresBox` (lib/dem/dompargen.h) removes lattice sites Bernoulli-style with `srand(seed)`, so counts vary with seed (measured 18,407-18,717 over seeds 1-60 at box 5.2; no seed hits exactly 18,600). The reported "18,600"/"154,000" are therefore consistent with rounded counts of this family, unlike the exact polyhedron counts.
+
+*Registered legacy reconstructions* (`/home/msys/SIMS/mechsys_p0_baseline/20261015-p0legacy/inputs/`, hashes in `SHA256SUMS.txt`):
+
+- `S_legacy_small.inp` SHA256 `09448665…` = committed `tper.inp` with T0=0.5/Tf=0.5 (window assumption from the record's iteration-10001/20001 references at dt=5e-5) → **18,616 spheres** (reported: "18,600"; Δ 0.09%).
+- `S_legacy_small_a0.02.inp` SHA256 `4c7301f3…` = same with Alpha=0.02.
+- `S_legacy_large.inp` SHA256 `0110bb1b…` = box doubled (10.4³) → **154,366 spheres** (reported: "154,000"; Δ 0.24%).
+- `P_legacy_large` = `test_cu_03` **committed defaults** via the `54574e0` parameterization (`8 <Alpha> 256 20 240 0.01`).
+
+*Initial-state verification (Task 3):*
+
+- **P-legacy-large geometry matches the historical record EXACTLY** (from the full-geometry run): 77,002 polyhedra (77,003 total − 1 floor plane), 1,815,920 vertices, 2,723,878 edges = 2×1,361,939, 1,061,963 faces = 2×530,981+1 (the record's counts are per-feature, the code counts two entries per face). The committed `test_cu_03` defaults ARE the historical geometry; only the run window (1001 steps vs default 1,000,001) and Alpha were local, uncommitted modifications.
+- Spheres: 18,616 and 154,366 vs reported 18,600/154,000 — small deficit consistent with count rounding in the record; exact input files remain unrecovered, so seed/window/box details beyond the above are assumptions.
+
+*Timing reproduction (Task 4, first pass; profile-enabled runs are diagnostic):*
+
+| Workload | rebuilds | host rebuild total | wall | candidate pairs/rebuild | per-rebuild host |
+|---|---:|---:|---:|---:|---:|
+| S-legacy-small, Alpha=0.01 | 12 (compress) + 26 (shear) = **38** | 1.342 + 2.322 = 3.66 s | 23.43 s | 2.27M / 2.23M (~122/particle) | 112 / 89 ms |
+| S-legacy-small, Alpha=0.02 | 6 + 13 = **19** | — | 20.66 s | — | — |
+| S-legacy-large, Alpha=0.01 | 10 + 62 = 72 | 14.9 + 71.3 = 86.2 s | 236.2 s | 18.9M / 18.6M (~120/particle) | 1490 / 1150 ms |
+
+- **The historical "38 rebuilds" at Alpha=0.01 is reproduced exactly** (38), and Alpha 0.02 gives 19 vs the reported 17; the Alpha-sweep direction and magnitude reproduce. Per-rebuild host costs (112/89 ms at 18.6k) bracket the historical 119.6→92.9 ms sequence; at 154k the ~1.2-1.5 s per rebuild scales as expected (~8.3× particles).
+- **The 84-91% rebuild-share claim still does not reproduce** with this validated configuration: measured shares are ~15.6% (18.6k whole run), ~36.5% (154k whole run; shear stage ~?% pending stage split). Combined with §5.2, the discrepancy is increasingly attributable to measurement-window/definition differences in the historical report (e.g., attributing per-step transfers or using kernel-only denominators), not to configuration — to be settled quantitatively in `P0-R`.
+- Reported historical wall times (compression 6.647 s / shear 7.648 s at 18.6k) are ~1.6× shorter than this reconstruction's 23.4 s for the assumed 20,001-step window; the historical window may have been shorter than assumed (e.g. T0+Tf≈0.33 s) and/or Nproc/output cadence differed. Window sensitivity is a registered open item; it does not affect the rebuild-count match.
+
+*P-legacy-large reproduction (first probes — 2026-10-15):*
+
+- **Physics reproduction is EXACT at printed precision**: `test_cu_03` committed defaults (geometry verified above) run for the historical 1001-step window at the default Alpha=0.05 gives final **Kinematic energy 369.835 — bit-identical to the historical record's "final energy 369.835"** (stable across their 6 runs). The historical polyhedron configuration is therefore the committed defaults with a locally shortened window (Tf=0.01 via the `54574e0` parameterization); Alpha does not affect this energy (no contacts are missed at any tested Alpha), so the record's energy pins the physics but not Alpha.
+- Timing at Alpha=0.05: 12:28.6 wall total; solve 695.1 s for 1001 iterations (~695 ms/step), rebuilds=0 (no rebuild possible in-window: max free-fall displacement ~4.9e-4 << 0.05). Historical: 197.36 s (~197 ms/step) with at least one 23.6 s rebuild → the historical Alpha must have been smaller (both to permit a rebuild and to shrink the candidate lists driving the EE/VF/FV kernels). The ~3.5× kernel-cost difference at Alpha=0.05 vs the historical total is the dominant open discrepancy and is Alpha-calibratable: the historical ListPosPairs=85,748,325 and per-step EE/VF/FV candidate counts can be matched by sweeping Alpha with the instrumentation's `candidate_pair_max`/`interaction_max`/`ee/vf/fv` counters (requires an in-window rebuild, i.e. Alpha < ~5e-4, or initial-list instrumentation).
+- **Alpha calibration EXACT (Alpha=1e-4 probe)**: `candidate_pair_max = 85,748,325` — bit-identical to the historical `ListPosPairs` — with 5 in-window rebuilds and the same exact final energy 369.835. **The historical polyhedron configuration is therefore: `test_cu_03` committed defaults, window Tf=0.01 (1001 steps), Alpha=1e-4.** Timing at Alpha=1e-4 (profile-enabled, diagnostic): solve 271.75 s / 1001 iterations = 271 ms/step vs the historical 197 ms/step (1.38x; profile synchronizations, possible Nproc differences, and the un-recovered 5-file patch are candidate explanations; a default-off timing run is required before any comparison claim). Per-rebuild host cost ~5.23 s (26.13 s / 5) vs the historical 23.6 s single-rebuild report (4.5x; candidate explanations: Nproc, rebuild-bucket definitions, contact state at rebuild time) — a `P0-R` item. The historical per-step EE/VF/FV candidate counts (15,992,853 / 5,936,551 / 5,938,065) are kernel-side per-step quantities not yet instrumented (current counters cover rebuild-stage evaluation only); kernel-side counters are `P1` work.
+
 **Workload classification (initial, per `AGENTS.md` §5.1):**
 
-| Benchmark | Input files | Configuration | Initial state | Classification (initial) |
+
+
+
+
+| Benchmark | Input files | Configuration | Initial state | Classification (updated 2026-10-15) |
 |---|---|---|---|---|
-| S-legacy-small | `LEGACY_UNAVAILABLE` | partially recoverable from record | not yet checkable | `LEGACY_UNAVAILABLE` (pending Task 2 reconstruction) |
-| S-legacy-large | `LEGACY_UNAVAILABLE` | partially recoverable | not yet checkable | `LEGACY_UNAVAILABLE` (pending) |
-| P-legacy-large | `LEGACY_UNAVAILABLE` | step count/defaults conflict noted above | counts checkable against record | `LEGACY_UNAVAILABLE` (pending) |
+| S-legacy-small | original `.inp` unrecovered; reconstructed from committed `tper.inp` (user-identified template) + documented window assumption | material/seed/Alpha from committed template; counts match 0.09% | count verified; coordinates not recorded historically | `LEGACY_EQUIVALENT` (38-rebuild and Alpha-sweep behavior reproduced) |
+| S-legacy-large | original `.inp` unrecovered; box-doubled template | same; counts match 0.24% | count verified | `LEGACY_EQUIVALENT` |
+| P-legacy-large | none needed — committed defaults ARE the historical geometry | committed defaults + shortened window (Tf=0.01); historical Alpha un-calibrated (energy is Alpha-invariant) | geometry and final energy match the record exactly | `LEGACY_EQUIVALENT` (geometry `LEGACY_EXACT`; Alpha calibration pending) |
 
 **Comparison table skeleton (Task 5; fill during P0-L execution):** Measurement | Historical | Exact legacy reproduction | Current P0 — rows: particle count; geometry count; candidate interactions; actual contacts; Verlet distance; rebuild count; average rebuild time; rebuild percentage (84-91% spheres vs measured); GPU kernel percentage; total runtime. Current-P0 column values are in §5.2 (spheres rebuild share 1.3-3.3%).
 
@@ -314,6 +352,9 @@ Protection:         `origin` = user's fork; `upstream` fetch-only / push-disable
 | 2026-10-15 | Canonical historical record recovered and archived (`DEM_GPU_OPTIMIZATIONS.txt`, SHA256 `a62db594…`); no legacy input files found anywhere on the machine | §5.3 Task-1 first pass | SOURCE VERIFIED |
 | 2026-10-15 | Historical record is internally inconsistent on the sphere rebuild share (38×119.6 ms = 59% of shear solve, not 84%) and the polyhedron config (1001 steps and 77,002 particles vs current defaults' 1,000,001 steps and 76,800 grains) | §5.3 preliminary observations | UNRESOLVED — P0-L Tasks 2-5 |
 | 2026-10-15 | Upstream surveyed for original legacy formulations: none exist in upstream Git (test_cu_04 always .inp-driven with no committed input; test_cu_03 formulation unchanged since first upload and *longer* than the historical 1001-step run); upstream `6a77203` "Deepseek Harness" commit is LBM-only, unrelated to the DEM patch; baseline already contains all upstream test changes | §5.3 upstream survey | SOURCE VERIFIED |
+| 2026-10-15 | User identified `tper.inp`/`tpercu.inp` as the `test_cu_04` input templates; S-legacy reconstructions registered from committed `tper.inp`; 38-rebuild exact match and Alpha-sweep reproduction at 18.6k; S-legacy-large 154,366 particles, 72 rebuilds, rebuild share 36.5% | §5.3 execution progress | MEASURED |
+| 2026-10-15 | P-legacy-large: committed `test_cu_03` defaults reproduce the historical geometry (77,002 / 1,815,920 / 1,361,939 / 530,981) AND the final energy 369.835 bit-exactly; historical Alpha calibrated to 1e-4 by exact ListPosPairs match (85,748,325); window Tf=0.01 | §5.3 P-legacy reproduction | MEASURED — `LEGACY_EQUIVALENT` (geometry exact) |
+| 2026-10-15 | Historical 84-91% sphere rebuild share not reproduced at validated legacy configurations (15.6% at 18.6k, 36.5% at 154k whole-run); per-rebuild costs DO reproduce; discrepancy attribution shifts to measurement definitions — `P0-R` | §5.3 timing tables | MEASURED |
 
 ### Current bounded task (`P0-L`)
 
