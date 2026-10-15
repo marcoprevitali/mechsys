@@ -1,0 +1,5 @@
+workload,reps,instrumentation,wall_mean_s,wall_median_s,wall_min_s,wall_max_s,wall_std_s,solve_compression_s,solve_shear_s,solve_total_s,startup_est_s,steps,cpu_percent_note
+S-legacy-small,3,default-off,23.01,23.42,22.12,23.50,0.63,6.561,6.540,13.101,9.9,20001,clean (214% cpu observed on poly only)
+S-legacy-large,3,default-off,231.98,232.37,230.45,233.11,1.15,46.502,104.037,150.539,81.4,20001,clean
+P-legacy-large,1,default-off,225.49,225.49,225.49,225.49,0.0,n/a (single solve),n/a,~100 (derived),~125,1001,clean rep; 2 further reps contaminated by external MoFEM job (157% vs 214% cpu)
+P-legacy-large,2,default-off,310.9,310.9,310.83,310.99,0.1,contaminated,contaminated,contaminated,n/a,1001,EXCLUDED from clean statistics

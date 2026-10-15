@@ -1,0 +1,38 @@
+{
+ "milestone": "P0-R",
+ "date": "2026-10-15",
+ "git": {
+  "branch": "perf/p0-reconciliation",
+  "head_commit": "see PROJECT_STATUS.md session log",
+  "baseline": "72a33d0 (P0-L)",
+  "instrumentation_commits": [
+   "62384c8",
+   "bf01109"
+  ]
+ },
+ "build": {
+  "dir": "/tmp/mechsys_gpu_opt_build_sm86",
+  "flags": "Release/O3/OpenMP/CUDA/FP64 (USE_GPU_DOUBLE), sm_86",
+  "executables": {
+   "test_cu_04_sha256": "7a127d547d9f67220237c81f6bc7dd89fb1389795620cee2c4e7cbc4170f9d7b (pre-R4-counters build used for R1/R2 timings)",
+   "test_cu_03_sha256_post_r4": "rebuilt 2026-10-15 ~19:50 with screening counters"
+  }
+ },
+ "gpu": {
+  "model": "NVIDIA RTX A6000 (84 SMs, CC 8.6)",
+  "driver": "595.84",
+  "cuda": "12.6.85"
+ },
+ "cpu": {
+  "model": "Intel Xeon Gold 6430",
+  "threads": "64 logical",
+  "runs_pinned": "taskset -c 16-63 for runs after external contention detected"
+ },
+ "inputs": {
+  "S_legacy_small_sha256": "0944866542148dc54bc23a637fa786d2e47669af1a746cda458429b7e9e7717a",
+  "S_legacy_large_sha256": "0110bb1b2cd75c2d36501b084444991facef3411608eaf299b6d12420af485ee",
+  "P_legacy": "test_cu_03 argv: Nproc Alpha=1e-4 Nthread=256 nx=20 nz=240 Tf=0.01"
+ },
+ "environment_incident": "An unrelated MoFEM solver process (PID 3226800, ~100% of one core, started 16:09) and a concurrent AI agent session editing this same clone were active during parts of P0-R. Contaminated runs were identified via /usr/bin/time CPU-percent and excluded; clean runs are labelled. A concurrent agent session also temporarily edited lib/dem/domain.h (ratcheting counters, since reverted by its owner) and deleted the perf/p0-reconciliation branch (recreated from commit 62384c8).",
+ "raw_artifacts": "/home/msys/SIMS/mechsys_p0_baseline/20261015-p0r/logs/"
+}

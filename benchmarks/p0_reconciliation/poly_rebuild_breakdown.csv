@@ -1,0 +1,4 @@
+Nproc,rebuilds,download_s_total,host_contacts_s_total,state_pack_s_total,upload_s_total,per_rebuild_total_s,note
+8,5,3.840,18.472,0.252,3.567,5.226,profile run; candidate_pair_max=85748325 (exact historical match)
+1,5,6.786,94.470,0.411,4.525,21.238,profile run; matches historical 23.6 s within 11%
+historical,>=1,not separated (D2H ~15% and H2D ~15-18% quoted inside rebuild),not separated,,,23600,single rebuild; 743k CInteracton creations; 2.824 s stale erase

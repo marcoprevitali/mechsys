@@ -202,6 +202,13 @@ Do not unilaterally change the contact model to make a test pass. Investigate fi
 
 **Milestone order:** `P0` (initial measurements) → `P0-L` (legacy reproduction) → `P0-R` (reconcile historical vs current bottlenecks) → `V0` completion → `P1` (first optimization selection, blocked by `P0-R` and relevant `V0` gates).
 
+### 5.2 Measurement-environment rules (added during P0-R)
+
+- Before any timed run, record GPU utilization/temperature and the system load; identify competing CPU processes (`ps aux --sort=-%cpu`). Validate each rep's `/usr/bin/time` "Percent of CPU" against the expected value for its Nproc; exclude and re-run contaminated reps, and record the exclusion and its cause.
+- On a multi-agent machine, verify immediately before EVERY commit that HEAD, the branch name, and the working tree are what you expect (concurrent sessions may switch branches, delete branches, or edit shared files). Push protected work promptly; never assume an uncommitted working tree will still be yours an hour later.
+- Diagnostic instrumentation must be default-off, env-gated, add no host synchronization in production mode, and never alter forces, histories, or ordering. Verify the default-off binary reproduces reference outputs before collecting timing data.
+- `ncu` is unavailable on this host: occupancy/register-level claims are NOT_MEASURED unless a supported profiler metric exists; do not fabricate them.
+
 ## 6. Work sequencing for this agent
 
 

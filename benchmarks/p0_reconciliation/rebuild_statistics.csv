@@ -1,0 +1,11 @@
+workload,Nproc,N_rebuilds,mean_ms,median_ms,min_ms,max_ms,total_s,f_rebuild_compression,f_rebuild_shear,f_rebuild_total,candidate_pairs_per_rebuild,interaction_records_per_rebuild
+S-legacy-small,8,38,102.23,93.74,78.81,146.58,3.885,0.233,0.355,0.297,2229922 (shear max),85738 (shear max)
+S-legacy-small,4,38,124.04,115.38,110.67,197.24,4.713,n/a,n/a,n/a,n/a,n/a
+S-legacy-small,2,38,148.55,136.70,120.78,222.15,5.645,n/a,n/a,n/a,n/a,n/a
+S-legacy-small,1,38,178.09,170.96,147.47,241.92,6.767,n/a,n/a,n/a,n/a,n/a
+S-legacy-large,8,72,1168.98,1116.40,1080.43,1784.54,84.167,0.324,0.664,0.559,18570043 (shear max),726734 (shear max)
+P-legacy-large,8,5,4895.45,4894.18,4807.72,5035.59,24.477,0,0,0 (no rebuild share; rebuilds in-solve),85748325,387939
+P-legacy-large,1,5,21238.46,21294.68,20684.64,21616.34,106.192,0,0,0,85748325,387939
+HISTORICAL-18.6k,unknown,38,119.6,not reported,not reported,not reported,4.545 (derived),claimed 0.84 (shear),,not self-consistent,not reported,not reported
+HISTORICAL-154k,unknown,not reported,not reported,,,,,claimed 0.91 (shear),,not self-consistent,not reported,not reported
+HISTORICAL-77k,likely 1 (test_cu_03 default),>=1,23600,,,,,,,~0.12 of solve,85748325,743000 CInteracton creations
