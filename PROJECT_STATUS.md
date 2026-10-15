@@ -1,8 +1,8 @@
 # MechSys GPU DEM optimization — PROJECT_STATUS.md
 
 **As-of:** 2026-10-15
-**State:** `F0 PASS` / `V0` SOURCE AUDIT IN PROGRESS / `P0` NOT YET MEASURED
-**Next authorized work:** finish the bounded `V0` source/runtime audit, then establish the reproducible `P0` baseline. **Do not begin a broad rewrite.**
+**State:** `F0 PASS` / `V0 PARTIAL` / `P0` INSTRUMENTED BUT UNCONTAMINATED TIMING BLOCKED
+**Next authorized work:** finish the bounded `V0` runtime/oracle audit and measure the `P0` baseline when the RTX A6000 is idle. **Do not begin a broad rewrite.**
 **Agent:** GLM-5.3 Flash (or successor); operational rules in `AGENTS.md`.
 **Original project:** https://github.com/Axtal/mechsys
 **Fork URL / owner:** https://github.com/marcoprevitali/mechsys / `marcoprevitali` (authenticated account and public fork metadata verified 2026-10-15)
@@ -101,6 +101,18 @@ Design lessons **to benchmark, not copy uncritically**:
 
 The pass evidence must include source SHA, commands, independent oracle or control, thresholds, observed errors/counters, and raw artifact paths. Failure blocks dependent optimization work. **No production speed claim before these gates.**
 
+### 3.1 Current baseline audit — 2026-10-15
+
+Baseline source is fork commit `e4ba163ec9f32c8bccb0fd8619ba79e000d3d6d8`; the default-off instrumentation is isolated at `4ae0111ebd10249605519b0ccd4155018d72d5d3`.
+
+- `V0.1 PARTIAL / HISTORICAL VARIANT ABSENT`: the baseline launches `MaxD`, evaluates `thrust::max_element`, dereferences the device iterator on the host, and immediately calls `UpdateContactsDevice()` when `maxdis > Alpha`. There is no asynchronous copy, sticky device flag, host polling throttle, or delayed-rebuild path in this source. This removes the historical delay hazard from the selected baseline but does not validate the unavailable historical patch or prove the full candidate-set oracle.
+- `V0.2 PARTIAL / HISTORICAL VARIANT ABSENT`: no `CalcCentroids`, `OverlapCentroid`, or cached face-centroid buffer exists in the baseline DEM path. EE/VF/FV use current vertex geometry. The historical cached-centroid experiment remains unresolved and is not accepted or imported.
+- `V0.3 PARTIAL`: rebuild history follows `DnLoadDevice` -> `PairtoCInt`/feature maps -> `UpLoadDevice`; pair keys use ordered particle indices and feature keys use ordered local feature indices. They are stable in the present unsorted storage but are not a canonical unordered physical-ID abstraction suitable for future sorting without redesign.
+- A 10-step, initially overlapping, tangential two-sphere FP64 test compared CPU and CUDA outputs. Stored `Position`, `PVelocity`, `PAngVelocity`, `Quaternion`, `PEkin`, applied-force fields, tags, radii and rods were exactly equal at float32 output precision for all 10 frames. Contact branch/normal/tangential/dashpot/history outputs were exactly equal from frames 1-9. Final printed energies matched (`Ekin=0.82916`, `Epot=5.8649`). Input SHA256: `f5b17b40be4e216053fd99444ec0340baacdbddcb71560cea4a327058cd860a8`; artifacts: `/tmp/mechsys_gpu_opt_contact_cpu/` and `/tmp/mechsys_gpu_opt_contact_gpu/`.
+- Two baseline diagnostic-output defects were exposed and are not silently treated as dynamics failures: CUDA frame-0 contact-force output is zero before the first device force evaluation, while CPU reports its host-initialized force; CUDA `PAngacceleration` remains zero on the host because `DnLoadDevice` does not copy `bWdot`, even though angular velocity and the full stored trajectory match CPU. These need a separate output-semantics decision before claiming complete V0 parity.
+- Candidate completeness across rebuilds, separation/recontact, restart, periodic-image transitions, moving walls, polyhedral feature histories and action-reaction/energy identities still require dedicated oracles. `V0` is therefore not a PASS.
+- `V0.4 COMPILE ONLY`: `tlbmdem_cu_02` compiles and links with the shared headers at `sm_86`; no coupled runtime acceptance test was run. Compilation is not coupled-runtime evidence.
+
 ## 4. Parallel work tracks and milestones
 
 Statuses at handoff are `NOT_STARTED` unless explicitly marked `HISTORICAL_REPORTED` in §1.
@@ -144,6 +156,15 @@ Where possible use `nsys` for stream/host timeline and `ncu` for kernel-level me
 
 **Numerical gates:** (i) complete candidate superset at force evaluation time, (ii) no duplicates/overflow, (iii) continuity of canonical pair/feature histories and image transitions, (iv) force/torque/momentum/energy identities within justified FP64 tolerances, (v) stable restart/output behavior, (vi) coupled `lib/lbmdem/Domain.h` coverage for changed shared functions. A faster solver failing any hard correctness gate is **REJECTED**.
 
+### 5.1 P0 implementation and blocker — 2026-10-15
+
+- Toolchain: NVIDIA RTX A6000, compute capability 8.6, 49,140 MiB, driver 595.84; CUDA 12.6.85; GCC/G++/GFortran 13.3.0; CMake 3.28.3; Nsight Systems 2024.5.1; `ncu` unavailable. CPU is Intel Xeon Gold 6430. Production precision remains FP64 (`USE_GPU_DOUBLE`).
+- Valid build: `/tmp/mechsys_gpu_opt_build_sm86`, Release/O3, OpenMP, CUDA, FP64. `cuobjdump --list-elf` verified `sm_86` for `test_cu_01`, `test_cu_02`, `test_2spheres_gpu`, `test_cu_04`, and `tlbmdem_cu_02`. A prior sandbox-only build fell back from `-arch=native` to `sm_52` and is rejected for A6000 timing.
+- Commit `4ae0111` adds default-off rebuild profiling. Set `MECHSYS_PROFILE_GPU_REBUILD=1` to synchronize only at profile stage boundaries and print one `DEM_GPU_REBUILD_PROFILE` record with rebuild count; download/reset, host-contact, state-pack and upload/refresh seconds; particle-candidate and interaction-record sums/maxima; and VV/EE/VF/FV feature-candidate sums. Because enabling it adds synchronizations, its stage totals are diagnostic and enabled/disabled whole-run times must not be compared as an optimization result.
+- Default-off regression: the instrumented CUDA binary reproduced all 20 HDF files from the pre-instrumentation two-sphere run with maximum absolute stored-field difference `0.0`; artifacts: `/tmp/mechsys_gpu_opt_instrumented_default/` and `/tmp/mechsys_gpu_opt_contact_gpu/`.
+- Counter smoke only: a 10-step `Alpha=1e-6` run reported 10 rebuilds, candidate-pair sum/max `10/1`, interaction-record sum/max `10/1`, VV sum `10`, and EE/VF/FV sums `0/0/0`. Its timing fields are rejected because a separate `ratcheting_gpu_v15` process was using about 66% GPU at 79 C; artifacts: `/tmp/mechsys_gpu_opt_profile_smoke/`.
+- `P0 BLOCKED`: do not run or report a complete-solve baseline, Alpha sweep, `nsys`, or small-speedup A/B comparison until that user workload is finished and the GPU is thermally idle. No new performance or speedup claim was made in this session.
+
 ## 6. Git/repository topology and record
 
 ```text
@@ -155,7 +176,8 @@ New clone dir:      /home/msys/git/mechsys-gpu-opt
 Upstream branch:    main (remote HEAD verified by `git ls-remote --symref`)
 Original SHA:       e4ba163ec9f32c8bccb0fd8619ba79e000d3d6d8
 Imported patch SHA: NOT IMPORTED; preserved artifact SHA256 e98dcc578695992948f3d804f572f6b212888ac2381832ae261be9c4e99132e9
-Feature branch:     perf/gpu-baseline (created at the exact original SHA)
+Baseline branch:    perf/gpu-baseline at c88dc99f415dbf7b7bc3b1764fdf5506f0d66c9e
+Active topic:       perf/p0-instrumentation at 4ae0111ebd10249605519b0ccd4155018d72d5d3
 Protection:         `origin` = user's fork; `upstream` fetch-only / push-disabled
 ```
 
@@ -184,13 +206,16 @@ Protection:         `origin` = user's fork; `upstream` fetch-only / push-disable
 | 2026-10-15 | Isolate all future work in a user-owned GitHub fork and a new clone | User request | REQUIRED at handoff; superseded by the `F0 PASS` evidence below |
 | 2026-10-15 | Preserve but do not import the observed dirty worktree into the GPU-optimization baseline | Binary patch/archive inspection: changes do not match the historical performance patch and include unrelated ongoing work | `F0 PASS`; original work retained externally |
 | 2026-10-15 | Use validated fork commit `e4ba163` as the initial baseline rather than fork `main` | Exact old SHA exists in fork; branch is 28 commits ahead of `origin/main` | SOURCE BASE SELECTED; runtime/profile gates still pending |
+| 2026-10-15 | Keep delayed rebuild and centroid cache out of the baseline | Source has synchronous displacement check and current geometry; historical variants were not recoverable as a coherent patch | BASELINE SAFE FROM THOSE TWO VARIANTS; historical claims still unresolved |
+| 2026-10-15 | Add default-off P0 rebuild instrumentation on its own branch | `sm_86` DEM and LBM-DEM compile; enabled counter smoke; default-off output difference 0.0 | IMPLEMENTED, NOT A SPEEDUP CLAIM |
+| 2026-10-15 | Defer baseline timing while the A6000 is occupied | `ratcheting_gpu_v15` at about 66% SM and 79 C during the check | `P0 BLOCKED` for uncontaminated timing |
 
 ### Current bounded task
 
-1. Finish the `V0` source/runtime audit on the isolated `e4ba163` baseline, including contact-history and coupled CUDA paths.
-2. Add only the instrumentation needed for a reproducible `P0` profile, default-off and separately reviewable.
-3. Obtain uncontaminated complete-solve timings and rebuild-stage measurements when the RTX A6000 is idle.
-4. Use the measured profile to choose one bounded next experiment; do not start S2/P2/P3/X1/X3 from historical percentages alone.
+1. When the A6000 is idle, register fixed short sphere and polyhedron inputs, hash them, and obtain uncontaminated complete-solve plus `DEM_GPU_REBUILD_PROFILE` measurements with matching windows.
+2. Complete V0 oracles for candidate completeness, rebuild history continuity, periodic/moving-wall cases, restart, and one coupled LBM-DEM runtime.
+3. Decide whether the stale `PAngacceleration` and frame-0 contact diagnostics are corrected or explicitly excluded from the output contract; keep that patch separate from performance work.
+4. Use the measured P0 profile to choose one bounded next experiment, expected to be S1 if sphere rebuild dominance reproduces; do not start S2/P2/P3/X1/X3 from historical percentages alone.
 
 **Session log template:**
 
