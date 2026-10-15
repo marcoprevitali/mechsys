@@ -1,8 +1,8 @@
 # MechSys GPU DEM optimization — PROJECT_STATUS.md
 
-**As-of:** 2026-10-15
-**State:** `F0 PASS` / `V0 PARTIAL` / `P0` INSTRUMENTED BUT UNCONTAMINATED TIMING BLOCKED
-**Next authorized work:** finish the bounded `V0` runtime/oracle audit and measure the `P0` baseline when the RTX A6000 is idle. **Do not begin a broad rewrite.**
+**As-of:** 2026-10-15 (P0 first measurements)
+**State:** `F0 PASS` / `V0 PARTIAL` / `P0 FIRST MEASUREMENTS COMPLETE (S-small, S-mid, P-small; registered inputs)`
+**Next authorized work:** reconcile the measured host-sync/transfer dominance against the historical rebuild/geometry percentages (larger-N registered workloads), then finish remaining `V0` oracles. Do not begin a broad rewrite.
 **Agent:** GLM-5.3 Flash (or successor); operational rules in `AGENTS.md`.
 **Original project:** https://github.com/Axtal/mechsys
 **Fork URL / owner:** https://github.com/marcoprevitali/mechsys / `marcoprevitali` (authenticated account and public fork metadata verified 2026-10-15)
@@ -165,7 +165,44 @@ Where possible use `nsys` for stream/host timeline and `ncu` for kernel-level me
 - Counter smoke only: a 10-step `Alpha=1e-6` run reported 10 rebuilds, candidate-pair sum/max `10/1`, interaction-record sum/max `10/1`, VV sum `10`, and EE/VF/FV sums `0/0/0`. Its timing fields are rejected because a separate `ratcheting_gpu_v15` process was using about 66% GPU at 79 C; artifacts: `/tmp/mechsys_gpu_opt_profile_smoke/`.
 - `P0 BLOCKED`: do not run or report a complete-solve baseline, Alpha sweep, `nsys`, or small-speedup A/B comparison until that user workload is finished and the GPU is thermally idle. No new performance or speedup claim was made in this session.
 
+### 5.2 P0 first measurements — 2026-10-15 (A6000 idle, 0-8% util, 48-62 C)
+
+Environment: same toolchain as §5.1; build `/tmp/mechsys_gpu_opt_build_sm86` at commit `54574e0` (`test_cu_04` binary contains instrumentation, verified by string; `test_cu_03` rebuilt after the parameterization commit). All runs sequential, uncontaminated. Raw artifacts: `/home/msys/SIMS/mechsys_p0_baseline/20261015-p0sphere/` and `/home/msys/SIMS/mechsys_p0_baseline/20261015-p0poly/`.
+
+**Registered inputs (hashed in `inputs/` subdirs):**
+
+- `test_cu_04_reduced.inp` (pre-existing, gitignored in original checkout) SHA256 `2330f50f411915d0b219f2c3e8e762881261efce269ffb12107925ac88ed5fc3`: 207 spheres, 601 iterations, wall 0.41-0.49 s (3 reps). Micro-run reference only; startup-dominated.
+- `test_cu_04_ssmall.inp` SHA256 `93e6466e0c0ccba7d77d1f0ed0e14cb1f885484e31e0b7caa47e43829d10e30c` (S-small): 7,471 spheres, 1,001 + 2,001 iterations (two Solve stages), wall 8.41/9.18/9.04 s (3 default-off reps).
+- `test_cu_04_ssmalldyn_a{0.025,0.01,0.005}.inp` SHA256 `bb2e46d7…`, `77e7a25a…`, `1bd2d7a1…`: same geometry, T0=0.1/Tf=0.2 (30,001 iterations).
+- `test_cu_04_smid_a0.01.inp` SHA256 `81319e5e…` (S-mid): 17,825 spheres, Alpha=0.01, 30,001 iterations.
+- Polyhedron P-small is argv-defined (see commit `54574e0`): `test_cu_03 8 0.01 256 12 12 0.002` = 12x12x12 cells, 1,382 polyhedra (32,118 vertices), 200 iterations.
+
+**Sphere results (`DEM_GPU_REBUILD_PROFILE`, enabled runs are diagnostic only):**
+
+| Workload | Alpha | rebuilds | host rebuild total | wall | candidate pairs /rebuild | interaction records /rebuild |
+|---|---|---:|---:|---:|---:|---:|
+| S-small 7,471 | 0.25 | 0 | 0 | 8.73 s | 0 | 0 |
+| S-small dyn | 0.025 | 5 | 0.207 s | 15.54 s | 795,698 | 31,949 |
+| S-small dyn | 0.01 | 12 | 0.450 s | 14.64 s | 795,699 | 31,949 |
+| S-small dyn | 0.005 | 25 | 0.786 s | 14.83 s | 795,710 | 31,949 |
+| S-mid 17,825 | 0.01 | 10 | 1.031 s | 31.00 s | 1,962,239 | 77,310 |
+
+Findings: (1) rebuild count scales ~1/Alpha; per-rebuild host cost ~31 ms (7.5k) / ~103 ms (17.8k); candidate pairs ~106-110 per particle. (2) At registered scales rebuild cost is only ~1.3-3.3% of wall: **the historical 84-91% rebuild dominance does NOT reproduce here.** (3) `nsys` on S-small-dyn a=0.01: per-step GPU busy ~216 us (CalcForceVV 95.4 us, CalcForceVF 55.7 us, Reset 25.4 us, Rotate 19.5 us, Translate 8.8 us, MaxD+reductions ~10 us), but wall ~0.5 ms/step: `cudaStreamSynchronize` 4.09 s + `cudaMemcpyAsync` 2.11 s (2/step) + 200k launches 0.82 s over the window; **GPU idle ~55%**. The S-small regime is **host-synchronization-bound**, consistent in direction with the historical pipelining win (~1.04-1.05x) but not with rebuild-share percentages. Fixed startup (generation + CUDA init + initial build) is ~6-7 s and must be excluded in A/B windows.
+
+**Polyhedron results:**
+
+| Config | steps | wall | rebuilds | host rebuild total | candidate pairs /rebuild | interaction records /rebuild | EE/VF/FV feature sums |
+|---|---:|---:|---:|---:|---:|---:|---|
+| 12^3, Alpha=0.01 (fixed list) | 200 | 5.99-6.13 s (3 reps) | 0 | 0 | n/a | n/a | not sampled |
+| 12^3, Alpha=1e-4 (dyn) | 1000 | 3.25 s | 5 | 0.310 s | 567,398 | 6,152 | 199,245 / 80,675 / 80,630 |
+
+Findings: (1) fixed-list run costs ~27 ms/step wall but only ~1.60 ms/step GPU (CalcForceEE 528 us + CalcForceVF 398 us + CalcForceFV 388 us + Rotate 240 us + Translate 39 us): `nsys` shows `cudaMemcpyAsync` 2.75 s over 1,020 calls (~5/step, avg 2.7 ms, max 30 ms) and 416 `cudaMalloc` calls (max 129 ms) dominate; **the registered P-small regime is per-step host-transfer-bound, not geometry-kernel-bound.** (2) The dyn run's low wall/step (~1-3 ms) during free flight shows contact-list size, not particle count, drives per-step cost. (3) Historical 77k-polyhedron percentages cannot be projected from 1.4k-polyhedron data; kernel cost scales with feature pairs while per-step transfers scale with state size. Registered P-legacy reproduction remains open.
+
+**Consequences for work order:** the measured evidence does not support starting S1 (uniform-skin sweep) as the next optimization on these registered workloads, because rebuild cost is not yet dominant at accessible scales; the priority is to quantify how the sphere host-sync overhead and the polyhedron per-step memcpy behave at larger N (toward the historical 18.6k/154k sphere and 77k polyhedron regimes) before choosing the first optimization target. Update §4 dependencies after that reconciliation.
+
 ## 6. Git/repository topology and record
+
+
 
 ```text
 Original upstream:  https://github.com/Axtal/mechsys
@@ -177,7 +214,7 @@ Upstream branch:    main (remote HEAD verified by `git ls-remote --symref`)
 Original SHA:       e4ba163ec9f32c8bccb0fd8619ba79e000d3d6d8
 Imported patch SHA: NOT IMPORTED; preserved artifact SHA256 e98dcc578695992948f3d804f572f6b212888ac2381832ae261be9c4e99132e9
 Baseline branch:    perf/gpu-baseline at c88dc99f415dbf7b7bc3b1764fdf5506f0d66c9e
-Active topic:       perf/p0-instrumentation at 4ae0111ebd10249605519b0ccd4155018d72d5d3
+Active topic:       perf/p0-instrumentation at 54574e0 (test_cu_03 parameterization; P0 first measurements recorded in PROJECT_STATUS.md)
 Protection:         `origin` = user's fork; `upstream` fetch-only / push-disabled
 ```
 
@@ -209,13 +246,17 @@ Protection:         `origin` = user's fork; `upstream` fetch-only / push-disable
 | 2026-10-15 | Keep delayed rebuild and centroid cache out of the baseline | Source has synchronous displacement check and current geometry; historical variants were not recoverable as a coherent patch | BASELINE SAFE FROM THOSE TWO VARIANTS; historical claims still unresolved |
 | 2026-10-15 | Add default-off P0 rebuild instrumentation on its own branch | `sm_86` DEM and LBM-DEM compile; enabled counter smoke; default-off output difference 0.0 | IMPLEMENTED, NOT A SPEEDUP CLAIM |
 | 2026-10-15 | Defer baseline timing while the A6000 is occupied | `ratcheting_gpu_v15` at about 66% SM and 79 C during the check | `P0 BLOCKED` for uncontaminated timing |
+| 2026-10-15 | A6000 became idle; P0 first measurements taken on registered S-small/S-mid/P-small inputs | §5.2 tables, hashed inputs, nsys reports in `/home/msys/SIMS/mechsys_p0_baseline/` | `P0 FIRST MEASUREMENTS COMPLETE` |
+| 2026-10-15 | Historical sphere rebuild dominance (84-91%) does NOT reproduce at registered scales; S-small/S-mid are host-synchronization-bound (GPU idle ~55%) | §5.2 rebuild shares 1.3-3.3% of wall; nsys API/kernel split | MEASURED; needs larger-N reconciliation before S1 |
+| 2026-10-15 | Registered P-small polyhedron regime is per-step-transfer-bound (cudaMemcpyAsync ~5/step), not geometry-kernel-bound | §5.2 nsys: 1.6 ms/step GPU vs 27 ms/step wall | MEASURED; needs larger-N reconciliation before P1/P2 |
+| 2026-10-15 | Do not start S1 solely from historical percentages; reconcile bottleneck scaling with N first | §5.2 consequences paragraph | PLAN REVISED |
 
 ### Current bounded task
 
-1. When the A6000 is idle, register fixed short sphere and polyhedron inputs, hash them, and obtain uncontaminated complete-solve plus `DEM_GPU_REBUILD_PROFILE` measurements with matching windows.
+1. Reconcile bottleneck scaling with N: register and measure one larger sphere workload (toward 18.6k-154k particles) and one larger polyhedron workload (toward the 77k-polyhedron legacy regime, e.g. 20x20x40 cells first), with the same uncontaminated protocol, to determine whether rebuild share (spheres) or geometry-kernel share (polyhedra) grows toward the historical percentages. Only then select the first bounded optimization experiment (S1 vs a host-sync/transfer-reduction experiment).
 2. Complete V0 oracles for candidate completeness, rebuild history continuity, periodic/moving-wall cases, restart, and one coupled LBM-DEM runtime.
 3. Decide whether the stale `PAngacceleration` and frame-0 contact diagnostics are corrected or explicitly excluded from the output contract; keep that patch separate from performance work.
-4. Use the measured P0 profile to choose one bounded next experiment, expected to be S1 if sphere rebuild dominance reproduces; do not start S2/P2/P3/X1/X3 from historical percentages alone.
+4. For any A/B comparison, exclude the ~6-7 s fixed startup window or use matching complete-solve windows, and use >=3 interleaved paired repetitions.
 
 **Session log template:**
 
