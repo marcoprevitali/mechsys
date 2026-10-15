@@ -1130,6 +1130,7 @@ if (UseVelocityVerlet){
                DiagFVCandidates, fv_broad, fv_exact, fv_force);
     }
 #endif
+#endif
     printf("%s  Kinematic energy                                          = %g%s\n",TERM_CLR4, Ekin, TERM_RST);
     printf("%s  Potential energy                                          = %g%s\n",TERM_CLR4, Epot, TERM_RST);
     printf("%s  Total energy                                              = %g%s\n",TERM_CLR2, Etot, TERM_RST);
