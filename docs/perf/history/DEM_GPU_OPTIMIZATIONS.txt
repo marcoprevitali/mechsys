@@ -1,0 +1,481 @@
+================================================================================
+DEM / CUDA  --  PERFORMANCE WORK ON THE GPU SOLVER
+================================================================================
+
+Scope
+-----
+Three changes to the CUDA DEM solver, plus a set of measured experiments that
+were tried and rejected.  Everything below was measured on the machine used for
+development (NVIDIA RTX A6000, 84 SMs, CUDA via mechsyscc), in DOUBLE precision,
+which is what mechsyscc builds by default (-DUSE_GPU_DOUBLE).
+
+Two benchmark cases were used throughout:
+
+  * SPHERES   -- tdem/test_cu_04 (sphereboxhcp), 18,600 and 154,000 particles.
+                 Run in two modes, "compression" and "shear".
+  * POLYHEDRA -- tdem/test_cu_03 (Voronoi column collapse), 77,002 particles,
+                 1,815,920 vertices, 1,361,939 edges, 530,981 faces,
+                 403,764 contact pairs.
+
+The two cases turned out to be dominated by completely different things, so they
+are reported separately.  The headline is that the sphere case is bound by the
+CONTACT REBUILD (84-91% of the solve) while the polyhedra case is bound by the
+PER-STEP FORCE KERNELS (95% of kernel time, ~47-60% of the whole solve).
+
+
+================================================================================
+SUMMARY OF RESULTS
+================================================================================
+
+  Change                                        Case        Effect
+  --------------------------------------------------------------------------
+  1. Remove per-step host/device sync           spheres     1.04x - 1.05x
+     (pipelined rebuild check)
+
+  2. Stamp-based sweep of stale interactons     spheres     1.03x - 1.07x
+                                                (faster in 12/12 runs both
+                                                 compression and shear)
+
+  3. Cache face centroids on the device         polyhedra   2.1% faster
+                                                (energy bit-identical)
+
+  Rejected (measured, see the last section):
+
+  * Sorting the feature lists by particle       polyhedra   no effect, reverted
+  * Single precision (-UUSE_GPU_DOUBLE off)     spheres     2.3x faster BUT
+                                                             changes physics
+                                                polyhedra   2.1x SLOWER and
+                                                             diverges
+
+  Not code -- a parameter change, but the largest single win found:
+
+  * Verlet distance (Alpha) 0.01 -> 0.02        spheres     ~24% faster
+    7.585 s -> 5.757 s, 38 -> 17 rebuilds.  Accuracy-safe: a larger Verlet
+    distance only ENLARGES the candidate list, it cannot miss a contact.
+
+
+================================================================================
+WHERE THE TIME GOES  (measured profile, double precision)
+================================================================================
+
+POLYHEDRA -- tdem/test_cu_03, 77,002 particles, 1001 steps
+-------------------------------------------------------------------------------
+Interaction counts per step:
+    edge-edge      (neeint) = 15,992,853
+    vertex-face    (nvfint) =  5,936,551
+    face-vertex    (nfvint) =  5,938,065
+    vertex-vertex  (nvvint) =          0     <-- unused for polyhedra
+    contact pairs  (ncoint) =    403,764
+
+That is ~69 feature-pair tests for every actual contact pair, every step.
+
+Per-kernel time (1001 steps):
+
+    kernel        time      share    ms/step
+    ------------------------------------------
+    pForceEE     26.44 s    39.7%    26.41
+    pForceVF     18.63 s    27.9%    18.61
+    pForceFV     18.11 s    27.2%    18.09
+    pRotate       1.74 s     2.6%     1.74
+    pTranslate    1.21 s     1.8%     1.21
+    pReset        0.37 s     0.6%     0.37
+    pForceVV      0.008 s    0.0%     0.008
+    ------------------------------------------
+    force total  63.55 s    95.3%    63.49
+    move + MaxD   3.10 s     4.7%     3.10
+
+    MaxD alone:   0.154 ms/step
+
+The contact rebuild is RARE here but enormous when it happens: 23.6 s, of which
+
+    create CInteracton + collect CPairs   19.198 s   81.2%
+    erase stale interactons                2.824 s   12.3%
+    candidate-pair loop                    0.692 s
+    linked cells                           0.671 s
+    rebuild the flat Interactons array     0.175 s
+    per-pair feature contacts              ~0.000 s
+
+The candidate list reaches ListPosPairs = 85,748,325 entries, roughly 1.4 GB.
+
+Note the difference from spheres: here the per-pair feature work sits in the
+CInteracton CONSTRUCTOR (81% of the rebuild), not in UpdateContacts, so the
+"refresh the contacts of a live pair" step is free.
+
+
+SPHERES -- tdem/test_cu_04
+-------------------------------------------------------------------------------
+The rebuild is 84% of the shear solve at 18.6k particles and 91% at 154k.  Per
+rebuild (18.6k, average over 38 rebuilds, before -> after change 2):
+
+    linked cells + displacements   ~36-43 ms   (35-45%)
+    candidate-pair loop            ~ 3- 7 ms
+    create CInteracton + collect   ~13-16 ms
+    boundary interactons           ~ 0-14 ms
+    rebuild flat Interactons       ~ 1- 7 ms
+    erase stale interactons        ~31 ms      (33%)  -> reduced by change 2
+    ------------------------------------------------------------------
+    TOTAL                          ~119.6 ms  ->  ~92.9 ms
+
+Inside the outer rebuild (double precision):
+
+    18.6k particles:  CPU neighbour search 67-70%, D2H ~15%, H2D 15-18%
+    154k particles:   CPU neighbour search 62.8%,  D2H 14.4%, H2D 22.8%
+
+So the CPU side of the rebuild dominates, and "copy less data" is capped at
+about 30% of the rebuild -- which is why a device-side cell list was judged poor
+return on effort and was not attempted.
+
+
+================================================================================
+CHANGE 1 -- REMOVING THE PER-STEP HOST/DEVICE SYNCHRONISATION
+================================================================================
+
+PROBLEM
+-------
+The rebuild decision was made on the host, in the middle of the step loop:
+
+    MaxD <<<...>>> (...);                    // computes the max vertex displacement
+    cudaDeviceSynchronize();                 // <-- every step
+    maxdis = thrust::max_element(bMaxDCU...);// device reduction, on the host
+    if (maxdis > Alpha) UpdateContactsDevice();
+
+That forced a full host/device rendezvous on every single step, plus a
+thrust::max_element launch, just to answer a yes/no question.
+
+WHAT WAS DONE
+-------------
+The decision moved onto the device and became sticky:
+
+  * MaxD gained two parameters, (real alpha, int * dflag).  After its block
+    reduction it does
+
+        if (lane==0) if (m>alpha) dflag[0] = 1;
+
+    so the device itself records "a rebuild is due".
+
+  * ResetMaxD gained (int * dflag) and clears it, but only at ic==0, i.e. only
+    when a contact rebuild actually happens:
+
+        if (ic==0) dflag[0] = 0;
+
+  * Solve now copies the flag out ASYNCHRONOUSLY
+
+        cudaMemcpyAsync(hRebuildFlag, pRebuildFlag, sizeof(int),
+                        cudaMemcpyDeviceToHost);
+
+    and the value read may be one step old.  That is harmless precisely because
+    the device flag is sticky until a rebuild clears it: once it is set it stays
+    set, so a stale read can only be late, never wrong, and no rebuild is
+    missed.
+
+  * The host is still not allowed to run away without bound, so a small ring of
+    CUDA events throttles it: every pipeDepth (=4) steps the host waits on the
+    event it recorded pipeDepth steps earlier.  Four steps of motion is a tiny
+    fraction of Alpha, so the candidate list stays valid.
+
+  * The thrust::max_element per-step reduction was removed entirely -- it is no
+    longer needed, the comparison now happens on the device inside MaxD.
+
+The pipeline state is allocated in UpLoadDevice(...,first) rather than in Solve,
+because the coupled LBM-DEM domain drives its own loop and never calls Solve, but
+it does call UpLoadDevice(...,true).
+
+MEASURED
+--------
+    compression   6.647 s -> 6.354 s    1.046x
+    shear         7.648 s -> 7.357 s    1.040x
+
+    0 stashes (the throttle never had to force a wait beyond the ring)
+
+Physics preserved.
+
+
+================================================================================
+CHANGE 2 -- STAMP-BASED SWEEP OF STALE INTERACTONS
+================================================================================
+
+PROBLEM
+-------
+ResetContacts() rebuilds the list of live pairs.  The old code kept a second,
+complete hash set of every live pair key and then walked the whole map looking
+for entries to delete:
+
+    std::unordered_set<size_t> UniquePair;
+    ...  UniquePair.insert(HashFunction(n,m));  for every live pair ...
+    for (auto it=PairtoCInt.begin(); it!=PairtoCInt.end(); )
+        if (UniquePair.count(it->first)==0) { delete it->second; erase(it); }
+
+That is a hash insert per live pair plus a hash lookup per map entry, on every
+rebuild -- and it was about 33% of an 18.6k rebuild.
+
+WHAT WAS DONE
+-------------
+Each CInteracton carries a Stamp: the id of the last rebuild that saw this pair
+live.
+
+  * CInteracton gained a member, initialised to (size_t)-1:
+
+        size_t Stamp;
+        CInteracton () : Stamp((size_t)-1) {};
+
+  * When a candidate pair updates successfully, it is stamped:
+
+        if (PairtoCInt[hash]->UpdateContacts(Alpha,Per,iter))
+        {
+            PairtoCInt[hash]->Stamp = iter;
+            MTD[omp_get_thread_num()].LCI.Push(PairtoCInt[hash]);
+        }
+
+  * The UniquePair set and its insert are gone, and the sweep became a field
+    read on the interacton instead of a hash lookup:
+
+        for (auto it=PairtoCInt.begin(); it!=PairtoCInt.end(); )
+            if (it->second->Stamp != iter) { delete it->second; erase(it); }
+
+Why this is safe: HashFunction(i,j) is order-dependent, so a pair key identifies
+one ordered interacton; an interacton is stamped only by the rebuild that
+actually kept it live, so "Stamp != iter" is exactly "this rebuild did not touch
+it".
+
+MEASURED  (6 interleaved pairs)
+-------------------------------
+    compression   6.481 s -> 6.300 s    1.029x
+    shear         7.477 s -> 6.979 s    1.071x
+
+    faster in 12/12 runs, both phases
+    at 154k particles the energies were bit-identical: 0 / 11.1031 / 51.104
+
+A NOTE ON A FAILED VARIANT
+--------------------------
+Replacing the map iteration with a flat vector<(hash,pointer)> (adding a LiveCInt
+member and keeping it in sync in Load/ClearInteractons/ResetInteractons) gave
+exactly zero gain -- 31.00 ms vs 30.95 ms.  The cost is dereferencing each
+scattered CInteracton object to read its Stamp, roughly 260 ns per object, not
+the map traversal.  That variant was reverted.
+
+
+================================================================================
+CHANGE 3 -- CACHING FACE CENTROIDS ON THE DEVICE
+================================================================================
+
+PROBLEM
+-------
+Polyhedra are bound by the feature kernels, and the vertex-face ones spend most
+of their time in the overlap pre-test.  OverlapVF/OverlapFV recomputed the FACE
+CENTROID by summing every vertex of the face:
+
+    __host__ __device__ bool OverlapVF(Faces, Facid, Verts, V0, f1, Dmax0, Dmax1, Per)
+    {
+        real3 x1 = 0;
+        size_t nvertex = Faces[2*f1+1] - Faces[2*f1];
+        for (size_t i=0;i<nvertex;i++) x1 = x1 + Verts[Facid[i+Faces[2*f1]]];
+        x1 = x1/nvertex;
+        return (norm(BranchVec(V0,x1,B,Per)) < Dmax0 + Dmax1);
+    }
+
+A face's centroid depends only on that face -- it is identical for all of that
+face's candidate partners -- yet CalcForceVF calls this for each of 5,936,551
+candidate pairs and CalcForceFV for another 5,938,065, every step.
+
+WHAT WAS DONE
+-------------
+  * A device array of one centroid per face, bCentCU / pCentCU, sized
+    demaux.nfaces/2 (nfaces counts two entries per face in the Faces array).
+
+  * A kernel that fills it:
+
+        __global__ void CalcCentroids(Faces, Facid, Verts, Cent, demaux)
+        {
+            size_t f = threadIdx.x + blockIdx.x * blockDim.x;
+            if (f>=demaux[0].nfaces/2) return;
+            size_t nv = Faces[2*f+1] - Faces[2*f];
+            real3 x = make_real3(0.0,0.0,0.0);
+            for (size_t i=0;i<nv;i++) x = x + Verts[Facid[Faces[2*f]+i]];
+            Cent[f] = (nv>0) ? x/nv : x;
+        }
+
+  * The pre-test became a plain load-and-compare:
+
+        __host__ __device__ bool OverlapCentroid(real3 const & xa, real3 const & xb,
+                                                 real const & Dmaxa, real const & Dmaxb,
+                                                 real3 const & Per = ...)
+        { real3 B; BranchVec(xa,xb,B,Per); return (norm(B) < Dmaxa + Dmaxb); }
+
+        CalcForceVF:  if (!OverlapCentroid(xi,    Cent[f2], dm1,dm2,Pert)) return;
+        CalcForceFV:  if (!OverlapCentroid(Cent[f1], xf,    dm1,dm2,Pert)) return;
+
+    (the argument order of the two Dmax values does not matter, they are summed)
+
+  * CalcForceVF and CalcForceFV take an extra (real3 const * Cent) right after
+    Verts, and the ForceVF_ptr_t / ForceFV_ptr_t typedefs were updated to match.
+    The two direct launches in lib/lbmdem/Domain.h were updated as well.
+
+  * The centroids are refreshed at the END of UpLoadDevice, right after pdemaux
+    is uploaded, and NOT in the first==true setup branch.  This matters: the
+    topology (and so bCentCU) is only built when first==true, but vertex
+    POSITIONS move between rebuilds, and the centroid depends on them.  Both
+    paths -- initial setup and every rebuild -- go through the end of
+    UpLoadDevice, so placing it there covers both.  It cannot go in the setup
+    branch anyway, because pdemaux is not allocated until the end of the
+    function.
+
+    The device vertices are always current at that point: they are advanced by
+    the kernels and copied DOWN for the rebuild, never uploaded from here, so
+    the centroids are computed from the live positions.
+
+MEASURED  (polyhedra, 77k particles, 1000 steps, 3 interleaved pairs)
+--------------------------------------------------------------------
+    baseline          centroid cache
+    ---------------   --------------
+    197.79 s          192.71 s
+    197.34 s          193.47 s
+    196.96 s          193.83 s
+    ---------------   --------------
+    mean 197.36 s     mean 193.34 s
+
+    2.1% faster, quicker in 3/3 pairs, the ranges do not overlap
+    final energy 369.835 in ALL SIX runs -- bit-identical
+
+The bit-identical energy is the important part.  This is the same number
+computed once instead of millions of times; unlike single precision it changes
+nothing physically.
+
+WHY ONLY 2.1% AND NOT MORE
+--------------------------
+The face centroid sum was cheaper than it looks, because a face's vertices are
+reused by all of that face's candidate partners and so stay resident in cache.
+The VF+FV kernels are 36.7 ms/step of the ~64 ms kernel total, and this removes
+a few percent of that.  Real and free, but not large.
+
+
+================================================================================
+TRIED AND REJECTED  (both measured, not guessed)
+================================================================================
+
+1. SORTING THE FEATURE LISTS BY PARTICLE -- no effect
+-----------------------------------------------------
+Hypothesis: CalcForceEE/VF/FV run one thread per feature pair and gather
+DPar[i1], DPar[i2], Edges[f1], Edges[f2], Verts[...] at scattered addresses, so
+sorting the lists by owning particle should improve locality.
+
+This is safe to do after construction: the Ivv/Iee/Ivf/Ifv offset arrays are
+deleted by then, and every entry carries its own Idx back-pointer, so both the
+kernels and the force write-back are order-independent.
+
+Result (polyhedra, 1001 steps):
+
+    kernel       unsorted      sorted
+    ------------------------------------
+    pForceEE     26.41 ms/step  26.48 ms/step   +0.3%
+    pForceVF     18.61          18.63           +0.1%
+    pForceFV     18.09          18.06           -0.2%
+
+All within noise, and the sort costs 3.6 s per rebuild (rearranging ~900 MB:
+16.0M + 5.9M + 5.9M entries of 32 bytes).
+
+CONCLUSION: the feature kernels are NOT memory-locality-bound.  Reverted.
+
+2. SINGLE PRECISION -- worse, and it breaks the physics
+-------------------------------------------------------
+mechsyscc hardcodes -DUSE_GPU_DOUBLE; an extra -UUSE_GPU_DOUBLE overrides it
+(defines precede $extra in the mechsyscc command line), and USE_GPU_DOUBLE
+appears only in matvec.h, so the fp32 build is ABI-consistent and links fine.
+
+SPHERES: 2.26x faster on a controlled 3000-step window (2.017 s -> 0.894 s),
+         BUT it materially changes the physics: after 3000 steps from the same
+         start, fp32 has kinetic energy 8.4e-05 against fp64's 1.32.
+
+POLYHEDRA (452,512 vertices, 300 steps):
+
+         solve        per step      final energy
+         ---------    -----------   -------------
+    fp64  37.09 s     123.6 ms       8.27388
+    fp32  78.41 s     261   ms    3984.66        <-- diverges
+
+The 480x energy blow-up is catastrophic cancellation in the overlap test:
+delta = r1 + r2 - dist is a difference of nearly equal numbers, and polyhedral
+features make it worse.  The 2.1x slowdown is a CONSEQUENCE of the blown-up
+state (far more contacts), which is also why the full-size fp32 polyhedra run
+never finished.
+
+CONCLUSION: keep double precision.  Float is not a usable lever here.
+
+3. DEVICE-SIDE CELL LIST / "copy less data" -- not attempted
+------------------------------------------------------------
+Measured first: inside the outer rebuild, the CPU neighbour search is 62.8-70%
+and the H2D/D2H copies are only ~30% combined, so a device-side cell list would
+have a hard ceiling of about 30% of the rebuild, for a large amount of work.
+
+
+================================================================================
+A NOTE ON REPRODUCIBILITY
+================================================================================
+
+The pipelined run-ahead (change 1) makes the rebuild cadence vary slightly from
+run to run, so sphere results differ in their last digits between runs.  This is
+pre-existing behaviour of the pipeline, not a bug: running the SAME sphere binary
+three times gave, at iteration 20001, 3.69005 / 3.68070 / 3.68084, while
+iteration 10001 was identical (2.33903) every time.
+
+The polyhedra case is deterministic -- its final energy was 369.835 in all six
+runs of the centroid-cache comparison.
+
+When timing, use several INTERLEAVED pairs of runs; single pairs of this workload
+are not conclusive.
+
+
+================================================================================
+FILES CHANGED
+================================================================================
+
+  lib/dem/dem.cuh         MaxD/ResetMaxD take a rebuild flag; new CalcCentroids
+                          kernel; CalcForceVF/CalcForceFV take the centroid
+                          array; ForceVF_ptr_t/ForceFV_ptr_t typedefs updated.
+
+  lib/dem/distance.h      new OverlapCentroid() helper.  The original
+                          OverlapVF()/OverlapFV() are left in place but are now
+                          unused by the kernels.
+
+  lib/dem/domain.h        pipeline state (pRebuildFlag/hRebuildFlag/event ring)
+                          allocated in UpLoadDevice; asynchronous flag check and
+                          ring throttle in Solve; Stamp set in ResetContacts and
+                          used by the sweep, UniquePair removed; bCentCU/pCentCU
+                          members, allocation, pointer, and the CalcCentroids
+                          launch; VF/FV launch sites pass pCentCU.
+
+  lib/dem/interacton.h    CInteracton::Stamp member and its initialisation.
+
+  lib/lbmdem/Domain.h     MaxD call and the two direct VF/FV launches updated.
+
+  Total: 109 insertions, 37 deletions across 5 files.
+
+To revert everything:
+
+    git checkout -- lib/dem/dem.cuh lib/dem/distance.h lib/dem/domain.h \
+                    lib/dem/interacton.h lib/lbmdem/Domain.h
+
+Nothing here is committed yet.
+
+
+================================================================================
+WHAT IS LEFT, IN ORDER OF VALUE
+================================================================================
+
+For POLYHEDRA (the case with real headroom):
+
+  1. The three feature kernels are 95% of kernel time, driven by 27.9M feature
+     pair tests per step for 404k contacts.  Since locality sorting does not
+     help, the lever is to test FEWER pairs, or to test them more cheaply --
+     e.g. a coarser bounding test before the per-feature one.
+  2. The rebuild is rare but 23.6 s, and 81% of it is 743k individual
+     `new CInteracton` calls with their feature contexts.  Pooling or otherwise
+     batching those allocations is the obvious target.
+  3. ListPosPairs reaches 85.7M entries (~1.4 GB).  A tighter Verlet distance or
+     better cell sizing would cut memory and the candidate loop (though not the
+     create/feature cost).
+
+For SPHERES (rebuild-bound):
+
+  1. Verlet distance tuning -- the largest single win found (~24%), no code
+     change, accuracy-safe.
+  2. The CPU neighbour search inside the rebuild (63-70% of it).
