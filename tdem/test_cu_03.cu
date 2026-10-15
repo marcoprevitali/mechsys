@@ -32,12 +32,19 @@ int main(int argc, char **argv) try
     double g = 9.8;         // gravity acceleration
     double mu = 0.4;        // friction coefficient
     double theta = 0.0*M_PI/180.0;
+    // Registered-workload overrides (defaults reproduce the legacy 77k-polyhedron column collapse)
+    size_t nx = 20;          // cells per side in x and y (legacy: 20)
+    size_t nz = 240;         // cells in z (legacy: 240)
+    double Tf = 10.0;        // final time (legacy: 10.0)
     if (argc>=2) Nproc      =atoi(argv[1]);
     if (argc>=3) dom.Alpha  =atof(argv[2]);
     if (argc>=4) dom.Nthread=atoi(argv[3]);
+    if (argc>=5) nx         =atoi(argv[4]);
+    if (argc>=6) nz         =atoi(argv[5]);
+    if (argc>=7) Tf         =atof(argv[6]);
     //dom.Alpha = 100.0;
     //dom.Beta  = 4.0;
-    dom.AddVoroPack (-1, 0.1, 20.0,20.0,240.0, 20,20,240, 1.0, false, true, 1000, 0.8);
+    dom.AddVoroPack (-1, 0.1, double(nx),double(nx),double(nz), nx,nx,nz, 1.0, false, true, 1000, 0.8);
     Vec3_t Xmin(-0.5*10.0,-0.5*10.0,-0.5*120.0);
     Vec3_t Xmax = -Xmin;
     //dom.GenSpheresBox (-1, Xmin, Xmax, 0.5, 1.0, "HCP", 1000, 0.8, 0.8);
@@ -60,7 +67,6 @@ int main(int argc, char **argv) try
     B.Set(-2,"Gn Gt Kn Kt Mu",-0.2,0.0,1.0e7,5.0e6,mu);
     dom.SetProps(B);
 
-    double Tf = 10.0;
     dom.Solve(/*final time*/Tf,/*time step*/dt,/*Output step*/Tf/100,NULL,NULL,/*file key*/"test_cu_03",/*Render video?*/2,Nproc);
 
     return 0;
