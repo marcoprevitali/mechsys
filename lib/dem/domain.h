@@ -269,12 +269,16 @@ public:
     std::vector<size_t> GPURebuildInteractions;   ///< per-rebuild Interactons sizes
     bool   DiagKernelCounters;                                              ///< P0-R4: enable EE/VF/FV kernel screening counters (MECHSYS_DEM_KERNEL_DIAG)
     size_t DiagEECandidates, DiagVFCandidates, DiagFVCandidates;            ///< P0-R4: accumulated per-step kernel candidate counts
+    bool   CandidateOracle;                                                 ///< P1-S: brute-force candidate-completeness oracle (MECHSYS_CANDIDATE_ORACLE)
+    size_t OracleRef, OracleCand, OracleMissing, OracleDup, OracleBadImg;   ///< P1-S: cumulative oracle counters
+    size_t OracleChecks;                                                    ///< P1-S: number of oracle checks performed
     void UpLoadDevice(size_t Nc=1, bool first = true, bool updatestate = true);                      ///< Upload the domain to cuda device
     void DnLoadDevice(size_t Nc=1, bool force = true);                      ///< Download the key data from device
 #ifdef USE_CUDA
     void SetVelocityDevice (size_t idx, double vx, double vy, double vz);   ///< Set one particle's velocity on the device (prescribed motion)
 #endif
     void UpdateContactsDevice();                                            ///< Update contacts lists in device
+    void OracleCheck (size_t iter, size_t iter_b);                          ///< P1-S: brute-force candidate-completeness oracle (diagnostic only)
     thrust::device_vector<ParticleCU>      bParticlesCU;                    ///< device vector of particles
     thrust::device_vector<DynParticleCU>   bDynParticlesCU;                 ///< device vector of particles
     thrust::device_vector<real>            bMaxDCU;                         ///< device vector of maximun displacements
@@ -387,6 +391,12 @@ inline Domain::Domain (void * UD, size_t contactlaw)
     DiagEECandidates = 0;
     DiagVFCandidates = 0;
     DiagFVCandidates = 0;
+    char const * candidate_oracle = std::getenv("MECHSYS_CANDIDATE_ORACLE");
+    CandidateOracle = candidate_oracle != NULL
+                     && candidate_oracle[0] != '\0'
+                     && candidate_oracle[0] != '0';
+    OracleRef = OracleCand = OracleMissing = OracleDup = OracleBadImg = 0;
+    OracleChecks = 0;
     GPURebuildProfileCount               = 0;
     GPURebuildProfileDownloadSeconds     = 0.0;
     GPURebuildProfileHostContactsSeconds = 0.0;
@@ -790,6 +800,7 @@ inline void Domain::Solve (double tf, double dt, double dtOut, ptFun_t ptSetup, 
             tout += dtOut;
         }
 #ifdef USE_CUDA
+if (CandidateOracle) OracleCheck(iter, iter_b);
 
 pReset<<<(demaux.nparts+demaux.ncoint)/Nthread+1, Nthread>>>(pParticlesCU, pDynParticlesCU, pInteractons, pComInteractons, pdemaux, pExtraParams);
 
@@ -3917,6 +3928,114 @@ inline void Domain::DnLoadDevice(size_t Nc, bool force)
         }
     }
 }
+
+#ifdef USE_CUDA
+// P1-S diagnostic: brute-force candidate-completeness oracle. Independent of the
+// neighbor-list algorithm: enumerates ALL particle pairs on the host from device
+// positions copied at the moment of the check (immediately before contact-force
+// evaluation), applies the SAME contact criterion as the force kernels
+// (delta = R_i + R_j - dist > 0, minimum-image on periodic axes for free pairs;
+// sphere-plane via perpendicular distance to the plane through its device verts),
+// and verifies each contacting pair is represented in PairtoCInt.
+// Read-only w.r.t. the simulation state.
+inline void Domain::OracleCheck (size_t iter, size_t iter_b)
+{
+    size_t np = Particles.Size();
+    thrust::host_vector<DynParticleCU> hD(bDynParticlesCU.begin(), bDynParticlesCU.end());
+    thrust::host_vector<real3>         hV(bVertsCU.begin(), bVertsCU.end());
+    Vec3_t Per(demaux.Per.x, demaux.Per.y, demaux.Per.z);
+    // current pair records (unordered particle-index pairs)
+    std::map<std::pair<size_t,size_t>, size_t> recs;
+    for (auto it=PairtoCInt.begin(); it!=PairtoCInt.end(); ++it)
+    {
+        size_t a = it->second->I1, b = it->second->I2;
+        if (a>b) std::swap(a,b);
+        recs[std::make_pair(a,b)]++;
+    }
+    size_t ref=0, matched=0, miss=0, dup=0, reported=0;
+    for (size_t i=0;i<np;i++)
+    for (size_t j=i+1;j<np;j++)
+    {
+        bool sph_i = (Particles[i]->Verts.Size()==1);
+        bool sph_j = (Particles[j]->Verts.Size()==1);
+        if (!sph_i && !sph_j) continue;             // plane-plane: no contact path
+        Vec3_t xi(hD[i].x.x,hD[i].x.y,hD[i].x.z);
+        Vec3_t xj(hD[j].x.x,hD[j].x.y,hD[j].x.z);
+        bool   contact=false;
+        Vec3_t img(0.0,0.0,0.0);
+        double delta=0.0;
+        if (sph_i && sph_j)
+        {
+            double Ri = Particles[i]->Props.R, Rj = Particles[j]->Props.R;
+            bool   free_pair = Particles[i]->IsFree() && Particles[j]->IsFree();
+            double ox[3] = {0.0, -Per(0), Per(0)};
+            double oy[3] = {0.0, -Per(1), Per(1)};
+            for (int ax=0; ax<3 && !contact; ax++)
+            {
+                if (ax>0 && Per(0)<=0.0) continue;
+                for (int ay=0; ay<3 && !contact; ay++)
+                {
+                    if (ay>0 && Per(1)<=0.0) continue;
+                    if (!free_pair && (ax>0||ay>0)) continue;
+                    Vec3_t off(ox[ax],oy[ay],0.0);
+                    Vec3_t dx = xj+off-xi;
+                    double d = norm(dx);
+                    if (Ri+Rj-d > 0.0)
+                    {
+                        contact=true; img=off; delta=Ri+Rj-d;
+                    }
+                }
+            }
+        }
+        else
+        {
+            // sphere-plane: plane is the face-bearing particle
+            Particle* pl = sph_i ? Particles[j] : Particles[i];
+            Particle* sp = sph_i ? Particles[i] : Particles[j];
+            size_t si = sph_i ? i : j;
+            if (pl->Verts.Size()>=3)
+            {
+                size_t b0 = pl->Nvi;
+                Vec3_t p0(hV[b0+0].x,hV[b0+0].y,hV[b0+0].z);
+                Vec3_t p1(hV[b0+1].x,hV[b0+1].y,hV[b0+1].z);
+                Vec3_t p2(hV[b0+2].x,hV[b0+2].y,hV[b0+2].z);
+                Vec3_t d1 = p1-p0;
+                Vec3_t d2 = p2-p0;
+                Vec3_t n = cross(d1,d2);
+                double nn = norm(n);
+                if (nn>0.0)
+                {
+                    n = n/nn;
+                    Vec3_t xs(hD[si].x.x,hD[si].x.y,hD[si].x.z);
+                    Vec3_t dxs = xs-p0;
+                    double d = fabs(dot(dxs, n));
+                    double Ri = sp->Props.R, Rj = pl->Props.R;
+                    if (Ri+Rj-d > 0.0) { contact=true; delta=Ri+Rj-d; }
+                }
+            }
+        }
+        if (!contact) continue;
+        ref++;
+        auto key = std::make_pair(i,j);
+        auto itf = recs.find(key);
+        if (itf==recs.end())
+        {
+            miss++;
+            if (reported<10)
+            {
+                printf("DEM_ORACLE_FAIL iter=%zu i=%zu j=%zu x1=(%.9g,%.9g,%.9g) x2=(%.9g,%.9g,%.9g) img=(%.3g,%.3g,%.3g) delta=%.9g steps_since_rebuild=%zu\n",
+                       iter,i,j,xi(0),xi(1),xi(2),xj(0),xj(1),xj(2),img(0),img(1),img(2),delta,iter-iter_b);
+                reported++;
+            }
+        }
+        else matched++;
+    }
+    for (auto &kv : recs) if (kv.second>1) dup += kv.second-1;
+    OracleRef+=ref; OracleCand+=matched; OracleMissing+=miss; OracleDup+=dup; OracleChecks++;
+    printf("DEM_ORACLE_STEP iter=%zu ref=%zu matched=%zu missing=%zu dup=%zu steps_since_rebuild=%zu records=%zu\n",
+           iter,ref,matched,miss,dup,iter-iter_b,recs.size());
+}
+#endif
 
 inline void Domain::UpdateContactsDevice()
 {
