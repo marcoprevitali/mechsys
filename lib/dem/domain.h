@@ -264,6 +264,11 @@ public:
     size_t GPURebuildProfileEESum;
     size_t GPURebuildProfileVFSum;
     size_t GPURebuildProfileFVSum;
+    std::vector<double> GPURebuildDurations;      ///< per-rebuild total durations (s), record 0 = initial contact build
+    std::vector<size_t> GPURebuildCandidatePairs; ///< per-rebuild ListPosPairs sizes
+    std::vector<size_t> GPURebuildInteractions;   ///< per-rebuild Interactons sizes
+    bool   DiagKernelCounters;                                              ///< P0-R4: enable EE/VF/FV kernel screening counters (MECHSYS_DEM_KERNEL_DIAG)
+    size_t DiagEECandidates, DiagVFCandidates, DiagFVCandidates;            ///< P0-R4: accumulated per-step kernel candidate counts
     void UpLoadDevice(size_t Nc=1, bool first = true, bool updatestate = true);                      ///< Upload the domain to cuda device
     void DnLoadDevice(size_t Nc=1, bool force = true);                      ///< Download the key data from device
 #ifdef USE_CUDA
@@ -375,6 +380,13 @@ inline Domain::Domain (void * UD, size_t contactlaw)
     ProfileGPURebuild = profile_gpu_rebuild != NULL
                      && profile_gpu_rebuild[0] != '\0'
                      && profile_gpu_rebuild[0] != '0';
+    char const * diag_kernel_counters = std::getenv("MECHSYS_DEM_KERNEL_DIAG");
+    DiagKernelCounters = diag_kernel_counters != NULL
+                     && diag_kernel_counters[0] != '\0'
+                     && diag_kernel_counters[0] != '0';
+    DiagEECandidates = 0;
+    DiagVFCandidates = 0;
+    DiagFVCandidates = 0;
     GPURebuildProfileCount               = 0;
     GPURebuildProfileDownloadSeconds     = 0.0;
     GPURebuildProfileHostContactsSeconds = 0.0;
@@ -388,6 +400,9 @@ inline Domain::Domain (void * UD, size_t contactlaw)
     GPURebuildProfileEESum               = 0;
     GPURebuildProfileVFSum               = 0;
     GPURebuildProfileFVSum               = 0;
+    GPURebuildDurations.clear();
+    GPURebuildCandidatePairs.clear();
+    GPURebuildInteractions.clear();
     if (contactlaw==0) pForceVV   = CalcForceVV;
     if (contactlaw==1) pForceVV   = CalcForceVV_Hertz;
     pForceEE   = CalcForceEE;
@@ -736,6 +751,13 @@ inline void Domain::Solve (double tf, double dt, double dtOut, ptFun_t ptSetup, 
 #endif
 
     // run
+#ifdef USE_CUDA
+    if (DiagKernelCounters)
+    {
+        int diag_one = 1;
+        cudaMemcpyToSymbol(g_dem_diag_enabled, &diag_one, sizeof(int));
+    }
+#endif
     while (Time<tf)
     {
 
@@ -809,6 +831,8 @@ if (demaux.nfvint > 0) pForceFV<<<(demaux.nfvint+Nthread-1)/Nthread, Nthread>>>(
 if (RotPar) pRotate   <<<demaux.nparts/Nthread+1,Nthread>>>(pVertsCU, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
 
     }        
+
+if (DiagKernelCounters) { DiagEECandidates += demaux.neeint; DiagVFCandidates += demaux.nvfint; DiagFVCandidates += demaux.nfvint; }
 
 // Wrap particles and reset displacement reference for wrapped particles
 // This must be done after BOTH VelocityVerlet and old integration paths
@@ -1071,6 +1095,39 @@ if (UseVelocityVerlet){
                GPURebuildProfileEESum,
                GPURebuildProfileVFSum,
                GPURebuildProfileFVSum);
+        if (!GPURebuildDurations.empty())
+        {
+            std::vector<double> d = GPURebuildDurations;
+            std::sort(d.begin(), d.end());
+            double sum = 0.0; for (double x : d) sum += x;
+            double mean = sum / d.size();
+            double median = (d.size()%2) ? d[d.size()/2] : 0.5*(d[d.size()/2-1]+d[d.size()/2]);
+            printf("DEM_GPU_REBUILD_STATS n=%zu mean_ms=%.9g median_ms=%.9g min_ms=%.9g max_ms=%.9g total_s=%.9g\n",
+                   d.size(), mean*1e3, median*1e3, d.front()*1e3, d.back()*1e3, sum);
+            for (size_t i = 0; i < GPURebuildDurations.size(); ++i)
+                printf("DEM_GPU_REBUILD_LIST %zu %.9g %zu %zu\n",
+                       i, GPURebuildDurations[i]*1e3, GPURebuildCandidatePairs[i], GPURebuildInteractions[i]);
+        }
+    }
+#ifdef USE_CUDA
+    if (DiagKernelCounters)
+    {
+        unsigned long long ee_broad=0, ee_exact=0, ee_force=0;
+        unsigned long long vf_broad=0, vf_exact=0, vf_force=0;
+        unsigned long long fv_broad=0, fv_exact=0, fv_force=0;
+        cudaMemcpyFromSymbol(&ee_broad, g_dem_diag_ee_broad, sizeof(unsigned long long));
+        cudaMemcpyFromSymbol(&ee_exact, g_dem_diag_ee_exact, sizeof(unsigned long long));
+        cudaMemcpyFromSymbol(&ee_force, g_dem_diag_ee_force, sizeof(unsigned long long));
+        cudaMemcpyFromSymbol(&vf_broad, g_dem_diag_vf_broad, sizeof(unsigned long long));
+        cudaMemcpyFromSymbol(&vf_exact, g_dem_diag_vf_exact, sizeof(unsigned long long));
+        cudaMemcpyFromSymbol(&vf_force, g_dem_diag_vf_force, sizeof(unsigned long long));
+        cudaMemcpyFromSymbol(&fv_broad, g_dem_diag_fv_broad, sizeof(unsigned long long));
+        cudaMemcpyFromSymbol(&fv_exact, g_dem_diag_fv_exact, sizeof(unsigned long long));
+        cudaMemcpyFromSymbol(&fv_force, g_dem_diag_fv_force, sizeof(unsigned long long));
+        printf("DEM_KERNEL_DIAG ee_candidates=%zu ee_broad=%llu ee_exact=%llu ee_force=%llu vf_candidates=%zu vf_broad=%llu vf_exact=%llu vf_force=%llu fv_candidates=%zu fv_broad=%llu fv_exact=%llu fv_force=%llu\n",
+               DiagEECandidates, ee_broad, ee_exact, ee_force,
+               DiagVFCandidates, vf_broad, vf_exact, vf_force,
+               DiagFVCandidates, fv_broad, fv_exact, fv_force);
     }
 #endif
     printf("%s  Kinematic energy                                          = %g%s\n",TERM_CLR4, Ekin, TERM_RST);
@@ -3950,6 +4007,9 @@ inline void Domain::UpdateContactsDevice()
         GPURebuildProfileEESum += demaux.neeint;
         GPURebuildProfileVFSum += demaux.nvfint;
         GPURebuildProfileFVSum += demaux.nfvint;
+        GPURebuildDurations.push_back(std::chrono::duration<double>(profile_end-profile_begin).count());
+        GPURebuildCandidatePairs.push_back(profile_candidate_pairs);
+        GPURebuildInteractions.push_back(profile_interactions);
     }
 }
 #endif

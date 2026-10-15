@@ -513,6 +513,20 @@ __device__ inline real3 FeatureContactForce(InteractonCU const & law,
     return normalTotal + ft + tangentialDashpot;
 }
 
+// P0-R4 diagnostic screening counters (default-off). Enabled by setting the
+// device symbol g_dem_diag_enabled to 1 from host code (MECHSYS_DEM_KERNEL_DIAG=1).
+// Counters only observe control flow; they never alter forces, histories or ordering.
+__device__ int                g_dem_diag_enabled = 0;
+__device__ unsigned long long g_dem_diag_ee_broad = 0;
+__device__ unsigned long long g_dem_diag_ee_exact = 0;
+__device__ unsigned long long g_dem_diag_ee_force = 0;
+__device__ unsigned long long g_dem_diag_vf_broad = 0;
+__device__ unsigned long long g_dem_diag_vf_exact = 0;
+__device__ unsigned long long g_dem_diag_vf_force = 0;
+__device__ unsigned long long g_dem_diag_fv_broad = 0;
+__device__ unsigned long long g_dem_diag_fv_exact = 0;
+__device__ unsigned long long g_dem_diag_fv_force = 0;
+
 __global__ void CalcForceEE(size_t const * Edges, real3 const * Verts, InteractonCU const * Int, ComInteractonCU * CInt, DynInteractonCU * DIntEE,
         ParticleCU * Par, DynParticleCU * DPar, dem_aux const * demaux, void * extraparams)
 {
@@ -535,12 +549,15 @@ __global__ void CalcForceEE(size_t const * Edges, real3 const * Verts, Interacto
     real3 s;
     real3 Pert = make_real3(0.0,0.0,0.0);
     if (Int[id].BothFree) Pert = demaux[0].Per;
+    if (g_dem_diag_enabled) atomicAdd(&g_dem_diag_ee_broad,1ull);
     if (!OverlapEE(Edges,Verts,f1,f2,dm1,dm2,Pert)) return;
     DistanceEE(Edges,Verts,f1,f2,xi,xf,s,Pert);
+    if (g_dem_diag_enabled) atomicAdd(&g_dem_diag_ee_exact,1ull);
     real dist  = norm(s);
     real delta = r1 + r2 - dist;
     if (delta>0)
     {
+        if (g_dem_diag_enabled) atomicAdd(&g_dem_diag_ee_force,1ull);
         real3  n = s/dist;
         real   d = (r1*r1-r2*r2+dist*dist)/(2*dist);
         real3  x1c = xi+d*n;
@@ -613,12 +630,15 @@ __global__ void CalcForceVF(size_t const * Faces, size_t const * Facid, real3 co
     xi = Verts[f1];
     real3 Pert = make_real3(0.0,0.0,0.0);
     if (Int[id].BothFree) Pert = demaux[0].Per;
+    if (g_dem_diag_enabled) atomicAdd(&g_dem_diag_vf_broad,1ull);
     if (!OverlapVF(Faces,Facid,Verts,xi,f2,dm1,dm2,Pert)) return;
     DistanceVF(Faces,Facid,Verts,xi,f2,xf,s,Pert);
+    if (g_dem_diag_enabled) atomicAdd(&g_dem_diag_vf_exact,1ull);
     real dist  = norm(s);
     real delta = r1 + r2 - dist;
     if (delta>0)
     {
+        if (g_dem_diag_enabled) atomicAdd(&g_dem_diag_vf_force,1ull);
         real3  n = s/dist;
         real   d = (r1*r1-r2*r2+dist*dist)/(2*dist);
         real3  x1c = xi+d*n;
@@ -692,12 +712,15 @@ __global__ void CalcForceFV(size_t const * Faces, size_t const * Facid, real3 co
     xf = Verts[f2];
     real3 Pert = make_real3(0.0,0.0,0.0);
     if (Int[id].BothFree) Pert = demaux[0].Per;
+    if (g_dem_diag_enabled) atomicAdd(&g_dem_diag_fv_broad,1ull);
     if (!OverlapFV(Faces,Facid,Verts,f1,xf,dm1,dm2,Pert)) return;
     DistanceFV(Faces,Facid,Verts,f1,xf,xi,s,Pert);
+    if (g_dem_diag_enabled) atomicAdd(&g_dem_diag_fv_exact,1ull);
     real dist  = norm(s);
     real delta = r1 + r2 - dist;
     if (delta>0)
     {
+        if (g_dem_diag_enabled) atomicAdd(&g_dem_diag_fv_force,1ull);
         real3  n = s/dist;
         real   d = (r1*r1-r2*r2+dist*dist)/(2*dist);
         real3  x1c = xi+d*n;
