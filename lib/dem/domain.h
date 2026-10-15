@@ -272,6 +272,9 @@ public:
     bool   CandidateOracle;                                                 ///< P1-S: brute-force candidate-completeness oracle (MECHSYS_CANDIDATE_ORACLE)
     size_t OracleRef, OracleCand, OracleMissing, OracleDup, OracleBadImg;   ///< P1-S: cumulative oracle counters
     size_t OracleChecks;                                                    ///< P1-S: number of oracle checks performed
+    bool   PersistentReduction;                                             ///< P1-S: persistent-buffer displacement reduction (MECHSYS_PERSISTENT_REDUCTION)
+    thrust::device_vector<real>            bMaxOut;                         ///< P1-S: persistent device scalar for the max-displacement result
+    real                                 * pMaxOut;                         ///< P1-S: raw pointer to bMaxOut
     void UpLoadDevice(size_t Nc=1, bool first = true, bool updatestate = true);                      ///< Upload the domain to cuda device
     void DnLoadDevice(size_t Nc=1, bool force = true);                      ///< Download the key data from device
 #ifdef USE_CUDA
@@ -397,6 +400,10 @@ inline Domain::Domain (void * UD, size_t contactlaw)
                      && candidate_oracle[0] != '0';
     OracleRef = OracleCand = OracleMissing = OracleDup = OracleBadImg = 0;
     OracleChecks = 0;
+    char const * persistent_reduction = std::getenv("MECHSYS_PERSISTENT_REDUCTION");
+    PersistentReduction = persistent_reduction != NULL
+                     && persistent_reduction[0] != '\0'
+                     && persistent_reduction[0] != '0';
     GPURebuildProfileCount               = 0;
     GPURebuildProfileDownloadSeconds     = 0.0;
     GPURebuildProfileHostContactsSeconds = 0.0;
@@ -858,8 +865,20 @@ MaxD<<<demaux.nverts/Nthread+1, Nthread>>>(pVertsCU, pVertsoCU, pMaxDCU, pdemaux
 
 
         real maxdis = 0.0;
-        thrust::device_vector<real>::iterator it=thrust::max_element(bMaxDCU.begin(),bMaxDCU.end());
-        maxdis = *it;
+        if (PersistentReduction)
+        {
+            // P1-S experiment: persistent-buffer reduction. No temporary allocation;
+            // the 4-byte readback replaces the thrust iterator dereference. The decision
+            // point, value and ordering are unchanged (max is order-independent).
+            cudaMemsetAsync(pMaxOut, 0, sizeof(real));
+            MaxReduceKernel<<<(demaux.nverts+Nthread-1)/Nthread, Nthread>>>(pMaxDCU, bMaxDCU.size(), pMaxOut);
+            cudaMemcpy(&maxdis, pMaxOut, sizeof(real), cudaMemcpyDeviceToHost);
+        }
+        else
+        {
+            thrust::device_vector<real>::iterator it=thrust::max_element(bMaxDCU.begin(),bMaxDCU.end());
+            maxdis = *it;
+        }
 
         //std::cout << "9" << std::endl;
         //std::cout << iter << std::endl;
@@ -3484,6 +3503,11 @@ inline void Domain::UpLoadDevice(size_t Nc, bool first,bool updateState)
         
         //std::cout << "3" << std::endl;
         bMaxDCU        .resize(demaux.nverts);
+        if (PersistentReduction)
+        {
+            bMaxOut.resize(1);
+            pMaxOut = thrust::raw_pointer_cast(bMaxOut.data());
+        }
         bParticlesCU   .resize(hParticlesCU   .size());
         bDynParticlesCU.resize(hDynParticlesCU.size());
         bVertsCU       .resize(hVertsCU       .size());

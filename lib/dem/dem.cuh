@@ -527,6 +527,21 @@ __device__ unsigned long long g_dem_diag_fv_broad = 0;
 __device__ unsigned long long g_dem_diag_fv_exact = 0;
 __device__ unsigned long long g_dem_diag_fv_force = 0;
 
+// P1-S: persistent-storage displacement reduction (default-off; MECHSYS_PERSISTENT_REDUCTION).
+// Replaces the per-step thrust::max_element (which allocates temporary device storage every
+// call) with a grid-stride block-reduce + atomicMax into a preallocated device scalar.
+// Displacements are non-negative, so the integer atomicMax on the float bits is exact;
+// the maximum is order-independent, so the result is bitwise identical to the reduction.
+__global__ void MaxReduceKernel(const real * in, size_t n, real * out)
+{
+    size_t i = blockIdx.x * blockDim.x + threadIdx.x;
+    real   m = (real)0.0;
+    for (; i<n; i += gridDim.x*blockDim.x) if (in[i]>m) m = in[i];
+    // atomicMax on the raw bits is exact for non-negative values
+    if (sizeof(real)==4) atomicMax((int*)out, __float_as_int(m));
+    else                 atomicMax((long long int*)out, __double_as_longlong(m));
+}
+
 __global__ void CalcForceEE(size_t const * Edges, real3 const * Verts, InteractonCU const * Int, ComInteractonCU * CInt, DynInteractonCU * DIntEE,
         ParticleCU * Par, DynParticleCU * DPar, dem_aux const * demaux, void * extraparams)
 {
