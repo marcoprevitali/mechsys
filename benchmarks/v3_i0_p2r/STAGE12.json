@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "imprint_checks": 92,
+  "identical_initial_cases": 23,
+  "maxima": {
+    "gamma": "0",
+    "B": "0",
+    "Omega": "1.233618784381163013819104889989830553531646728515625E-17",
+    "force": "1.04083408558608425664715468883514404296875E-17"
+  },
+  "missing_candidates": 0,
+  "missing_imprints": 0,
+  "duplicates": 0,
+  "periodic_image_errors": 0
+}

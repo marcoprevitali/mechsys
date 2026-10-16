@@ -1,0 +1,291 @@
+{
+  "strict_default_off_result": "FAIL CUDA large; not relaxed or rerun until lucky PASS",
+  "root_cause_evidence": "same baseline executable/identical initial inputs gives multiple state hashes; per-candidate initial claims identical, live accumulation differs",
+  "atomic_order_attribution": "supported by identical claim forces/torques, varying actual live sums and existing atomicAdd accumulation; no deterministic reduction implemented",
+  "same_initial_inputs": true,
+  "same_initial_per_candidate_claims": true,
+  "unique_hashes_by_executable": {
+    "base": {
+      "state-0.json": 1,
+      "state-1.json": 2,
+      "state-2.json": 2
+    },
+    "candidate": {
+      "state-0.json": 1,
+      "state-1.json": 2,
+      "state-2.json": 3
+    }
+  },
+  "first_strict_differences": [
+    {
+      "snapshot": "state-1.json",
+      "path": "/particles/0/w/0",
+      "base": "7.8035224536571441e-10",
+      "other": "7.8035224536583414e-10",
+      "absolute_difference": 1.1973439366705076e-22
+    },
+    {
+      "snapshot": "state-1.json",
+      "path": "/particles/0/w/1",
+      "base": "7.3452086080719304e-22",
+      "other": "5.9012787107586443e-22",
+      "absolute_difference": 1.4439298973132862e-22
+    },
+    {
+      "snapshot": "state-1.json",
+      "path": "/particles/0/w/2",
+      "base": "-1.5607044907319286e-09",
+      "other": "-1.5607044907319946e-09",
+      "absolute_difference": 6.596765385110396e-23
+    },
+    {
+      "snapshot": "state-1.json",
+      "path": "/particles/0/wb/0",
+      "base": "1.5607044907314288e-09",
+      "other": "1.5607044907316683e-09",
+      "absolute_difference": 2.394687873341015e-22
+    },
+    {
+      "snapshot": "state-1.json",
+      "path": "/particles/0/wb/1",
+      "base": "1.4690417216143861e-21",
+      "other": "1.1802557421517289e-21",
+      "absolute_difference": 2.8878597946265723e-22
+    },
+    {
+      "snapshot": "state-1.json",
+      "path": "/particles/0/wb/2",
+      "base": "-3.1214089814638573e-09",
+      "other": "-3.1214089814639892e-09",
+      "absolute_difference": 1.3193530770220791e-22
+    },
+    {
+      "snapshot": "state-1.json",
+      "path": "/particles/0/wa/0",
+      "base": "1.5607044907314288e-09",
+      "other": "1.5607044907316683e-09",
+      "absolute_difference": 2.394687873341015e-22
+    },
+    {
+      "snapshot": "state-1.json",
+      "path": "/particles/0/wa/1",
+      "base": "1.4690417216143861e-21",
+      "other": "1.1802557421517289e-21",
+      "absolute_difference": 2.8878597946265723e-22
+    },
+    {
+      "snapshot": "state-1.json",
+      "path": "/particles/0/wa/2",
+      "base": "-3.1214089814638573e-09",
+      "other": "-3.1214089814639892e-09",
+      "absolute_difference": 1.3193530770220791e-22
+    },
+    {
+      "snapshot": "state-1.json",
+      "path": "/particles/0/F/0",
+      "base": "-0.11674452090273846",
+      "other": "-0.11674452090273847",
+      "absolute_difference": 1.3877787807814457e-17
+    },
+    {
+      "snapshot": "state-1.json",
+      "path": "/particles/0/F/1",
+      "base": "0.058372260451367806",
+      "other": "0.058372260451367813",
+      "absolute_difference": 6.938893903907228e-18
+    },
+    {
+      "snapshot": "state-1.json",
+      "path": "/particles/0/Flbm/0",
+      "base": "-0.11674452090273846",
+      "other": "-0.11674452090273847",
+      "absolute_difference": 1.3877787807814457e-17
+    },
+    {
+      "snapshot": "state-1.json",
+      "path": "/particles/0/Flbm/1",
+      "base": "0.058372260451367806",
+      "other": "0.058372260451367813",
+      "absolute_difference": 6.938893903907228e-18
+    },
+    {
+      "snapshot": "state-1.json",
+      "path": "/particles/0/T/0",
+      "base": "1.3476672814923564e-05",
+      "other": "1.3476672814925631e-05",
+      "absolute_difference": 2.066760391300493e-18
+    },
+    {
+      "snapshot": "state-1.json",
+      "path": "/particles/0/T/1",
+      "base": "1.2685165418080402e-17",
+      "other": "1.0191500421363742e-17",
+      "absolute_difference": 2.4936649967166602e-18
+    },
+    {
+      "snapshot": "state-1.json",
+      "path": "/particles/0/T/2",
+      "base": "-2.6953345629855761e-05",
+      "other": "-2.6953345629856899e-05",
+      "absolute_difference": 1.1384122811097797e-18
+    },
+    {
+      "snapshot": "state-1.json",
+      "path": "/particles/0/Q/2",
+      "base": "8.2768854661902251e-10",
+      "other": "8.2768854661898095e-10",
+      "absolute_difference": 4.156582578078964e-23
+    },
+    {
+      "snapshot": "state-1.json",
+      "path": "/particles/0/Q/3",
+      "base": "-8.2768854661824351e-10",
+      "other": "-8.2768854661835498e-10",
+      "absolute_difference": 1.1146258754152048e-22
+    },
+    {
+      "snapshot": "state-2.json",
+      "path": "/particles/0/w/0",
+      "base": "2.0137708297174259e-09",
+      "other": "2.0137708297176245e-09",
+      "absolute_difference": 1.9852334701272664e-22
+    },
+    {
+      "snapshot": "state-2.json",
+      "path": "/particles/0/w/1",
+      "base": "-1.5157483956175098e-10",
+      "other": "-1.5157483956222495e-10",
+      "absolute_difference": 4.739744909928849e-22
+    },
+    {
+      "snapshot": "state-2.json",
+      "path": "/particles/0/w/2",
+      "base": "-3.9602574992220033e-09",
+      "other": "-3.9602574992221414e-09",
+      "absolute_difference": 1.3813916229635562e-22
+    },
+    {
+      "snapshot": "state-2.json",
+      "path": "/particles/0/wb/0",
+      "base": "2.4668371687034227e-09",
+      "other": "2.4668371687035807e-09",
+      "absolute_difference": 1.5799149699762829e-22
+    },
+    {
+      "snapshot": "state-2.json",
+      "path": "/particles/0/wb/1",
+      "base": "-3.0314967912497103e-10",
+      "other": "-3.0314967912563019e-10",
+      "absolute_difference": 6.591595506281939e-22
+    },
+    {
+      "snapshot": "state-2.json",
+      "path": "/particles/0/wb/2",
+      "base": "-4.7991060169801497e-09",
+      "other": "-4.7991060169802945e-09",
+      "absolute_difference": 1.4475660719677984e-22
+    },
+    {
+      "snapshot": "state-2.json",
+      "path": "/particles/0/wa/0",
+      "base": "9.0613267797199385e-10",
+      "other": "9.0613267797191227e-10",
+      "absolute_difference": 8.158068791304235e-23
+    },
+    {
+      "snapshot": "state-2.json",
+      "path": "/particles/0/wa/1",
+      "base": "-3.0314967912644005e-10",
+      "other": "-3.0314967912681042e-10",
+      "absolute_difference": 3.7037011927061814e-22
+    },
+    {
+      "snapshot": "state-2.json",
+      "path": "/particles/0/wa/2",
+      "base": "-1.6776970355162925e-09",
+      "other": "-1.6776970355163051e-09",
+      "absolute_difference": 1.2614504341433672e-23
+    },
+    {
+      "snapshot": "state-2.json",
+      "path": "/particles/0/F/0",
+      "base": "-0.0057492911657127431",
+      "other": "-0.0057492911657127423",
+      "absolute_difference": 8.673617379884035e-19
+    },
+    {
+      "snapshot": "state-2.json",
+      "path": "/particles/0/F/1",
+      "base": "0.0028746494476620437",
+      "other": "0.0028746494476620432",
+      "absolute_difference": 4.336808689942018e-19
+    },
+    {
+      "snapshot": "state-2.json",
+      "path": "/particles/0/F/2",
+      "base": "-0.0014325902164197464",
+      "other": "-0.0014325902164197472",
+      "absolute_difference": 8.673617379884035e-19
+    },
+    {
+      "snapshot": "state-2.json",
+      "path": "/particles/0/Flbm/0",
+      "base": "-0.0057492911657127431",
+      "other": "-0.0057492911657127423",
+      "absolute_difference": 8.673617379884035e-19
+    },
+    {
+      "snapshot": "state-2.json",
+      "path": "/particles/0/Flbm/1",
+      "base": "0.0028746494476620437",
+      "other": "0.0028746494476620432",
+      "absolute_difference": 4.336808689942018e-19
+    },
+    {
+      "snapshot": "state-2.json",
+      "path": "/particles/0/Flbm/2",
+      "base": "-0.0014325902164197464",
+      "other": "-0.0014325902164197472",
+      "absolute_difference": 8.673617379884035e-19
+    },
+    {
+      "snapshot": "state-2.json",
+      "path": "/particles/0/T/0",
+      "base": "7.8244495998188801e-06",
+      "other": "7.8244495998181754e-06",
+      "absolute_difference": 7.047314121155779e-19
+    },
+    {
+      "snapshot": "state-2.json",
+      "path": "/particles/0/T/1",
+      "base": "-2.6176954470230542e-06",
+      "other": "-2.6176954470262526e-06",
+      "absolute_difference": 3.198396408832238e-18
+    },
+    {
+      "snapshot": "state-2.json",
+      "path": "/particles/0/T/2",
+      "base": "-1.4486902654854369e-05",
+      "other": "-1.4486902654854477e-05",
+      "absolute_difference": 1.0842021724855044e-19
+    },
+    {
+      "snapshot": "state-2.json",
+      "path": "/particles/0/Q/2",
+      "base": "2.2957551842633521e-09",
+      "other": "2.2957551842631602e-09",
+      "absolute_difference": 1.9190590211230242e-22
+    },
+    {
+      "snapshot": "state-2.json",
+      "path": "/particles/0/Q/3",
+      "base": "-2.4565245796812077e-09",
+      "other": "-2.4565245796815696e-09",
+      "absolute_difference": 3.618915179919496e-22
+    }
+  ],
+  "maximum_strict_absolute_difference": 1.3877787807814457e-17,
+  "gate": "P2R-K FAIL; strict compatibility acceptance blocked pending user decision, overall not PASS",
+  "preservation": "all failed and self-repeatability runs retained; historical P1/P2 results not rewritten",
+  "next": "separate default-off reproducibility study or explicitly authorized deterministic accumulation work; do not silently replace bitwise gate with tolerance"
+}

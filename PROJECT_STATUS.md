@@ -1,14 +1,14 @@
 # MechSys GPU DEM optimization — PROJECT_STATUS.md
 
-**As-of:** 2026-10-16 (V3-I0-P2 independent edge correction, HARD STOP)
-**State:** `V3-I0-P2 FAIL: near-tangent CPU/CUDA edge gate` / `CorrectTwelveEdgeProxy default false, unaccepted/unmerged` / `V3-I0-P1 PASS preserved for its registered subset` / `historical V3-I0/shared failures retained` / `Scheme A NOT_STARTED` / `C2 BLOCKED` / `coupled restart NOT_VALIDATED` / `P2-B NOT_RUN`
+**As-of:** 2026-10-16 (V3-I0-P2R robust arithmetic; strict compatibility HARD STOP)
+**State:** `V3-I0-P2R PARTIAL: geometry/coupled exchange pass, K strict default-off FAIL` / `baseline CUDA atomic sums also non-repeatable` / `RobustTwelveEdgeProxy default false, unmerged/unaccepted overall` / `V3-I0-P2 historical FAIL retained` / `V3-I0-P1 historical PASS retained for registered subset` / `Scheme A NOT_STARTED` / `C2 BLOCKED` / `coupled restart NOT_VALIDATED` / `P2-B NOT_RUN`
 **Reference decision (user, 2026-10-16):** explicitly select `UseVelocityVerlet=true` for all new validation, profiling, benchmarks and optimization decisions. Legacy position-Verlet/leapfrog data are separately labeled controls, not VV reference evidence. `AGENTS.md` records this policy; the compatibility constructor default remains false. `test_cu_04 <input> <Nproc> <dthoot> <qin> 1` must print `DEM_BENCHMARK_INTEGRATOR velocity_verlet=1`; use `--vv` in the registered runner.
-**Next bounded proposal (requires review/authorization after hard stop):** robust FP64 near-tangency edge evaluation against the frozen P2 fixtures/budgets. Start at `benchmarks/v3_i0_p2/V3_I0_P2_DECISION.md` and MINIMAL_COUNTEREXAMPLE.json. Sixteen original control-flow failures reproduced; candidate handles those but fails49 geometries/backend. Do not resume P2 coupled validation until the edge gate passes. No automatic Scheme A/P2-B; shared/limiter/coupled VV remain blocked/unvalidated.
+**Next bounded decision (requires user direction after hard stop):** review strict default-off reproducibility contract before any P2R promotion. Start at `benchmarks/v3_i0_p2r/V3_I0_P2R_DECISION.md` and DEFAULT_OFF_DIAGNOSIS.json. The unchanged baseline is not bitwise self-repeatable on CUDA large; do not silently relax K or implement deterministic force accumulation within the arithmetic patch. Geometry remediation and bounded coupled exchange pass, but required46 strict controls are not closed. No automatic Scheme A/restart/performance work.
 **Agent:** GLM-5.3 Flash (or successor); operational rules in `AGENTS.md`.
 **Original project:** https://github.com/Axtal/mechsys
 **Fork URL / owner:** https://github.com/marcoprevitali/mechsys / `marcoprevitali` (authenticated account and public fork metadata verified 2026-10-15)
 **Old local checkout:** `/home/msys/mechsys` at `e4ba163ec9f32c8bccb0fd8619ba79e000d3d6d8`; preserved dirty and not mutated during `F0`
-**Current work:** `fix/v3-i0-p2-edge-proxy`, exact base `e0d6c2fcc581b4caf9d020ebbf05f15c2f5a102f`; preregistration `88eb5a213a9fe14ae85efc63b9a33020e1f4ebdc`. Prepared in independent full clone `/tmp/mechsys-v3-i0-p2.d7OPg0/work`; persistent delivery target `/home/msys/git/mechsys-v3-i0-p2-edge-proxy`. Exact final commit/origin SHA/clean status and archive verification are recorded externally in P2 DELIVERY.json. Origin remains user fork; upstream push disabled. P1/V3-I0/V3-D/V2 clones and original checkout preserved READ ONLY. Scientific authority remains PROJECT_STATUS.md; PROJECT_STATE.md is its concise pointer.
+**Current work:** `fix/v3-i0-p2r-robust-tangency`, exact base `bf6616973be1335da1caa7d75f8a34aa0f6c1c22`; preregistration `fb6405ba334a457606903dd34efd1d606804983a`; implementation `1bde930295a9852e64a810e02e22b2bba21f98fc`. Independent full preparation clone `/tmp/mechsys-v3-i0-p2r.do4dZe/work`; persistent delivery target `/home/msys/git/mechsys-v3-i0-p2r-robust-tangency`. Exact final tip/origin/clean status and archive proof in external P2R DELIVERY.json. Origin=user fork, upstream push disabled. P2/P1/V3-I0/V3-D/V2 and original clones preserved READ ONLY. PROJECT_STATUS.md remains authoritative; PROJECT_STATE.md is its pointer.
 **Precision of historical benchmarks:** GPU double precision (`-DUSE_GPU_DOUBLE`) on NVIDIA RTX A6000 (84 SMs); do not assume the current host/GPU is unchanged.
 
 > **Evidence levels:** `HISTORICAL_REPORTED` means results transcribed from the user-supplied DeepSeek work summary dated 2026-10-14; they have **not** yet been independently reproduced or verified against source. `SOURCE_VERIFIED` requires auditing the actual local code. `MEASURED` requires raw timing/logs + code SHA. `PASS` requires documented numerical acceptance checks. Keep these labels distinct.
@@ -773,6 +773,93 @@ retaining every frozen geometry and budget. Requires review/authorization after
 this hard stop. Only resume P2 dependent gates after CPU/CUDA reference passes.
 Do not implement Scheme A, coupled restart, mixed precision or performance work.
 
+### 5.13 V3-I0-P2R — robust near-tangency arithmetic (2026-10-16 / Codex)
+
+**PARTIAL / strict default-off hard stop; no merge or default promotion.**
+P2 remains historically FAIL. Read benchmarks/v3_i0_p2r/V3_I0_P2R_DECISION.md.
+New independent full clone, base bf6616973be1335da1caa7d75f8a34aa0f6c1c22,
+preregistration fb6405b, implementation1bde930 (full SHAs at top/provenance).
+83 prior evidence-file hashes,original16 counterexamples,frozen1,254 geometries,
+expected values,random fixtures and all P2 budgets unchanged. Both49-failure
+sets reproduced before edits. Supplemental654 geometries separately registered
+with seed2026101602 and exact stored-input Fraction/Decimal700 reference.
+
+New shared host/device lib/dem/sphere_cube_robust.h uses FP64 exact coordinate
+and squared-margin expansions (TwoSum/FMA products), exact endpoint signs and
+rationalized short-interval lengths. No ordinary filter/geometric epsilon,
+positive-to-zero clamp,long double or model change. CPU/CUDA wrappers retain
+legacy and failed P2 helpers. New RobustTwelveEdgeProxy defaults false and
+requires both P1/P2 flags; old corrected mode alone remains historically failed.
+Explicit exponent envelope and unsupported/unrepresentable-output behavior in
+COMPENSATED_ARITHMETIC.md. Initial stress rejection31 inputs retained; proved
+normalized range extension2^-200→2^-400 fixes them without changing data/gates.
+
+All30,096 frozen edge comparisons PASS;49 old failures/backend resolve. Max
+edge error6.20361282052e-16,gamma7.45512778685e-17.15,696 supplemental edge
+comparisons PASS;worst normalized error1.78002800987e-16*dx. No genuine positive
+returned zero,false positive,invalid length/gamma or exact rational sign error.
+Frozen reference has36 tiny Decimal residual entries at exact rational zero;
+unchanged values/errors retained,not positive geometry clamped. All-nonzero
+reference max relative error1,meaningful exact-positive max2.889e-16. Error
+distributions/per-edge prior failures recorded. All edges compensated and
+unconditional exact expansion;no separate adaptive fallback/depth or speed claim.
+
+Only after geometry gates passed:23 identical initial coupled cases/backend,
+92 imprints and92,000 cells/1,380,000 direction records. Stage1 gamma/B/Omega
+parity,Stage2 candidates/imprints/images pass before Stage3 independent ledger.
+Gamma/B initial CPU/GPU differences0;Omega<=1.23361878439e-17,solid increment
+<=6.07153216592e-18. Zero missing candidates/imprints,duplicates,wrong image
+levers. Linear exchange residual<=1.59323721005e-16;body torque discrepancy
+<=5.00765878417e-18;world fixed-pose angular identity<=1e-71. Original I0
+budgets/collision arithmetic unchanged. This is legacy integration exchange
+evidence,not full-step angular conservation,coupled VV/restart/added-mass support.
+
+Identical INITIAL states only for correction effects:172 backend/cell rows
+above|delta_gamma|1e-10,max .216803150761095,affected mean .0548185114431593;
+32 previouslyzero become positive. Max case-total particle impulse change
+7.58763084824e-4,body torque change2.19753372314e-4. Allcell spatial delta
+gamma/B/Omega/fluid/particle/world/body torque data retained;unchanged geometries
+within old tolerance. Evolved backend states checked independently,not equated.
+
+**K hard stop:** required46 non-shared off/reference controls:43 attempted,
+42 bitwise PASS,CUDA large strict FAIL,three CUDA tail controls NOT_RUN. Full
+P1-only regression PARTIAL. Same unchanged baseline executable/identical input
+also has2 state1 and2 state2 hashes over3 repeats;candidate repeats vary too.
+All6 initial inputs/per-candidate claims identical;live force/torque sums vary,
+strongly implicating existing atomic accumulation order. First strict mismatch
+max1.38777878078e-17. No tolerance waiver,lucky-repeat PASS,deterministic
+reduction or silent reclassification. HistoricalP1/P2 verdicts retained.
+
+Six existing standalone explicitVV/checkpoint restart controls bitwise;three
+CPU/GPU comparisons pass prior budgets.18 negatives pass before collision:
+missingflags,noncanonical,Fconv2,Sc,shared,VV,limiter risk,exponent envelope on
+both backends. Shared CUDA legacy strict negative preserved. Limiter never
+activated in production collision;its support remains unvalidated. Original
+free out-of-range negative fixture wrapped to supported pose;corrected fixed-
+sphere negative rejects;both attempts retained. No gate bypass.
+
+P2R-A..J,L,M PASS in recorded subset;K FAIL;N Git delivery proof external at
+handoff. Representative2,100 candidate sample prepared but NOT_RUN afterstop;
+operation counts not fabricated. No performance qualification or P2-B run.
+Only production changes:common numerical header,CPU/CUDA wrappers,explicit
+default-off dispatch/configuration/preflight;contact/collision/integration/
+restart bodies and83 prior evidence files byte-identical to base. Tested
+runtime build header hashes match implementation;dirty-build provenance explicit.
+
+Artifacts/scripts/commands/hashes in benchmarks/v3_i0_p2r/. New archive namespace
+/home/msys/SIMS/mechsys_v3_i0_p2r_validation/20261016-robust-tangency-partial/;
+P2R_RAW.tgz,per-file verification andDELIVERY.json retain failures,repeats and
+all source/build/run/checkpoint evidence. Original tracked diff remains
+e98dcc...132e9 (full F0 hash above);previous clones untouched.
+
+Archive SHA256 cd31c91956d94a25d0014c01f03b888c65bb06e92107dc00428b6b319d070b38;
+3,980 payload files,3,045,791,680 bytes streamed against indexed sizes/SHA256.
+Archive verification is delivery evidence,not a scientific gate waiver.
+
+**Next bounded decision:** user to direct default-off reproducibility/gate
+study or separately authorize deterministic accumulation. Do not relaxK,
+promote this branch,implement SchemeA/coupled restart or run performance work.
+
 ## 6. Git/repository topology and record
 
 
@@ -847,7 +934,17 @@ Protection:         `origin` = user's fork; `upstream` fetch-only / push-disable
 | 2026-10-15 | P0-R complete: HISTORICAL_REBUILD_SHARE_UNRECONCILED (record self-contradicts); poly 23.6 s rebuild = Nproc=1 (21.24 s measured); neeint 6.4x interaction-list gap discovered; V0-A/B UNPROVEN; first experiments recommended and gated | §5.4, benchmarks/p0_reconciliation/ | MEASURED |
 | 2026-10-15 | Concurrent agent session edited this clone during P0-R (branch deleted, domain.h temporarily broken) and an external MoFEM job contaminated timing reps; mitigations applied; session separation recommended | §5.4 environment incident | COORDINATION HAZARD — user action recommended |
 
-### Current bounded task (after V3-I0-P2 hard stop)
+### Current bounded decision (after V3-I0-P2R compatibility stop)
+
+1. Read §5.13 and benchmarks/v3_i0_p2r/V3_I0_P2R_DECISION.md. Arithmetic and
+   bounded coupled exchange pass;overallPARTIAL,K strict compatibilityFAIL.
+2. Review unchanged-baseline CUDA large non-repeatability before choosing any
+   gate change or separately scoped deterministic force accumulation work.
+   Do not silently weaken bitwise requirements or cherry-pick matching repeats.
+3. Keep all3 occupancy switches defaultfalse andbranchunmerged. HistoricalP2FAIL,
+   shared/limiter/VV/restart/performance blockers remainexplicit andpreserved.
+
+### Superseded bounded task (after V3-I0-P2 hard stop)
 
 1. Read §5.12 and benchmarks/v3_i0_p2/V3_I0_P2_DECISION.md. P2 FAIL, default-off,
    unmerged; independent near-tangent edge counterexample and full batch retained.

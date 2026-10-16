@@ -1,0 +1,7 @@
+dataset,backend,edge_evaluations,ordinary_FP64,compensated,exact_predicate_fallback,max_fallback_depth,always_exact_expansion,max_expansion_components
+frozen,cpu,15048,0,15048,0,0,15048,6
+frozen,cuda,15048,0,15048,0,0,15048,6
+stress,cpu,7848,0,7848,0,0,7848,7
+stress,cuda,7848,0,7848,0,0,7848,7
+representative_candidate_geometry,cpu,NOT_RUN,NOT_RUN,NOT_RUN,NOT_RUN,NOT_RUN,NOT_RUN,NOT_RUN
+representative_candidate_geometry,cuda,NOT_RUN,NOT_RUN,NOT_RUN,NOT_RUN,NOT_RUN,NOT_RUN,NOT_RUN

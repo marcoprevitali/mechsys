@@ -5,6 +5,44 @@ record. This file is a concise re-entry point, not a replacement for that record
 
 ## Current objective and boundary
 
+**V3-I0-P2R PARTIAL — arithmetic/coupled exchange pass, strict default-off K
+FAIL.** Read PROJECT_STATUS.md §5.13 and
+[P2R decision](benchmarks/v3_i0_p2r/V3_I0_P2R_DECISION.md). Independent branch
+fix/v3-i0-p2r-robust-tangency, base bf6616973be1335da1caa7d75f8a34aa0f6c1c22,
+preregistration fb6405b, implementation 1bde930. Final tip/origin/clean receipt is
+external P2R DELIVERY.json. All occupancy flags default false; no merge/promotion.
+
+One shared CPU/CUDA FP64 exact-expansion helper preserves coordinate tails,
+margin/endpoint signs and short positive intervals. OldP2 functions/evidence
+retained.83 prior file hashes and frozen fixtures/reference/tolerances unchanged.
+1,254 frozen+654 supplemental geometries/backend pass;all49 previous failures
+resolved. Max frozen edgeerror6.204e-16,gamma7.456e-17. Explicit exponent/
+representability envelope,initial31 rejected inputs and its proved extension
+documented. No arbitraryepsilon,clamping or exact-volume replacement.
+
+After geometryPASS:23 identical-initial coupled cases/backend,92 imprints,
+92,000 collisions/1,380,000 directions,zero independent failures/missing/
+duplicate/image errors. Gamma/B parityexact;Omega<=1.234e-17. Linear exchange
+residual<=1.594e-16,body torqueerror<=5.008e-18;world fixed-pose angular
+identity<=1e-71,NOT full-step dynamics. Legacy coupled integration only.
+
+**Compatibility stop:**43/46 non-shared controls tested,42 bitwisePASS,CUDA
+large strictFAIL,three CUDA tail controlsNOT_RUN;fullP1-only regressionPARTIAL.
+Same unchangedbaseline binary givesmultiple statehashes on3 repeats. All6
+base/candidate initial inputs and per-candidate claimsbitwise identical;live
+atomic sums vary. Max first strict difference1.38778e-17. Do NOT waiveK or
+reportoverallPASS. Six standaloneVV checkpoint restartsbitwise;18 explicit
+unsupported/limiter/shared/VV negativesrejectbeforecollision. Representative
+operation sampleNOT_RUN afterstop. No SchemeA/restart/performance work.
+
+Next requires user direction: default-off reproducibility/gate study or separate
+deterministic-accumulation scope. No implicit tolerance relaxation. Evidence
+benchmarks/v3_i0_p2r/;newrawarchive/verification namespace
+/home/msys/SIMS/mechsys_v3_i0_p2r_validation/20261016-robust-tangency-partial/.
+Persistent delivery target: /home/msys/git/mechsys-v3-i0-p2r-robust-tangency.
+
+## Preserved P2 failed experiment (not relabeled by remediation)
+
 **V3-I0-P2 FAIL — hard stop at independent CPU/CUDA edge gate.** Default-off
 CorrectTwelveEdgeProxy is an unaccepted, unmerged experiment, not coupled
 validation. Read PROJECT_STATUS.md §5.12 and
@@ -30,7 +68,7 @@ not accepted. Existing P1/default-off controls all rerun with P2=false:
 zero P1 independent failures. Standalone VV/checkpoint cases0/1/9 CPU/CUDA
 pass bounded regression (six bitwise restarts); coupled VV guard remains active.
 
-Next: review/authorize a robust FP64 near-tangency edge evaluation experiment
+Historical P2 next proposal (arithmetically remediated in P2R above): review/authorize a robust FP64 near-tangency edge evaluation experiment
 with unchanged fixtures/budgets before resuming dependent P2 gates. Do not
 weaken tolerances, replace proxy with exact volume, implement Scheme A/restart
 or run P2-B performance. Partial artifacts: benchmarks/v3_i0_p2/;

@@ -1,0 +1,965 @@
+{
+  "required_controls": 46,
+  "tested": 43,
+  "bitwise_pass": 42,
+  "strict_fail": 1,
+  "not_run": 3,
+  "controls": [
+    {
+      "backend": "cpu",
+      "case": "boundary",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cpu",
+      "case": "contact",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cpu",
+      "case": "cross_x",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cpu",
+      "case": "cross_y",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cpu",
+      "case": "cross_z",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cpu",
+      "case": "empty",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cpu",
+      "case": "fconv",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cpu",
+      "case": "fixed",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cpu",
+      "case": "large",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cpu",
+      "case": "moving",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cpu",
+      "case": "near_inside",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cpu",
+      "case": "near_outside",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cpu",
+      "case": "offset1",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cpu",
+      "case": "offset2",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cpu",
+      "case": "partial",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cpu",
+      "case": "periodic",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cpu",
+      "case": "rebuild",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cpu",
+      "case": "rotating",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cpu",
+      "case": "shared",
+      "bitwise_equal": true,
+      "scope": "unsupported shared negative"
+    },
+    {
+      "backend": "cpu",
+      "case": "small",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cpu",
+      "case": "translate_x",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cpu",
+      "case": "translate_y",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cpu",
+      "case": "translate_z",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cpu",
+      "case": "zero",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cuda",
+      "case": "boundary",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cuda",
+      "case": "contact",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cuda",
+      "case": "cross_x",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cuda",
+      "case": "cross_y",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cuda",
+      "case": "cross_z",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cuda",
+      "case": "fconv",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cuda",
+      "case": "fixed",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cuda",
+      "case": "large",
+      "bitwise_equal": false,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cuda",
+      "case": "moving",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cuda",
+      "case": "offset1",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cuda",
+      "case": "offset2",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cuda",
+      "case": "partial",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cuda",
+      "case": "periodic",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cuda",
+      "case": "rebuild",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cuda",
+      "case": "rotating",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cuda",
+      "case": "shared",
+      "bitwise_equal": false,
+      "scope": "unsupported shared negative"
+    },
+    {
+      "backend": "cuda",
+      "case": "small",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cuda",
+      "case": "translate_x",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cuda",
+      "case": "translate_y",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cuda",
+      "case": "translate_z",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    },
+    {
+      "backend": "cuda",
+      "case": "zero",
+      "bitwise_equal": true,
+      "scope": "required non-shared control"
+    }
+  ],
+  "standalone_vv": {
+    "absolute_tolerance": 1e-10,
+    "relative_tolerance": 1e-09,
+    "pass": true,
+    "runs": {
+      "case0_law0_damp1_cpu_reference": {
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv-build/cpu",
+          "reference",
+          "0",
+          "0",
+          "1",
+          "300",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv/case0_law0_damp1_cpu.vv.json"
+        ],
+        "exit_code": 0,
+        "snapshots": 301,
+        "log_sha256": "8837fe504ffa56342adef5c1f79c7edcef89d0f04443d9c26d82a5b7bac6a7ab",
+        "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+      },
+      "case0_law0_damp1_cpu_prefix": {
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv-build/cpu",
+          "split",
+          "0",
+          "0",
+          "1",
+          "50",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv/case0_law0_damp1_cpu.vv.json"
+        ],
+        "exit_code": 0,
+        "snapshots": 51,
+        "log_sha256": "68811cd58a5e17b20d7290eb4e5a71b82418c33a1f1a0d12961eba966196dbd9",
+        "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+      },
+      "case0_law0_damp1_cpu_resumed": {
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv-build/cpu",
+          "continue",
+          "0",
+          "0",
+          "1",
+          "300",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv/case0_law0_damp1_cpu.vv.json"
+        ],
+        "exit_code": 0,
+        "snapshots": 252,
+        "log_sha256": "79806a738bba509711307b199939b818cd19d60b4491c034f4e6df81d8711fc0",
+        "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+      },
+      "case0_law0_damp1_cuda_reference": {
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv-build/cuda",
+          "reference",
+          "0",
+          "0",
+          "1",
+          "300",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv/case0_law0_damp1_cuda.vv.json"
+        ],
+        "exit_code": 0,
+        "snapshots": 301,
+        "log_sha256": "426eda9b5128f005e5f6e3bcf94682eb63d13a003cc940cdef0f60faec3015b1",
+        "binary_sha256": "2274654f0e2b38229c7ac294480c017904e355641433321cf4642de12364e7d3"
+      },
+      "case0_law0_damp1_cuda_prefix": {
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv-build/cuda",
+          "split",
+          "0",
+          "0",
+          "1",
+          "50",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv/case0_law0_damp1_cuda.vv.json"
+        ],
+        "exit_code": 0,
+        "snapshots": 51,
+        "log_sha256": "1192f019465939cd2873cdaa6f31b421222cea4088d784b4d4c96db7073be3b2",
+        "binary_sha256": "2274654f0e2b38229c7ac294480c017904e355641433321cf4642de12364e7d3"
+      },
+      "case0_law0_damp1_cuda_resumed": {
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv-build/cuda",
+          "continue",
+          "0",
+          "0",
+          "1",
+          "300",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv/case0_law0_damp1_cuda.vv.json"
+        ],
+        "exit_code": 0,
+        "snapshots": 252,
+        "log_sha256": "7ed14a6fea57eb8ec45a5af08eb61ae8212d19da2f290f7c13cebddfbaa3d283",
+        "binary_sha256": "2274654f0e2b38229c7ac294480c017904e355641433321cf4642de12364e7d3"
+      },
+      "case1_law0_damp1_cpu_reference": {
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv-build/cpu",
+          "reference",
+          "1",
+          "0",
+          "1",
+          "300",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv/case1_law0_damp1_cpu.vv.json"
+        ],
+        "exit_code": 0,
+        "snapshots": 301,
+        "log_sha256": "04b49f60c4b0301394ae5c0987f70782b663a5e0e82eff7f539f3efbfb471000",
+        "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+      },
+      "case1_law0_damp1_cpu_prefix": {
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv-build/cpu",
+          "split",
+          "1",
+          "0",
+          "1",
+          "50",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv/case1_law0_damp1_cpu.vv.json"
+        ],
+        "exit_code": 0,
+        "snapshots": 51,
+        "log_sha256": "421c20c32999e548e82df145579fe02f3f9cdd24b9fb2e1572ec94745df5dfca",
+        "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+      },
+      "case1_law0_damp1_cpu_resumed": {
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv-build/cpu",
+          "continue",
+          "1",
+          "0",
+          "1",
+          "300",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv/case1_law0_damp1_cpu.vv.json"
+        ],
+        "exit_code": 0,
+        "snapshots": 252,
+        "log_sha256": "f07817dabffcae82e7a7eb65eaa02ed345f8d7b3dc0c1a12e88a8c3f55e02308",
+        "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+      },
+      "case1_law0_damp1_cuda_reference": {
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv-build/cuda",
+          "reference",
+          "1",
+          "0",
+          "1",
+          "300",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv/case1_law0_damp1_cuda.vv.json"
+        ],
+        "exit_code": 0,
+        "snapshots": 301,
+        "log_sha256": "61dda6b57851811d33ad11f548ff5ff50b71be3cb9f3a5819b1761aa831317d4",
+        "binary_sha256": "2274654f0e2b38229c7ac294480c017904e355641433321cf4642de12364e7d3"
+      },
+      "case1_law0_damp1_cuda_prefix": {
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv-build/cuda",
+          "split",
+          "1",
+          "0",
+          "1",
+          "50",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv/case1_law0_damp1_cuda.vv.json"
+        ],
+        "exit_code": 0,
+        "snapshots": 51,
+        "log_sha256": "1a80dd66b70d67485eea5daacc7f100c2ee3effbf29f80d17ec508c360586d6c",
+        "binary_sha256": "2274654f0e2b38229c7ac294480c017904e355641433321cf4642de12364e7d3"
+      },
+      "case1_law0_damp1_cuda_resumed": {
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv-build/cuda",
+          "continue",
+          "1",
+          "0",
+          "1",
+          "300",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv/case1_law0_damp1_cuda.vv.json"
+        ],
+        "exit_code": 0,
+        "snapshots": 252,
+        "log_sha256": "eb93f61c0be42650249ae2db90914423ac1b1a22a7a074185676493fa7bab51d",
+        "binary_sha256": "2274654f0e2b38229c7ac294480c017904e355641433321cf4642de12364e7d3"
+      },
+      "case9_law0_damp1_cpu_reference": {
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv-build/cpu",
+          "reference",
+          "9",
+          "0",
+          "1",
+          "300",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv/case9_law0_damp1_cpu.vv.json"
+        ],
+        "exit_code": 0,
+        "snapshots": 301,
+        "log_sha256": "88fe5479af9221e3061de6c477442c26cff47912487f1a624267d51e847830d7",
+        "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+      },
+      "case9_law0_damp1_cpu_prefix": {
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv-build/cpu",
+          "split",
+          "9",
+          "0",
+          "1",
+          "200",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv/case9_law0_damp1_cpu.vv.json"
+        ],
+        "exit_code": 0,
+        "snapshots": 201,
+        "log_sha256": "6b265de867ff1fc0cf0bc3412761301b6e5f00ec9f12d5cbbe132fc699392834",
+        "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+      },
+      "case9_law0_damp1_cpu_resumed": {
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv-build/cpu",
+          "continue",
+          "9",
+          "0",
+          "1",
+          "300",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv/case9_law0_damp1_cpu.vv.json"
+        ],
+        "exit_code": 0,
+        "snapshots": 102,
+        "log_sha256": "f780c9cf9725870ceaabd2785118c496441d6d1d4866be5af33761999491b2d0",
+        "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+      },
+      "case9_law0_damp1_cuda_reference": {
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv-build/cuda",
+          "reference",
+          "9",
+          "0",
+          "1",
+          "300",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv/case9_law0_damp1_cuda.vv.json"
+        ],
+        "exit_code": 0,
+        "snapshots": 301,
+        "log_sha256": "629324d664b5d089bcb67780a0184fa63bb46b5d15fddc2c9e8c29f476b0cad5",
+        "binary_sha256": "2274654f0e2b38229c7ac294480c017904e355641433321cf4642de12364e7d3"
+      },
+      "case9_law0_damp1_cuda_prefix": {
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv-build/cuda",
+          "split",
+          "9",
+          "0",
+          "1",
+          "200",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv/case9_law0_damp1_cuda.vv.json"
+        ],
+        "exit_code": 0,
+        "snapshots": 201,
+        "log_sha256": "dd9f98d8736df385c198fa0becf81c1e5a0111a408e173374f9341f67a4da2a1",
+        "binary_sha256": "2274654f0e2b38229c7ac294480c017904e355641433321cf4642de12364e7d3"
+      },
+      "case9_law0_damp1_cuda_resumed": {
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv-build/cuda",
+          "continue",
+          "9",
+          "0",
+          "1",
+          "300",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/standalone-vv/case9_law0_damp1_cuda.vv.json"
+        ],
+        "exit_code": 0,
+        "snapshots": 102,
+        "log_sha256": "f430ce509ea687d73c9ac3940bbaa152004314e7edf1f2930924dae5d4e642f8",
+        "binary_sha256": "2274654f0e2b38229c7ac294480c017904e355641433321cf4642de12364e7d3"
+      }
+    },
+    "comparisons": {
+      "case0_law0_damp1_cpu_restart": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 0,
+        "bitwise_numeric": true,
+        "numbers": 25149,
+        "restart_step": 50
+      },
+      "case0_law0_damp1_cuda_restart": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 0,
+        "bitwise_numeric": true,
+        "numbers": 25149,
+        "restart_step": 50
+      },
+      "case0_law0_damp1_cpu_vs_cuda": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 5.562217353372034e-14,
+        "bitwise_numeric": false,
+        "numbers": 24900,
+        "exact_zero_feature_slots_equivalent_to_absent": true,
+        "strict_storage_comparison": {
+          "pass": true,
+          "failures": 0,
+          "first_failure": [],
+          "max_absolute_error": 5.562217353372034e-14,
+          "bitwise_numeric": false,
+          "numbers": 24900
+        }
+      },
+      "case1_law0_damp1_cpu_restart": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 0,
+        "bitwise_numeric": true,
+        "numbers": 25149,
+        "restart_step": 50
+      },
+      "case1_law0_damp1_cuda_restart": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 0,
+        "bitwise_numeric": true,
+        "numbers": 25149,
+        "restart_step": 50
+      },
+      "case1_law0_damp1_cpu_vs_cuda": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 5.562217353372034e-14,
+        "bitwise_numeric": false,
+        "numbers": 24900,
+        "exact_zero_feature_slots_equivalent_to_absent": true,
+        "strict_storage_comparison": {
+          "pass": true,
+          "failures": 0,
+          "first_failure": [],
+          "max_absolute_error": 5.562217353372034e-14,
+          "bitwise_numeric": false,
+          "numbers": 24900
+        }
+      },
+      "case9_law0_damp1_cpu_restart": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 0,
+        "bitwise_numeric": true,
+        "numbers": 25149,
+        "restart_step": 200
+      },
+      "case9_law0_damp1_cuda_restart": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 0,
+        "bitwise_numeric": true,
+        "numbers": 25149,
+        "restart_step": 200
+      },
+      "case9_law0_damp1_cpu_vs_cuda": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 3.469446951953614e-17,
+        "bitwise_numeric": false,
+        "numbers": 24900,
+        "exact_zero_feature_slots_equivalent_to_absent": true,
+        "strict_storage_comparison": {
+          "pass": true,
+          "failures": 0,
+          "first_failure": [],
+          "max_absolute_error": 3.469446951953614e-17,
+          "bitwise_numeric": false,
+          "numbers": 24900
+        }
+      }
+    },
+    "analytical": {
+      "case0_law0_damp1_cpu": {
+        "expected": {
+          "normal": 1.0,
+          "tangent": 8e-05,
+          "tangent_damping": 0.0008377580409572783,
+          "rolling": 1.2000000000000002e-05
+        },
+        "pass": true,
+        "checks": {
+          "normal": true,
+          "tangent": true,
+          "tangent_damping": true,
+          "rolling": true
+        }
+      }
+    }
+  },
+  "unsupported_guards": {
+    "tests": [
+      {
+        "backend": "cpu",
+        "case": "no_p1",
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/coupled-build/cpu",
+          "moving",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/negative-tests-r2/cpu-no_p1"
+        ],
+        "environment": {
+          "P1_MODE": "0"
+        },
+        "exit": 1,
+        "pass": true,
+        "expected_message": "requires ConservativeSphereCells",
+        "production_collision_occurred": false
+      },
+      {
+        "backend": "cpu",
+        "case": "no_p2",
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/coupled-build/cpu",
+          "moving",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/negative-tests-r2/cpu-no_p2"
+        ],
+        "environment": {
+          "P2_MODE": "0"
+        },
+        "exit": 1,
+        "pass": true,
+        "expected_message": "requires CorrectTwelveEdgeProxy",
+        "production_collision_occurred": false
+      },
+      {
+        "backend": "cpu",
+        "case": "noncanonical",
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/coupled-build/cpu",
+          "moving",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/negative-tests-r2/cpu-noncanonical"
+        ],
+        "environment": {
+          "P2_NONCANONICAL": "1"
+        },
+        "exit": 1,
+        "pass": true,
+        "expected_message": "canonical centered spheres only",
+        "production_collision_occurred": false
+      },
+      {
+        "backend": "cpu",
+        "case": "nonunit_conversion",
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/coupled-build/cpu",
+          "fconv",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/negative-tests-r2/cpu-nonunit_conversion"
+        ],
+        "environment": {},
+        "exit": 1,
+        "pass": true,
+        "expected_message": "Fconv=1",
+        "production_collision_occurred": false
+      },
+      {
+        "backend": "cpu",
+        "case": "smagorinsky",
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/coupled-build/cpu",
+          "moving",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/negative-tests-r2/cpu-smagorinsky"
+        ],
+        "environment": {
+          "P2_SC": "1"
+        },
+        "exit": 1,
+        "pass": true,
+        "expected_message": "Sc=0",
+        "production_collision_occurred": false
+      },
+      {
+        "backend": "cpu",
+        "case": "shared",
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/coupled-build/cpu",
+          "shared",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/negative-tests-r2/cpu-shared"
+        ],
+        "environment": {},
+        "exit": 1,
+        "pass": true,
+        "expected_message": "shared geometric/positive-occupancy cell blocked",
+        "production_collision_occurred": false
+      },
+      {
+        "backend": "cpu",
+        "case": "vv_guard",
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/coupled-build/cpu",
+          "moving",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/negative-tests-r2/cpu-vv_guard",
+          "1"
+        ],
+        "environment": {},
+        "exit": 1,
+        "pass": true,
+        "expected_message": "coupled Velocity-Verlet/full-state restart is not implemented",
+        "production_collision_occurred": false
+      },
+      {
+        "backend": "cpu",
+        "case": "limiter_risk",
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/coupled-build/cpu",
+          "moving",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/negative-tests-r2/cpu-limiter_risk"
+        ],
+        "environment": {
+          "P2_LIMITER_RISK": "1"
+        },
+        "exit": 1,
+        "pass": true,
+        "expected_message": "production limiter risk blocked before collision",
+        "production_collision_occurred": false
+      },
+      {
+        "backend": "cpu",
+        "case": "exponent_envelope",
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/coupled-build/cpu",
+          "empty",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/negative-tests-r2/cpu-exponent_envelope"
+        ],
+        "environment": {
+          "P1_POSITION": "1e130 5 5"
+        },
+        "exit": 1,
+        "pass": true,
+        "expected_message": "outside certified FP64 exponent envelope",
+        "production_collision_occurred": false
+      },
+      {
+        "backend": "cuda",
+        "case": "no_p1",
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/coupled-build/cuda",
+          "moving",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/negative-tests-r2/cuda-no_p1"
+        ],
+        "environment": {
+          "P1_MODE": "0"
+        },
+        "exit": 1,
+        "pass": true,
+        "expected_message": "requires ConservativeSphereCells",
+        "production_collision_occurred": false
+      },
+      {
+        "backend": "cuda",
+        "case": "no_p2",
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/coupled-build/cuda",
+          "moving",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/negative-tests-r2/cuda-no_p2"
+        ],
+        "environment": {
+          "P2_MODE": "0"
+        },
+        "exit": 1,
+        "pass": true,
+        "expected_message": "requires CorrectTwelveEdgeProxy",
+        "production_collision_occurred": false
+      },
+      {
+        "backend": "cuda",
+        "case": "noncanonical",
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/coupled-build/cuda",
+          "moving",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/negative-tests-r2/cuda-noncanonical"
+        ],
+        "environment": {
+          "P2_NONCANONICAL": "1"
+        },
+        "exit": 1,
+        "pass": true,
+        "expected_message": "canonical centered spheres only",
+        "production_collision_occurred": false
+      },
+      {
+        "backend": "cuda",
+        "case": "nonunit_conversion",
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/coupled-build/cuda",
+          "fconv",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/negative-tests-r2/cuda-nonunit_conversion"
+        ],
+        "environment": {},
+        "exit": 1,
+        "pass": true,
+        "expected_message": "Fconv=1",
+        "production_collision_occurred": false
+      },
+      {
+        "backend": "cuda",
+        "case": "smagorinsky",
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/coupled-build/cuda",
+          "moving",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/negative-tests-r2/cuda-smagorinsky"
+        ],
+        "environment": {
+          "P2_SC": "1"
+        },
+        "exit": 1,
+        "pass": true,
+        "expected_message": "Sc=0",
+        "production_collision_occurred": false
+      },
+      {
+        "backend": "cuda",
+        "case": "shared",
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/coupled-build/cuda",
+          "shared",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/negative-tests-r2/cuda-shared"
+        ],
+        "environment": {},
+        "exit": 1,
+        "pass": true,
+        "expected_message": "shared geometric/positive-occupancy cell blocked",
+        "production_collision_occurred": false
+      },
+      {
+        "backend": "cuda",
+        "case": "vv_guard",
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/coupled-build/cuda",
+          "moving",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/negative-tests-r2/cuda-vv_guard",
+          "1"
+        ],
+        "environment": {},
+        "exit": 1,
+        "pass": true,
+        "expected_message": "coupled Velocity-Verlet/full-state restart is not implemented",
+        "production_collision_occurred": false
+      },
+      {
+        "backend": "cuda",
+        "case": "limiter_risk",
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/coupled-build/cuda",
+          "moving",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/negative-tests-r2/cuda-limiter_risk"
+        ],
+        "environment": {
+          "P2_LIMITER_RISK": "1"
+        },
+        "exit": 1,
+        "pass": true,
+        "expected_message": "production limiter risk blocked before collision",
+        "production_collision_occurred": false
+      },
+      {
+        "backend": "cuda",
+        "case": "exponent_envelope",
+        "command": [
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/coupled-build/cuda",
+          "empty",
+          "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/negative-tests-r2/cuda-exponent_envelope"
+        ],
+        "environment": {
+          "P1_POSITION": "1e130 5 5"
+        },
+        "exit": 1,
+        "pass": true,
+        "expected_message": "outside certified FP64 exponent envelope",
+        "production_collision_occurred": false
+      }
+    ],
+    "pass": true
+  },
+  "P1_only_regression": "PARTIAL; CUDA tail stopped on default-off failure",
+  "corrected_mode": "false in all compatibility controls"
+}

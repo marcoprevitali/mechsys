@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "archive": "/home/msys/SIMS/mechsys_v3_i0_p2r_validation/20261016-robust-tangency-partial/P2R_RAW.tgz",
+  "archive_sha256": "cd31c91956d94a25d0014c01f03b888c65bb06e92107dc00428b6b319d070b38",
+  "payload_files": 3980,
+  "payload_bytes": 3045791680,
+  "index_sha256": "28b85a887df547beb980f85d5e1c5850413af178a0a8b50c8bdc01870db05341",
+  "verification": "every tar member streamed and checked against SHA256/size, no extraction or prior archive overwrite"
+}
