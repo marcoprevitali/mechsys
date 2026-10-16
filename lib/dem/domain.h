@@ -807,8 +807,6 @@ inline void Domain::Solve (double tf, double dt, double dtOut, ptFun_t ptSetup, 
             tout += dtOut;
         }
 #ifdef USE_CUDA
-if (CandidateOracle) OracleCheck(iter, iter_b);
-
 pReset<<<(demaux.nparts+demaux.ncoint)/Nthread+1, Nthread>>>(pParticlesCU, pDynParticlesCU, pInteractons, pComInteractons, pdemaux, pExtraParams);
 
 
@@ -818,6 +816,8 @@ if (UseVelocityVerlet){
 // 1. Half‑step updates (translational and rotational)
 pVerletStep1<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pVertsCU, pParticlesCU, pDynParticlesCU, pA, pdemaux);
 if (RotPar) pOrientationUpdate<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pVertsCU, pParticlesCU, pDynParticlesCU, pWdot, pdemaux);
+
+if (CandidateOracle) OracleCheck(iter, iter_b);
 
 if (demaux.nvvint > 0) pForceVV<<<(demaux.nvvint+Nthread-1)/Nthread, Nthread>>>(pInteractons, pComInteractons, pDynInteractonsVV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
 if (demaux.neeint > 0) pForceEE<<<(demaux.neeint+Nthread-1)/Nthread, Nthread>>>(pEdgesCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsEE, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
@@ -837,6 +837,8 @@ else {
 
 // OLD CODE, POSITION VERLET + LEAPFROG
 // 1. reset forces
+
+if (CandidateOracle) OracleCheck(iter, iter_b);
 
 if (demaux.nvvint > 0) pForceVV<<<(demaux.nvvint+Nthread-1)/Nthread, Nthread>>>(pInteractons, pComInteractons, pDynInteractonsVV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
 if (demaux.neeint > 0) pForceEE<<<(demaux.neeint+Nthread-1)/Nthread, Nthread>>>(pEdgesCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsEE, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
@@ -3957,107 +3959,107 @@ inline void Domain::DnLoadDevice(size_t Nc, bool force)
 // P1-S diagnostic: brute-force candidate-completeness oracle. Independent of the
 // neighbor-list algorithm: enumerates ALL particle pairs on the host from device
 // positions copied at the moment of the check (immediately before contact-force
-// evaluation), applies the SAME contact criterion as the force kernels
-// (delta = R_i + R_j - dist > 0, minimum-image on periodic axes for free pairs;
-// sphere-plane via perpendicular distance to the plane through its device verts),
-// and verifies each contacting pair is represented in PairtoCInt.
-// Read-only w.r.t. the simulation state.
+// evaluation), applies exact current geometry for sphere pairs and finite planes,
+// and verifies the uploaded force-feature records. Orthogonal x/y/z periodicity
+// is supported; other particle families and custom kernels fail as unsupported.
+// Read-only w.r.t. mechanical state; a failed check raises Fatal.
 inline void Domain::OracleCheck (size_t iter, size_t iter_b)
 {
-    size_t np = Particles.Size();
-    thrust::host_vector<DynParticleCU> hD(bDynParticlesCU.begin(), bDynParticlesCU.end());
-    thrust::host_vector<real3>         hV(bVertsCU.begin(), bVertsCU.end());
-    Vec3_t Per(demaux.Per.x, demaux.Per.y, demaux.Per.z);
-    // current pair records (unordered particle-index pairs)
-    std::map<std::pair<size_t,size_t>, size_t> recs;
-    for (auto it=PairtoCInt.begin(); it!=PairtoCInt.end(); ++it)
-    {
-        size_t a = it->second->I1, b = it->second->I2;
-        if (a>b) std::swap(a,b);
-        recs[std::make_pair(a,b)]++;
-    }
+    // Diagnostic scope: built-in sphere-sphere and sphere/single-face plane laws.
+    // Enumerate geometry independently of the neighbor search, then inspect the
+    // actual feature arrays consumed by the next force launch, not PairtoCInt.
+    dem_aux active;
+    if (cudaMemcpy(&active,pdemaux,sizeof(active),cudaMemcpyDeviceToHost)!=cudaSuccess)
+        throw new Fatal("Candidate oracle: cannot download device control state");
+    thrust::host_vector<ParticleCU> hP = bParticlesCU;
+    thrust::host_vector<DynParticleCU> hD = bDynParticlesCU;
+    thrust::host_vector<real3> hV = bVertsCU;
+    thrust::host_vector<size_t> hFaces = bFacesCU, hFacid = bFacidCU;
+    thrust::host_vector<ComInteractonCU> hC = bComInteractons;
+    thrust::host_vector<InteractonCU> hI = bInteractons;
+    size_t np = hP.size();
+    if (np!=hD.size() || np!=active.nparts || np!=Particles.Size() ||
+        active.ncoint!=hC.size() || active.ncoint!=hI.size() || hV.size()!=active.nverts ||
+        active.nvvint!=demaux.nvvint || active.nvfint!=demaux.nvfint ||
+        active.nfvint!=demaux.nfvint || active.neeint!=demaux.neeint)
+        throw new Fatal("Candidate oracle: host/device launch extents disagree");
+    if (pForceVV!=CalcForceVV && pForceVV!=CalcForceVV_Hertz)
+        throw new Fatal("Candidate oracle: custom VV force kernels are unsupported");
+    if (pForceVF!=CalcForceVF || pForceFV!=CalcForceFV || active.neeint!=0 || active.strain!=0)
+        throw new Fatal("Candidate oracle: only built-in sphere/plane orthogonal periodic cases are supported");
+    auto sphere = [&](size_t i) { return hP[i].Nvf-hP[i].Nvi==1; };
+    auto free_particle = [&](size_t i) {
+        ParticleCU const & p = hP[i];
+        return (!p.vxf&&!p.vyf&&!p.vzf&&!p.wxf&&!p.wyf&&!p.wzf)||p.FixFree;
+    };
+    for (size_t i=0;i<np;i++)
+        if ((!sphere(i) && hP[i].Nff-hP[i].Nfi!=1) ||
+            hP[i].Nvf>hV.size() || !std::isfinite(hP[i].R))
+            throw new Fatal("Candidate oracle: unsupported or invalid particle geometry");
+    typedef std::pair<size_t,size_t> Pair;
+    std::map<Pair,size_t> recs;
+    size_t bad_periodicity=0;
+    // Each supported physical pair has exactly one VV or sphere/plane feature.
+    auto inspect = [&](thrust::device_vector<DynInteractonCU> const & device, size_t count, int family) {
+        if (count!=device.size()) throw new Fatal("Candidate oracle: invalid feature launch extent");
+        thrust::host_vector<DynInteractonCU> features = device;
+        for (size_t k=0;k<count;k++)
+        {
+            DynInteractonCU const & f = features[k];
+            if (f.Idx>=hC.size()) throw new Fatal("Candidate oracle: invalid common-contact index");
+            size_t a=hC[f.Idx].I1, b=hC[f.Idx].I2;
+            if (a>=np || b>=np || a==b) throw new Fatal("Candidate oracle: invalid particle pair");
+            if (hI[f.Idx].BothFree!=(free_particle(a)&&free_particle(b))) bad_periodicity++;
+            if ((family==0 && (!sphere(a)||!sphere(b))) ||
+                (family==1 && (!sphere(a)||sphere(b)||f.IF1!=hP[a].Nvi||f.IF2!=hP[b].Nfi)) ||
+                (family==2 && (sphere(a)||!sphere(b)||f.IF1!=hP[a].Nfi||f.IF2!=hP[b].Nvi)))
+                throw new Fatal("Candidate oracle: feature identity does not match its particles");
+            if (a>b) std::swap(a,b);
+            recs[std::make_pair(a,b)]++;
+        }
+    };
+    inspect(bDynInteractonsVV,active.nvvint,0);
+    inspect(bDynInteractonsVF,active.nvfint,1);
+    inspect(bDynInteractonsFV,active.nfvint,2);
     size_t ref=0, matched=0, miss=0, dup=0, reported=0;
     for (size_t i=0;i<np;i++)
     for (size_t j=i+1;j<np;j++)
     {
-        bool sph_i = (Particles[i]->Verts.Size()==1);
-        bool sph_j = (Particles[j]->Verts.Size()==1);
-        if (!sph_i && !sph_j) continue;             // plane-plane: no contact path
-        Vec3_t xi(hD[i].x.x,hD[i].x.y,hD[i].x.z);
-        Vec3_t xj(hD[j].x.x,hD[j].x.y,hD[j].x.z);
-        bool   contact=false;
-        Vec3_t img(0.0,0.0,0.0);
-        double delta=0.0;
-        if (sph_i && sph_j)
-        {
-            double Ri = Particles[i]->Props.R, Rj = Particles[j]->Props.R;
-            bool   free_pair = Particles[i]->IsFree() && Particles[j]->IsFree();
-            double ox[3] = {0.0, -Per(0), Per(0)};
-            double oy[3] = {0.0, -Per(1), Per(1)};
-            for (int ax=0; ax<3 && !contact; ax++)
-            {
-                if (ax>0 && Per(0)<=0.0) continue;
-                for (int ay=0; ay<3 && !contact; ay++)
-                {
-                    if (ay>0 && Per(1)<=0.0) continue;
-                    if (!free_pair && (ax>0||ay>0)) continue;
-                    Vec3_t off(ox[ax],oy[ay],0.0);
-                    Vec3_t dx = xj+off-xi;
-                    double d = norm(dx);
-                    if (Ri+Rj-d > 0.0)
-                    {
-                        contact=true; img=off; delta=Ri+Rj-d;
-                    }
-                }
-            }
-        }
+        if ((!sphere(i)&&!sphere(j)) || (!free_particle(i)&&!free_particle(j))) continue;
+        real3 periodic = free_particle(i)&&free_particle(j) ? active.Per : make_real3(0,0,0);
+        real3 branch;
+        if (sphere(i)&&sphere(j)) BranchVec(hD[j].x,hD[i].x,branch,periodic);
         else
         {
-            // sphere-plane: plane is the face-bearing particle
-            Particle* pl = sph_i ? Particles[j] : Particles[i];
-            Particle* sp = sph_i ? Particles[i] : Particles[j];
-            size_t si = sph_i ? i : j;
-            if (pl->Verts.Size()>=3)
-            {
-                size_t b0 = pl->Nvi;
-                Vec3_t p0(hV[b0+0].x,hV[b0+0].y,hV[b0+0].z);
-                Vec3_t p1(hV[b0+1].x,hV[b0+1].y,hV[b0+1].z);
-                Vec3_t p2(hV[b0+2].x,hV[b0+2].y,hV[b0+2].z);
-                Vec3_t d1 = p1-p0;
-                Vec3_t d2 = p2-p0;
-                Vec3_t n = cross(d1,d2);
-                double nn = norm(n);
-                if (nn>0.0)
-                {
-                    n = n/nn;
-                    Vec3_t xs(hD[si].x.x,hD[si].x.y,hD[si].x.z);
-                    Vec3_t dxs = xs-p0;
-                    double d = fabs(dot(dxs, n));
-                    double Ri = sp->Props.R, Rj = pl->Props.R;
-                    if (Ri+Rj-d > 0.0) { contact=true; delta=Ri+Rj-d; }
-                }
-            }
+            size_t s=sphere(i)?i:j, p=sphere(i)?j:i;
+            if (2*hP[p].Nfi+1>=hFaces.size()) throw new Fatal("Candidate oracle: invalid plane face");
+            size_t start=hFaces[2*hP[p].Nfi], end=hFaces[2*hP[p].Nfi+1];
+            if (end<start+3 || end>hFacid.size()) throw new Fatal("Candidate oracle: invalid plane connectivity");
+            for (size_t k=start;k<end;k++)
+                if (hFacid[k]>=hV.size()) throw new Fatal("Candidate oracle: invalid plane vertex");
+            real3 closest;
+            DistanceVF(hFaces.data(),hFacid.data(),hV.data(),hV[hP[s].Nvi],hP[p].Nfi,closest,branch,periodic);
         }
-        if (!contact) continue;
+        real delta=hP[i].R+hP[j].R-norm(branch);
+        if (!std::isfinite(delta)) throw new Fatal("Candidate oracle: nonfinite contact geometry");
+        if (delta<=0) continue;
         ref++;
-        auto key = std::make_pair(i,j);
-        auto itf = recs.find(key);
-        if (itf==recs.end())
+        if (recs.find(std::make_pair(i,j))==recs.end())
         {
             miss++;
-            if (reported<10)
-            {
-                printf("DEM_ORACLE_FAIL iter=%zu i=%zu j=%zu x1=(%.9g,%.9g,%.9g) x2=(%.9g,%.9g,%.9g) img=(%.3g,%.3g,%.3g) delta=%.9g steps_since_rebuild=%zu\n",
-                       iter,i,j,xi(0),xi(1),xi(2),xj(0),xj(1),xj(2),img(0),img(1),img(2),delta,iter-iter_b);
-                reported++;
-            }
+            if (reported++<10)
+                printf("DEM_ORACLE_FAIL iter=%zu i=%zu j=%zu delta=%.17g steps_since_rebuild=%zu\n",
+                       iter,i,j,double(delta),iter-iter_b);
         }
         else matched++;
     }
-    for (auto &kv : recs) if (kv.second>1) dup += kv.second-1;
-    OracleRef+=ref; OracleCand+=matched; OracleMissing+=miss; OracleDup+=dup; OracleChecks++;
-    printf("DEM_ORACLE_STEP iter=%zu ref=%zu matched=%zu missing=%zu dup=%zu steps_since_rebuild=%zu records=%zu\n",
-           iter,ref,matched,miss,dup,iter-iter_b,recs.size());
+    for (auto const & kv : recs) if (kv.second>1) dup+=kv.second-1;
+    OracleRef+=ref; OracleCand+=matched; OracleMissing+=miss; OracleDup+=dup;
+    OracleBadImg+=bad_periodicity; OracleChecks++;
+    printf("DEM_ORACLE_STEP iter=%zu ref=%zu matched=%zu missing=%zu dup=%zu steps_since_rebuild=%zu records=%zu bad_periodicity=%zu\n",
+           iter,ref,matched,miss,dup,iter-iter_b,recs.size(),bad_periodicity);
+    if (miss || dup || bad_periodicity)
+        throw new Fatal("Candidate oracle failed: missing=%zu duplicate=%zu bad_periodicity=%zu",miss,dup,bad_periodicity);
 }
 #endif
 

@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-16",
+  "base_commit": "9176b728a2c0397086d68e4cf8d46c10c2ee823b",
+  "remote_poly_commit_verified": "eef594acf45edf4ed894951e29c633e924a4f34f",
+  "precision": "FP64",
+  "gpu": "NVIDIA RTX A6000",
+  "architecture": "sm_86",
+  "original_negative_controls": {
+    "binary_sha256": "909d1014a74f61c33d6c81cafe3e942c7e5253369690ec77a611ca85e53b7a5c",
+    "solver_source_commit": "9176b728a2c0397086d68e4cf8d46c10c2ee823b",
+    "observations": [
+      "removed GPU feature: reported_missing=0",
+      "duplicated GPU feature: reported_duplicates=0",
+      "removed host pair: reported_missing=1, execution continues",
+      "z periodic overlap: reported_reference=0"
+    ]
+  },
+  "hardened_probe": {
+    "binary_sha256": "0a9e518b868701a15314e5cc617ce69b1a9fca637211e37dcb059e07dbe18444",
+    "returncode": 0,
+    "uncaught_missing_returncode": 1,
+    "missing_gpu_feature_rejected": true,
+    "duplicate_gpu_feature_rejected": true,
+    "incorrect_pair_periodicity_rejected": true,
+    "independent_of_host_pair_map": true,
+    "z_periodic_contact_found": true,
+    "finite_plane_outside_rejected_as_contact": true,
+    "vv_force_time_drift_baseline_missing_pairs": 1,
+    "vv_force_time_drift_baseline_verdict": "FAIL",
+    "vv_force_time_drift_oracle_rejection_verdict": "PASS",
+    "maximum_reduction_fp64_cases": 54,
+    "maximum_reduction_bitwise_mismatches": 0
+  },
+  "registered_baseline": {
+    "scenarios_passed": 5,
+    "checks": 56405,
+    "reference_contacts": 5421117,
+    "missing": 0,
+    "duplicate": 0,
+    "bad_periodicity": 0,
+    "binary_sha256": "825fcc2691873dd4f17207f54b67cb80648671bd2f284d6dfee2f8604b933f37"
+  },
+  "registered_persistent": {
+    "scenarios_passed": ["A_dense"],
+    "checks": 11001,
+    "reference_contacts": 830774,
+    "missing": 0,
+    "duplicate": 0,
+    "bad_periodicity": 0,
+    "binary_sha256": "03c5bc0c4e00f34d9a3ab61f72e762f0a01262fe50a1297f8f920a200bdba51e"
+  },
+  "cpu_header_syntax_check_returncode": 0,
+  "coupled_tlbmdem_cu_02_sm86_compile_link_returncode": 0,
+  "coupled_runtime": "NOT_RUN",
+  "performance_measurements_this_session": "NONE",
+  "persistent_reduction_promotion": "DEFAULT_OFF_UNMERGED",
+  "delayed_rebuild_gate": "BLOCKED"
+}

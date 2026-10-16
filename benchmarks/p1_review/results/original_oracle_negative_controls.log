@@ -1,0 +1,36 @@
+
+[1;33m--- Initializing particles ------------------------------------------------------[0m
+[1;36m  Kinematic energy   = 0[0m
+[1;36m  Potential energy   = 0[0m
+[1;37m  Total energy       = 0[0m
+[1;34m  Elapsed time       = 0.000011s  CPU 0.007728s  (9:23:29 => 9:23:29)[0m
+
+[1;33m--- Solving ---------------------------------------------------------------------[0m
+[1;36m  Total mass   of free particles            =  8.37758[0m
+[1;36m  Total volume of free particles            =  0.00837758[0m
+[1;37m  Total number of particles                 =  2[0m
+[1;37m  Time step                                 =  1e-08[0m
+[1;37m  Simulated Time                            =  1e-08[0m
+[1;37m  Verlet distance                           =  0.01[0m
+[1;35m  Suggested Time Step                       =  0.00204665[0m
+[1;37m  Using GPU:                                =  NVIDIA RTX A6000[0m
+  Using Number of CUDA threads:             =  256[0m
+  Number of vertices                        =  2[0m
+  Number of edges                           =  0[0m
+  Number of faces                           =  0[0m
+[1;36m  Total number of iterations                                = 1[0m
+[1;36m  Kinematic energy                                          = 6.25142e-16[0m
+[1;36m  Potential energy                                          = 0.005[0m
+[1;37m  Total energy                                              = 0.005[0m
+[1;34m  Elapsed time       = 0.172261s  CPU 0.175477s  (9:23:29 => 9:23:29)[0m
+DEM_ORACLE_STEP iter=0 ref=1 matched=1 missing=0 dup=0 steps_since_rebuild=0 records=1
+DEM_ORACLE_STEP iter=1 ref=1 matched=1 missing=0 dup=0 steps_since_rebuild=1 records=1
+REVIEW_NEGATIVE_CONTROL case=missing_gpu_feature actual_records=0 reported_missing=0 limitation_reproduced=1
+DEM_ORACLE_STEP iter=2 ref=1 matched=1 missing=0 dup=0 steps_since_rebuild=2 records=1
+REVIEW_NEGATIVE_CONTROL case=duplicate_gpu_feature actual_records=2 reported_duplicates=0 limitation_reproduced=1
+DEM_ORACLE_FAIL iter=3 i=0 j=1 x1=(-2.38732415e-16,0,0) x2=(0.199,0,0) img=(0,0,0) delta=0.001 steps_since_rebuild=3
+DEM_ORACLE_STEP iter=3 ref=1 matched=0 missing=1 dup=0 steps_since_rebuild=3 records=0
+REVIEW_NEGATIVE_CONTROL case=missing_host_pair reported_missing=1 execution_continues=1
+DEM_ORACLE_STEP iter=4 ref=0 matched=0 missing=0 dup=0 steps_since_rebuild=4 records=1
+REVIEW_NEGATIVE_CONTROL case=z_periodic actual_reference=1 reported_reference=0 limitation_reproduced=1
+REVIEW_REDUCTION cases=54 sizeof_real=8 bitwise_mismatches=0

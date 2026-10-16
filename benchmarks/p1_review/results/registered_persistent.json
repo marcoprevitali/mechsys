@@ -1,0 +1,25 @@
+{
+  "binary": "/tmp/mechsys-p1-review.2rptlG/evidence/reproducible_build/test_cu_04",
+  "binary_sha256": "03c5bc0c4e00f34d9a3ab61f72e762f0a01262fe50a1297f8f920a200bdba51e",
+  "persistent_reduction": true,
+  "cases": {
+    "A_dense": {
+      "input_sha256": "e9ebb25efb4d157d69410cf439962e25cbd58b0e88bcfdd15c69c025c3a3827b",
+      "log": "/tmp/mechsys-p1-review.2rptlG/evidence/registered_persistent/A_dense/run.log",
+      "log_sha256": "98a0dd24038414172807a63af897055a894e610b69136623ec97ef8468896ba2",
+      "returncode": 0,
+      "checks": 11001,
+      "command": [
+        "/tmp/mechsys-p1-review.2rptlG/evidence/reproducible_build/test_cu_04",
+        "oracle_A_dense",
+        "2"
+      ],
+      "reference": 830774,
+      "matched": 830774,
+      "missing": 0,
+      "duplicates": 0,
+      "bad_periodicity": 0,
+      "verdict": "PASS"
+    }
+  }
+}

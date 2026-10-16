@@ -1,0 +1,97 @@
+{
+  "binary": "/tmp/mechsys-p1-review.2rptlG/evidence/test_cu_04",
+  "binary_sha256": "825fcc2691873dd4f17207f54b67cb80648671bd2f284d6dfee2f8604b933f37",
+  "persistent_reduction": false,
+  "cases": {
+    "A_dense": {
+      "input_sha256": "e9ebb25efb4d157d69410cf439962e25cbd58b0e88bcfdd15c69c025c3a3827b",
+      "log": "/tmp/mechsys-p1-review.2rptlG/evidence/registered_baseline/A_dense/run.log",
+      "log_sha256": "35a30acc7cc2046bda9bc0c0184f584967bad66c45a8b4c1c3f2f4e5e3f81042",
+      "returncode": 0,
+      "checks": 11001,
+      "command": [
+        "/tmp/mechsys-p1-review.2rptlG/evidence/test_cu_04",
+        "oracle_A_dense",
+        "2"
+      ],
+      "reference": 830774,
+      "matched": 830774,
+      "missing": 0,
+      "duplicates": 0,
+      "bad_periodicity": 0,
+      "verdict": "PASS"
+    },
+    "B_lowdens": {
+      "input_sha256": "0f219036129313ef51e73714f41764ef567db77b6d2825fb4ca634db845c6af9",
+      "log": "/tmp/mechsys-p1-review.2rptlG/evidence/registered_baseline/B_lowdens/run.log",
+      "log_sha256": "7d918835564224dbe4211cf88dd89eda654ef76129510472c48625250fbdf14a",
+      "returncode": 0,
+      "checks": 11001,
+      "command": [
+        "/tmp/mechsys-p1-review.2rptlG/evidence/test_cu_04",
+        "oracle_B_lowdens",
+        "2"
+      ],
+      "reference": 21589,
+      "matched": 21589,
+      "missing": 0,
+      "duplicates": 0,
+      "bad_periodicity": 0,
+      "verdict": "PASS"
+    },
+    "C_highacc": {
+      "input_sha256": "37feb802a2fc2a29308f0dfbf49d5b5523187e613f7a5a7a137b2c10e1ab5074",
+      "log": "/tmp/mechsys-p1-review.2rptlG/evidence/registered_baseline/C_highacc/run.log",
+      "log_sha256": "72897b2e221548a0bfb38a15f004ba0eb30d7e2e2d3a3f8de9ee9925f8a1eca6",
+      "returncode": 0,
+      "checks": 10401,
+      "command": [
+        "/tmp/mechsys-p1-review.2rptlG/evidence/test_cu_04",
+        "oracle_C_highacc",
+        "2"
+      ],
+      "reference": 367340,
+      "matched": 367340,
+      "missing": 0,
+      "duplicates": 0,
+      "bad_periodicity": 0,
+      "verdict": "PASS"
+    },
+    "D_shear": {
+      "input_sha256": "3a02d9674eefac7502aa3b75a23b399cd55be0993ecbf22bda8bd4d5721acf6f",
+      "log": "/tmp/mechsys-p1-review.2rptlG/evidence/registered_baseline/D_shear/run.log",
+      "log_sha256": "ea9e752961002b2cb8ae836bbaa62c318de59ebd6182d2ade3926fc557d622fc",
+      "returncode": 0,
+      "checks": 12001,
+      "command": [
+        "/tmp/mechsys-p1-review.2rptlG/evidence/test_cu_04",
+        "oracle_D_shear",
+        "2"
+      ],
+      "reference": 4197770,
+      "matched": 4197770,
+      "missing": 0,
+      "duplicates": 0,
+      "bad_periodicity": 0,
+      "verdict": "PASS"
+    },
+    "E_squeeze": {
+      "input_sha256": "928ad39df34547bb30d3a697f3dbcdc8aec38d98557256771d61b20a8ada639f",
+      "log": "/tmp/mechsys-p1-review.2rptlG/evidence/registered_baseline/E_squeeze/run.log",
+      "log_sha256": "71d91dbb2e053758788a1758046e2061f2fc686b9913b3d221532131b6a22b92",
+      "returncode": 0,
+      "checks": 12001,
+      "command": [
+        "/tmp/mechsys-p1-review.2rptlG/evidence/test_cu_04",
+        "oracle_E_squeeze",
+        "2"
+      ],
+      "reference": 3644,
+      "matched": 3644,
+      "missing": 0,
+      "duplicates": 0,
+      "bad_periodicity": 0,
+      "verdict": "PASS"
+    }
+  }
+}
