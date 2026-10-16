@@ -106,7 +106,10 @@ int main(int argc, char **argv) try
     printf("REVIEW_NEGATIVE_CONTROL case=finite_plane_outside reported_reference=0\n");
 
     // This must be checked AFTER the VV drift, immediately before force evaluation.
-    // The existing end-of-step rebuild can miss this new contact in the baseline.
+    // Baseline (pre-V1): the end-of-step rebuild is too late; the force-time list is
+    // missing the new contact -> the oracle rejects (reproduce with --expect-baseline).
+    // Corrected (V1): the pre-force rebuild adds the pair, the force kernel processes
+    // it, and action-reaction holds.
     DEM::Domain vv;
     vv.UseVelocityVerlet=true;
     vv.CandidateOracle=true;
@@ -115,12 +118,42 @@ int main(int argc, char **argv) try
     vv.AddSphere(-2,Vec3_t(0.24,0.0,0.0),0.1,1000.0);
     vv.Particles[0]->v=Vec3_t(300.0,0.0,0.0);
     vv.Particles[1]->v=Vec3_t(-300.0,0.0,0.0);
+    bool expect_baseline = (argc>1 && (std::strcmp(argv[1],"--expect-baseline")==0 ||
+                                       std::strcmp(argv[1],"--uncaught-missing")==0));
     bool drift_rejected=false;
     try { vv.Solve(1.0e-4,1.0e-4,1.0,NULL,NULL,NULL,false,1); }
     catch (Fatal * error) { error->Cout(); delete error; drift_rejected=true; }
     printf("REVIEW_NEGATIVE_CONTROL case=vv_force_time_drift rejected=%d missing=%zu\n",
            int(drift_rejected),vv.OracleMissing);
-    if (!drift_rejected || vv.OracleMissing!=1) throw std::runtime_error("Oracle did not check VV force-time geometry");
+    if (expect_baseline)
+    {
+        if (!drift_rejected || vv.OracleMissing!=1)
+            throw std::runtime_error("Baseline VV force-time defect was not reproduced");
+    }
+    else
+    {
+        if (drift_rejected) throw std::runtime_error("Corrected VV path rejected a valid list");
+        if (vv.OracleMissing!=0) throw std::runtime_error("Corrected VV path left a missing contact at force time");
+        // 1. The contact exists in the uploaded GPU records.
+        if (vv.bDynInteractonsVV.size()!=1)
+            throw std::runtime_error("Corrected VV path did not upload the new contact record");
+        DEM::DynInteractonCU f = vv.bDynInteractonsVV[0];
+        // 2./3. The force kernel processed it: nonzero normal force along x (repulsive).
+        DEM::DynParticleCU p0 = vv.bDynParticlesCU[0];
+        DEM::DynParticleCU p1 = vv.bDynParticlesCU[1];
+        printf("REVIEW_VV_FORCE Fn=(%.9g,%.9g,%.9g) F1=(%.9g,%.9g,%.9g) F2=(%.9g,%.9g,%.9g)\n",
+               f.Fn.x,f.Fn.y,f.Fn.z,
+               p0.F.x,p0.F.y,p0.F.z,
+               p1.F.x,p1.F.y,p1.F.z);
+        if (fabs(f.Fn.y)>0.0 || fabs(f.Fn.z)>0.0 || !(fabs(f.Fn.x)>0.0))
+            throw std::runtime_error("Contact normal force was not evaluated as expected");
+        // 4. Action-reaction consistency on the particle force accumulators.
+        real3 F1 = p0.F, F2 = p1.F;
+        if (!(F1.x<0.0 && F2.x>0.0) ||
+            fabs(F1.x+F2.x)>1.0e-12 || fabs(F1.y)>1.0e-12 || fabs(F1.z)>1.0e-12 ||
+            fabs(F2.y)>1.0e-12 || fabs(F2.z)>1.0e-12)
+            throw std::runtime_error("Action-reaction consistency violated");
+    }
 
     // Independently verify the retained reduction for finite non-negative FP64 inputs.
     size_t cases = 0;

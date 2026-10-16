@@ -281,6 +281,7 @@ public:
     void SetVelocityDevice (size_t idx, double vx, double vy, double vz);   ///< Set one particle's velocity on the device (prescribed motion)
 #endif
     void UpdateContactsDevice();                                            ///< Update contacts lists in device
+    void UpdateContactsDevicePreForce();                                    ///< V1: narrowly scoped pre-force rebuild preserving the VV integration state
     void OracleCheck (size_t iter, size_t iter_b);                          ///< P1-S: brute-force candidate-completeness oracle (diagnostic only)
     thrust::device_vector<ParticleCU>      bParticlesCU;                    ///< device vector of particles
     thrust::device_vector<DynParticleCU>   bDynParticlesCU;                 ///< device vector of particles
@@ -817,6 +818,38 @@ if (UseVelocityVerlet){
 pVerletStep1<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pVertsCU, pParticlesCU, pDynParticlesCU, pA, pdemaux);
 if (RotPar) pOrientationUpdate<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pVertsCU, pParticlesCU, pDynParticlesCU, pWdot, pdemaux);
 
+#ifdef USE_CUDA
+// V1 fix: the drift above may have created new contacts that are absent from the
+// candidate list (which was built before the drift). The displacement check and
+// the rebuild must therefore run HERE, on the post-drift geometry, BEFORE the
+// force kernels - not at the end of the iteration. The criterion uses the same
+// geometric convention as the candidate cutoff: rebuild when the accumulated
+// displacement of any particle since the last valid list construction reaches
+// the Verlet allowance (D_max >= Alpha).
+MaxD<<<demaux.nverts/Nthread+1, Nthread>>>(pVertsCU, pVertsoCU, pMaxDCU, pdemaux);
+{
+    real maxdis_pre = 0.0;
+    if (PersistentReduction)
+    {
+        cudaMemsetAsync(pMaxOut, 0, sizeof(real));
+        MaxReduceKernel<<<(demaux.nverts+Nthread-1)/Nthread, Nthread>>>(pMaxDCU, bMaxDCU.size(), pMaxOut);
+        cudaMemcpy(&maxdis_pre, pMaxOut, sizeof(real), cudaMemcpyDeviceToHost);
+    }
+    else
+    {
+        thrust::device_vector<real>::iterator itp=thrust::max_element(bMaxDCU.begin(),bMaxDCU.end());
+        maxdis_pre = *itp;
+    }
+    if (maxdis_pre >= Alpha)
+    {
+        numup++;
+        iter_t += iter - iter_b;
+        iter_b = iter;
+        UpdateContactsDevicePreForce();
+    }
+}
+#endif
+
 if (CandidateOracle) OracleCheck(iter, iter_b);
 
 if (demaux.nvvint > 0) pForceVV<<<(demaux.nvvint+Nthread-1)/Nthread, Nthread>>>(pInteractons, pComInteractons, pDynInteractonsVV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
@@ -862,10 +895,24 @@ if (pWrapZ!=NULL) {
 }
 
 // 4., calculate max displacement / recalculate the verlet list if needed
+// V1: for the Velocity-Verlet path this check has been moved to the pre-force
+// stage (post-drift geometry), so it must not run again here - the displacement
+// reference was already reset by the pre-force rebuild and the positions have
+// not changed since.
+if (!UseVelocityVerlet)
+{
 MaxD<<<demaux.nverts/Nthread+1, Nthread>>>(pVertsCU, pVertsoCU, pMaxDCU, pdemaux);
 //cudaDeviceSynchronize();
+}
 
 
+        // V1: the displacement reduction and rebuild decision run here only for the
+        // position-Verlet/leapfrog path; the Velocity-Verlet path performs them at the
+        // pre-force stage on the post-drift geometry (see above).
+        demaux.iter++;
+        demaux.Time += Dt;
+        if (!UseVelocityVerlet)
+        {
         real maxdis = 0.0;
         if (PersistentReduction)
         {
@@ -885,8 +932,6 @@ MaxD<<<demaux.nverts/Nthread+1, Nthread>>>(pVertsCU, pVertsoCU, pMaxDCU, pdemaux
         //std::cout << "9" << std::endl;
         //std::cout << iter << std::endl;
         //Update Pair lists
-        demaux.iter++;
-        demaux.Time += Dt;
         if (maxdis>Alpha)
         {
             //std::cout << iter << std::endl;
@@ -897,6 +942,7 @@ MaxD<<<demaux.nverts/Nthread+1, Nthread>>>(pVertsCU, pVertsoCU, pMaxDCU, pdemaux
             iter_b = iter;
             UpdateContactsDevice();
             //cudaDeviceSynchronize();
+        }
         }
 
 
@@ -923,6 +969,22 @@ if (UseVelocityVerlet){
         Particles[i]->TranslateVelVerlet(Dt);
         if (RotPar) Particles[i]->RotateVelVerlet(Dt);
         }
+
+        // V1 fix: pre-force list-validity check on the post-drift geometry. The drift
+        // above can create contacts absent from the candidate list; rebuild here,
+        // before the forces, using the same displacement convention as the CPU
+        // contact reconstruction (displacement since the last valid list).
+        for (size_t i = 0; i < Nproc; i++) MTD[i].Dmx = 0.0;
+        #pragma omp parallel for schedule(static) num_threads(Nproc)
+        for (size_t i = 0; i < Particles.Size(); i++)
+        {
+            double mpd = Particles[i]->MaxDisplacement();
+            if (mpd > MTD[omp_get_thread_num()].Dmx) MTD[omp_get_thread_num()].Dmx = mpd;
+        }
+        double maxdis_pre = 0.0;
+        for (size_t i = 0; i < Nproc; i++)
+            if (maxdis_pre < MTD[i].Dmx) maxdis_pre = MTD[i].Dmx;
+        if (maxdis_pre >= Alpha) UpdateContacts();
 /*
         // 3. Check maximum displacement and rebuild contacts if needed
         #pragma omp parallel for schedule(static) num_threads(Nproc)
@@ -4062,6 +4124,49 @@ inline void Domain::OracleCheck (size_t iter, size_t iter_b)
         throw new Fatal("Candidate oracle failed: missing=%zu duplicate=%zu bad_periodicity=%zu",miss,dup,bad_periodicity);
 }
 #endif
+
+// V1: narrowly scoped contact-list rebuild for the pre-force stage of the
+// Velocity-Verlet path. Unlike UpdateContactsDevice, this operation:
+//  - does NOT re-upload particle dynamic state (positions, half-step velocities,
+//    orientations) - the device keeps the post-drift integration state;
+//  - does NOT upload A/Wdot from the host (those are stale in GPU mode; the device
+//    A already holds the acceleration written by the last FinalizeVelocity);
+//  - does NOT call RecomputeAccelerations (at the pre-force stage the force
+//    accumulators have just been reset; recomputing would zero the accelerations
+//    and corrupt the next half-step update).
+// It downloads the current geometry and contact histories, rebuilds the host
+// candidate/interaction records from the post-drift geometry, uploads the
+// interaction structures with the preserved histories, and resets the device
+// displacement reference (Vertso := Verts) so the new list is valid from the
+// current geometry onward. Contact histories are preserved because surviving
+// CInteractonSphere objects keep their Fdvv/Fdr/PrevDelta state across the
+// download (DnLoadDevice force=true) - upload (UpLoadDevice) round trip.
+inline void Domain::UpdateContactsDevicePreForce()
+{
+    ResetMaxD<<<demaux.nparts/Nthread+1,Nthread>>>(pVertsCU, pVertsoCU, pMaxDCU, pParticlesCU, pDynParticlesCU, pdemaux);
+    DnLoadDevice(Nproc,true);
+
+    // update host-side domain box from the device
+    dem_aux dev_aux;
+    cudaMemcpy(&dev_aux, pdemaux, sizeof(dem_aux), cudaMemcpyDeviceToHost);
+    Xmin = dev_aux.Xmin;
+    Xmax = dev_aux.Xmax;
+    Ymin = dev_aux.Ymin;
+    Ymax = dev_aux.Ymax;
+    Zmin = dev_aux.Zmin;
+    Zmax = dev_aux.Zmax;
+    Per = Vec3_t(Xmax - Xmin, Ymax - Ymin, Zmax - Zmin);
+
+    UpdateContacts();
+
+    // upload interaction structures and launch extents only; updateState=false keeps
+    // the device A/Wdot untouched and first=false keeps particles/verts untouched
+    UpLoadDevice(Nproc,false,false);
+
+    // re-issue the device displacement-reference reset so the new list is valid
+    // from the current (post-drift) geometry onward
+    ResetMaxD<<<demaux.nparts/Nthread+1,Nthread>>>(pVertsCU, pVertsoCU, pMaxDCU, pParticlesCU, pDynParticlesCU, pdemaux);
+}
 
 inline void Domain::UpdateContactsDevice()
 {
