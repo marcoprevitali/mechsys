@@ -29,6 +29,8 @@ def main():
     libs=flags/"linkLibs.rsp"
     sources={"reference_cuda":Path(__file__).with_name("reference_probe.cu"),
              "reference_cpu":Path(__file__).with_name("reference_probe.cu"),
+             "history_cuda":Path(__file__).with_name("history_probe.cu"),
+             "history_cpu":Path(__file__).with_name("history_probe.cu"),
              "test_cu_04":root/"tdem/test_cu_04.cu",
              "coupled_cuda":root/"tlbmdem/tlbmdem_cu_02.cu"}
     manifest={"source_root":str(root),"headers":{str(p):sha(root/p) for p in [Path("lib/dem/domain.h"),Path("lib/dem/dem.cuh")]},
@@ -37,7 +39,7 @@ def main():
         source=sources[target]
         obj=args.output/(target+".o")
         binary=args.output/target
-        gpu=target!="reference_cpu"
+        gpu=not target.endswith("_cpu")
         compiler=[str(args.cuda/"bin/nvcc"),"-arch=sm_86","-Xcompiler=-fopenmp","-DUSE_CUDA"] if gpu else ["g++","-fopenmp","-x","c++"]
         includes=["--options-file",str(include)] if gpu else ["@"+str(include)]
         compile=compiler+["-std=c++17","-O3",*definitions,"-I"+str(root),*includes,"-c",str(source),"-o",str(obj)]

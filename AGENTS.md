@@ -10,6 +10,7 @@ Improve **full-simulation GPU throughput** of MechSys DEM without changing its m
 
 - The historical DeepSeek summary is **reported evidence, not local verification**. Do not silently equate it to the present checkout's state.
 - Keep **FP64** as the only accepted production precision unless the user explicitly authorizes a separate mixed-precision validation program. Prior FP32 attempts changed physics severely.
+- **Velocity-Verlet (VV, `UseVelocityVerlet=true`) is the reference integration mode for all new validation, profiling, benchmarks and optimization decisions in this program** (user decision, 2026-10-16). Explicitly select and verify VV; label position-Verlet/leapfrog runs as legacy compatibility or historical controls, never as VV reference evidence. This reference-mode policy does not change the library's backwards-compatible constructor default. Use `test_cu_04 <input> <Nproc> <dthoot> <qin> 1` and verify `DEM_BENCHMARK_INTEGRATOR velocity_verlet=1`; registered-oracle runs must pass `--vv`.
 - Preserve contact laws, normal/tangential forces, friction and rolling state, effective radii, contact moment arms, damping, energy work, periodic images, coupled LBM–DEM and restarts.
 - Favor independent oracles and minimal reversible experiments. Every performance change has an explicit numerical pass/fail gate and measured **complete simulation** speedup.
 - Do not launch unattended massive benchmark campaigns or combine multiple major architectural changes in one unreviewable patch. Small diagnostic tests are encouraged.
