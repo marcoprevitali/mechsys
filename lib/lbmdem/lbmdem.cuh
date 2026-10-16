@@ -25,6 +25,7 @@
 #include <mechsys/linalg/matvec.h>
 #include <mechsys/dem/dem.cuh>
 #include <mechsys/flbm/lbm.cuh>
+#include <mechsys/dem/sphere_cube_robust.h>
 
 namespace LBMDEM
 {
@@ -35,6 +36,7 @@ struct lbmdem_aux
     size_t nfc;  ///< number of face cell pairs
     real  Fconv; ///< Force conversion factor
     bool CorrectTwelveEdgeProxy = false; ///< Default-off V3-I0-P2 occupancy only
+    bool RobustTwelveEdgeProxy = false;  ///< Default-off P2R remediation
 };
 
 struct ParCellPairCU
@@ -150,6 +152,14 @@ __device__ real cudaSphereCube12EdgeCorrected(real3 const & Xs, real3 const & Xc
         total+=length;
     }
     return total;
+}
+
+__device__ real cudaSphereCube12EdgeRobust(real3 const &Xs,real3 const &Xc,
+                                          real R,real dx,real *edges=nullptr,
+                                          MechSysRobustEdge::Trace *trace=nullptr)
+{
+    double x[3]={Xs.x,Xs.y,Xs.z},c[3]={Xc.x,Xc.y,Xc.z};
+    return MechSysRobustEdge::length(x,c,R,dx,edges,trace);
 }
 
 __global__ void cudaReset(bool const * IsSolid, real * Gammaf, real * Gamma, real * Omeis,FLBM::lbm_aux * lbmaux)
@@ -605,7 +615,9 @@ __global__ void cudaImprintLatticeVC(FuncBn fBn, size_t const * PaCeV, DEM::Part
     DEM::BranchVec(DPar[ip].x,C,B,Pert);
     if (norm(B)>Par[ip].Dmax+1.74*lbmaux[0].dx) return;
     Xs  = C-B;
-    len = lbmdemaux[0].CorrectTwelveEdgeProxy
+    len = lbmdemaux[0].RobustTwelveEdgeProxy
+        ? cudaSphereCube12EdgeRobust(Xs,C,Par[ip].Dmax,lbmaux[0].dx)
+        : lbmdemaux[0].CorrectTwelveEdgeProxy
         ? cudaSphereCube12EdgeCorrected(Xs,C,Par[ip].Dmax,lbmaux[0].dx)
         : cudaSphereCube(Xs,C,Par[ip].Dmax,lbmaux[0].dx);
     if (fabs(len)<1.0e-12) return;

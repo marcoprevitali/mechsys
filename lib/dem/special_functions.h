@@ -24,6 +24,7 @@
 
 // Stl
 #include <algorithm>
+#include <mechsys/dem/sphere_cube_robust.h>
 
 namespace DEM
 {
@@ -499,6 +500,14 @@ inline double SphereCube12EdgeCorrected(Vec3_t const & Xs, Vec3_t const & Xc,
         total+=length;
     }
     return total;
+}
+
+inline double SphereCube12EdgeRobust(Vec3_t const & Xs, Vec3_t const & Xc,
+                                     double R,double dx,double *edges=nullptr,
+                                     MechSysRobustEdge::Trace *trace=nullptr)
+{
+    double x[3]={Xs(0),Xs(1),Xs(2)},c[3]={Xc(0),Xc(1),Xc(2)};
+    return MechSysRobustEdge::length(x,c,R,dx,edges,trace);
 }
 
 inline double DiskSquare (Vec3_t & Xs, Vec3_t & Xc, double R, double dx) // Calculates the area of intersection between a Square an a Disk

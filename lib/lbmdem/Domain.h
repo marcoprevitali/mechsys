@@ -84,6 +84,7 @@ public:
     bool ConservativeSphereCells = false;
     // V3-I0-P2: restricted experimental occupancy correction; never implicit.
     bool CorrectTwelveEdgeProxy = false;
+    bool RobustTwelveEdgeProxy = false; // P2R, requires P1 and P2 switches too
     void CheckTwelveEdgeConfiguration();
     void CheckTwelveEdgeCollision(bool device=false);
     std::vector<Vec3_t> SphereCellReference;
@@ -344,7 +345,7 @@ inline Domain::Domain(LBMethod TheMethod, double Thenu, char const * DEMfile, do
 
 void Domain::ImprintLattice()
 {
-    if(CorrectTwelveEdgeProxy) CheckTwelveEdgeConfiguration();
+    if(CorrectTwelveEdgeProxy || RobustTwelveEdgeProxy) CheckTwelveEdgeConfiguration();
     if (ConservativeSphereCells) CheckSphereCellCoverage();
     #pragma omp parallel for schedule(static) num_threads(Nproc)
     for (size_t i = 0;i<ParCellPairs.Size();i++)
@@ -415,7 +416,8 @@ void Domain::ImprintLattice()
             if (dotpro>0.0||fabs(dotpro)<0.95*minl||Pa->Faces.Size()<4||!Pa->Closed) 
             {
                 Vec3_t Xst = S + C;
-                len = CorrectTwelveEdgeProxy ? DEM::SphereCube12EdgeCorrected(Xst,C,Pa->Props.R,dx)
+                len = RobustTwelveEdgeProxy ? DEM::SphereCube12EdgeRobust(Xst,C,Pa->Props.R,dx)
+                      : CorrectTwelveEdgeProxy ? DEM::SphereCube12EdgeCorrected(Xst,C,Pa->Props.R,dx)
                                             : DEM::SphereCube(Xst,C,Pa->Props.R,dx);
             }
         }
@@ -490,7 +492,7 @@ void Domain::ImprintLattice()
 
 void Domain::ResetParCell()
 {
-    if(CorrectTwelveEdgeProxy) CheckTwelveEdgeConfiguration();
+    if(CorrectTwelveEdgeProxy || RobustTwelveEdgeProxy) CheckTwelveEdgeConfiguration();
     if (ConservativeSphereCells) {
         if (!(Alpha>=0.0) || !std::isfinite(Alpha) || !(dx>0.0))
             throw new Fatal("Conservative sphere cells: invalid dx/Alpha");
@@ -627,6 +629,8 @@ void Domain::ResetParCell()
 // Geometric overlap is a conservative guard (possibly stricter than positive proxy).
 void Domain::CheckTwelveEdgeConfiguration()
 {
+    if(RobustTwelveEdgeProxy && !CorrectTwelveEdgeProxy)
+        throw new Fatal("Robust twelve-edge proxy requires CorrectTwelveEdgeProxy=true");
     if(!ConservativeSphereCells)
         throw new Fatal("Correct twelve-edge proxy requires ConservativeSphereCells=true");
     if(DEMDOM.UseVelocityVerlet || DEMDOM.CheckpointReady)
@@ -701,7 +705,7 @@ void Domain::CheckTwelveEdgeCollision(bool device)
 
 void Domain::CheckSphereCellCoverage(bool device)
 {
-    if(CorrectTwelveEdgeProxy) CheckTwelveEdgeConfiguration();
+    if(CorrectTwelveEdgeProxy || RobustTwelveEdgeProxy) CheckTwelveEdgeConfiguration();
     std::vector<Vec3_t> positions(DEMDOM.Particles.Size());
 #ifdef USE_CUDA
     if (device) {
@@ -721,6 +725,11 @@ void Domain::CheckSphereCellCoverage(bool device)
             size_t n=ic%LBMDOM.Ndim(0),m=(ic/LBMDOM.Ndim(0))%LBMDOM.Ndim(1),l=ic/(LBMDOM.Ndim(0)*LBMDOM.Ndim(1));
             if(LBMDOM.IsSolid[0][n][m][l]) continue;
             Vec3_t c(dx*n,dx*m,dx*l),r;DEM::BranchVec(positions[ip],c,r,per);
+            if(RobustTwelveEdgeProxy) {
+                Vec3_t image=c-r;double xx[3]={image(0),image(1),image(2)},cc[3]={c(0),c(1),c(2)};
+                if(!MechSysRobustEdge::supported(xx,cc,p->Props.R,dx))
+                    throw new Fatal("Robust twelve-edge proxy: geometry outside certified FP64 exponent envelope");
+            }
             double dist2=0.0;
             for(size_t j=0;j<3;j++){double d=std::max(0.0,fabs(r(j))-0.5*dx);dist2+=d*d;}
             if(dist2>(p->Props.R+pad)*(p->Props.R+pad)) continue;
@@ -771,6 +780,8 @@ inline void Domain::Solve(double Tf, double dtOut, ptDFun_t ptSetup, ptDFun_t pt
     // Silently ignoring the standalone VV flag is not a valid VV reference.
     if(DEMDOM.UseVelocityVerlet || DEMDOM.CheckpointReady)
         throw new Fatal("LBM-DEM: coupled Velocity-Verlet/full-state restart is not implemented; V2 coupled gate NOT PASSED. Select legacy integration explicitly or use a separately validated coupled VV scheme");
+    if(RobustTwelveEdgeProxy && !CorrectTwelveEdgeProxy)
+        throw new Fatal("Robust twelve-edge proxy requires CorrectTwelveEdgeProxy=true");
     if(CorrectTwelveEdgeProxy) CheckTwelveEdgeConfiguration();
     FileKey.Printf("%s",TheFileKey);
     idx_out = 0;
@@ -1195,6 +1206,7 @@ inline void Domain::UpLoadDevice(size_t Nc, bool first)
 {
     lbmdemaux.Fconv = Fconv;
     lbmdemaux.CorrectTwelveEdgeProxy = CorrectTwelveEdgeProxy;
+    lbmdemaux.RobustTwelveEdgeProxy = RobustTwelveEdgeProxy;
     if (first)
     {
         
