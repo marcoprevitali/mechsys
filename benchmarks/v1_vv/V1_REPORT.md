@@ -1,5 +1,11 @@
 # V1 - Velocity-Verlet contact-list validity fix (2026-10-16)
 
+**Follow-up correction:** [v1_reference/README.md](../v1_reference/README.md)
+reproduces a stale device-reference defect in this V1 implementation, fixes it,
+and tests VV explicitly. It also supersedes the center-only motion-monitoring
+claim: both CPU and GPU displacement monitors traverse vertices. The report
+below is retained as historical evidence, not a blanket current PASS.
+
 Branch: fix/vv-preforce-neighbor-validity (isolated clone /home/msys/git/mechsys-v1-vv)
 Base: perf/p1-evidence-review @ 634fbee. Probes: benchmarks/p1_review/oracle_negative_controls.cu
 (updated; built via build_review.py against this clone's toolchain).

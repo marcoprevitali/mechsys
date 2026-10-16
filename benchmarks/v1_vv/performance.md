@@ -1,5 +1,10 @@
 # V1-H performance impact (2026-10-16)
 
+**Coverage correction:** the original test_cu_04 driver leaves UseVelocityVerlet
+false; these unchanged registered commands exercise the legacy integrator. They
+do not establish the new VV path's overhead. See [the follow-up report](../v1_reference/README.md).
+Raw timings and original interpretations below are preserved.
+
 Method: interleaved corrected-vs-reference pairs on the registered legacy workloads,
 all experimental optimizations off (persistent reduction disabled, oracle off),
 Nproc=8, taskset-pinned for the large workload. /usr/bin/time CPU-percent recorded

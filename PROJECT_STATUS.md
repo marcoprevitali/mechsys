@@ -1,13 +1,13 @@
 # MechSys GPU DEM optimization — PROJECT_STATUS.md
 
-**As-of:** 2026-10-16 (P1 evidence review and sphere-oracle hardening)
-**State:** `F0 PASS` / `P0/P0-L/P0-R historical evidence retained, P0-R1 PARTIAL` / `P1-S DEFAULT-OFF EXPERIMENT, ACCEPTANCE QUALIFIED` / `V0 sphere/plane registered oracle cases PASS; adversarial VV baseline list validity FAIL` / `P1-P analysis complete, feature-count discrepancy UNRESOLVED`
-**Next authorized work:** repair or enforce the pre-force displacement/list-validity contract for fast Velocity-Verlet motion in a separate bounded patch; pass the new negative control before delayed-control work. The persistent-reduction variant remains default-off. Polyhedral historical feature counts remain unresolved; the proposal to remove large per-step state transfers is superseded by the P1 transfer audit. See §5.5 and `benchmarks/p1_review/README.md` for the corrected handoff. Do not begin a broad rewrite.
+**As-of:** 2026-10-16 (V1 repeated-rebuild follow-up)
+**State:** `V1 pre-force timing fix retained; device-reference defect FIXED` / `actual VV candidate oracle 5/5 PASS` / `CPU/GPU controlled force and preservation checks PASS` / `V0 evolving-history/restart/coupled runtime PARTIAL` / `P1-S DEFAULT-OFF, speed promotion unaccepted` / `P0-R1 and polyhedral count gap remain PARTIAL/UNRESOLVED`
+**Next authorized work:** extend stepwise FP64 force/history validation through repeated rebuilds, separation/recontact and restart, and close the relevant coupled runtime gate. Use an explicitly selected VV complete-solve baseline for future timing; previous default test_cu_04 timings exercise legacy integration. Delayed control/adaptive skins still require a displacement-validity proof. See §5.6 and `benchmarks/v1_reference/README.md`.
 **Agent:** GLM-5.3 Flash (or successor); operational rules in `AGENTS.md`.
 **Original project:** https://github.com/Axtal/mechsys
 **Fork URL / owner:** https://github.com/marcoprevitali/mechsys / `marcoprevitali` (authenticated account and public fork metadata verified 2026-10-15)
 **Old local checkout:** `/home/msys/mechsys` at `e4ba163ec9f32c8bccb0fd8619ba79e000d3d6d8`; preserved dirty and not mutated during `F0`
-**Current review clone:** `/home/msys/git/mechsys-p1-review`, branch `perf/p1-evidence-review`, based on sphere commit `9176b728a2c0397086d68e4cf8d46c10c2ee823b`. The other workstream clones and original checkout are preserved.
+**Current clone:** `/home/msys/git/mechsys-v1-reference`, branch `fix/vv-reference-reset`, based on verified V1 commit `7f99c4cef62686110b4bd7f85926e07228c8e86c`. Original, V1 and P1 clones are preserved.
 **Precision of historical benchmarks:** GPU double precision (`-DUSE_GPU_DOUBLE`) on NVIDIA RTX A6000 (84 SMs); do not assume the current host/GPU is unchanged.
 
 > **Evidence levels:** `HISTORICAL_REPORTED` means results transcribed from the user-supplied DeepSeek work summary dated 2026-10-14; they have **not** yet been independently reproduced or verified against source. `SOURCE_VERIFIED` requires auditing the actual local code. `MEASURED` requires raw timing/logs + code SHA. `PASS` requires documented numerical acceptance checks. Keep these labels distinct.
@@ -376,6 +376,34 @@ Gate statuses: V1-A PASS, V1-B PASS, V1-C PASS, V1-D PASS, V1-E PASS, V1-F PASS,
 V1-G PASS (compile + audit; coupled runtime and CPU-oracle runs outstanding),
 V1-H PASS (measured, no overhead), V1-I on commit/push.
 
+### 5.6 V1 follow-up — reference refresh and actual VV coverage (2026-10-16 / Codex GPT-6)
+
+Canonical report and reproducible evidence: `benchmarks/v1_reference/README.md`
+and `results/`. These findings supersede conflicting V1 claims in §5.5 while
+retaining the original report and measurements.
+Implementation/test commit: `c57c495`; the following documentation commit records
+the updated handoff. Experimental flags remain default-off.
+
+| Item | Verified result / limit |
+|---|---|
+| V1 provenance | User-fork remote verified at `7f99c4cef62686110b4bd7f85926e07228c8e86c`; source clone preserved clean |
+| Reproduced V1 defect | `ResetMaxD` refreshes wrapped vertices only; the new interaction-only upload leaves ordinary device references stale. Constant-velocity ten-step test: eight rebuilds, final x=0.1/reference=0/residual=0.1; ordinary assertion exits 1 |
+| Fix | After a completed pre-force upload, copy current vertices to all device references and zero the displacement cache on the same stream. No particle/A/Wdot upload or history update |
+| Rebuild regression | GPU standard/persistent reduction: three rebuilds at iterations 2/5/8, reference 0.09, residual 0.01; CPU matches. This is a diagnostic count reduction, not a measured complete-simulation speedup |
+| Preservation | Seeded particle state, A/Wdot, persistent contact identity and linear-law tangential/rolling/overlap/contact state preserved exactly through the narrow rebuild; reference refresh is idempotent |
+| Fresh accumulators | New common-contact records now value-initialized because pre-force rebuilding follows pReset. Unassigned fields were source verified; the selected baseline probe happened to contain zeros and did not show a runtime failure |
+| Controlled physical check | CPU/GPU fast-pair counterexample evaluates analytic 20 N normal force within 1e-10 N; action-reaction exactly zero; GPU common normal total also matches |
+| Rotation-monitor correction | GPU MaxD and CPU MaxDisplacement traverse every vertex. Pure cube-vertex rotation gives 0.070681219018733893 with zero center motion; earlier center-only claim superseded. Full polyhedral contact-completeness gate still outstanding |
+| Actual VV scenarios | New optional test_cu_04 argv selector and runner marker verify VV is enabled. Final five scenarios: 56,405 force-time checks / 5,419,450 references, zero misses/duplicates/periodicity errors. Different totals from the legacy integrator are expected |
+| Build/runtime coverage | CPU and GPU controlled runtimes PASS; explicit FP64 sm_86 DEM and coupled compile/link PASS. Coupled runtime and evolving history/restart gates remain incomplete |
+| Performance qualification | Original V1-E/H default test_cu_04 commands select legacy integration, so those data do not establish new VV-path coverage or overhead. No speedup claim or default-on experimental variant is accepted here |
+
+Raw baseline/intermediate/final logs and build artifacts are preserved at
+`/tmp/mechsys-v1-followup.0hJdwE/evidence/` (temporary); compact evidence is committed.
+Registered inputs remain under the existing SIMS evidence root, unchanged.
+Original checkout SHA/F0 backup hashes remain those in §6. Re-entry from this
+clone/branch using the current report avoids treating historical gates as current.
+
 ## 6. Git/repository topology and record
 
 
@@ -393,8 +421,9 @@ Original SHA:       e4ba163ec9f32c8bccb0fd8619ba79e000d3d6d8
 Imported patch SHA: NOT IMPORTED; preserved artifact SHA256 e98dcc578695992948f3d804f572f6b212888ac2381832ae261be9c4e99132e9
 Baseline branch:    perf/gpu-baseline at c88dc99f415dbf7b7bc3b1764fdf5506f0d66c9e
 P0/P1 source clones: mechsys-gpu-opt, mechsys-p1-sphere, mechsys-p1-poly (preserved)
-Review clone:       /home/msys/git/mechsys-p1-review
-Active topic:       perf/p1-evidence-review, base 9176b72; exact review SHA via git rev-parse HEAD
+V1 source clone:    /home/msys/git/mechsys-v1-vv (preserved)
+Current clone:      /home/msys/git/mechsys-v1-reference
+Active topic:       fix/vv-reference-reset, base 7f99c4c; exact SHA via git rev-parse HEAD
 Protection:         `origin` = user's fork; `upstream` fetch-only / push-disabled
 ```
 
@@ -440,7 +469,17 @@ Protection:         `origin` = user's fork; `upstream` fetch-only / push-disable
 | 2026-10-15 | P0-R complete: HISTORICAL_REBUILD_SHARE_UNRECONCILED (record self-contradicts); poly 23.6 s rebuild = Nproc=1 (21.24 s measured); neeint 6.4x interaction-list gap discovered; V0-A/B UNPROVEN; first experiments recommended and gated | §5.4, benchmarks/p0_reconciliation/ | MEASURED |
 | 2026-10-15 | Concurrent agent session edited this clone during P0-R (branch deleted, domain.h temporarily broken) and an external MoFEM job contaminated timing reps; mitigations applied; session separation recommended | §5.4 environment incident | COORDINATION HAZARD — user action recommended |
 
-### Current bounded task (2026-10-16 review supersedes the old P0-R recommendations)
+### Current bounded task (V1 follow-up; supersedes the older recommendations below)
+
+1. Extend the FP64 force/history oracle through repeated rebuilds, separation,
+   recontact and restart; retain the new reference-reset and fast-contact probes.
+2. Close the relevant coupled runtime gate. Compile/link evidence remains separate.
+3. Register explicitly selected VV complete-solve timing windows before performance
+   promotion. Keep persistent reduction default-off; large-scale benefit is inconclusive.
+4. Retain the unresolved polyhedral interaction-count discrepancy; delayed/adaptive
+   reconstruction requires a separate conservative displacement proof.
+
+The following was the historical pre-V1 bounded task and is retained as context:
 
 1. Repair or enforce pre-force VV list validity in a separate reversible patch;
    require the `vv_force_time_drift` counterexample to pass with complete candidates,
