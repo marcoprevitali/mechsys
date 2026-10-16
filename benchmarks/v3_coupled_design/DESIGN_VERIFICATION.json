@@ -1,0 +1,36 @@
+{
+  "milestone": "V3-D",
+  "classification": "documentation/source/algebra checks only, not coupled numerical validation",
+  "base_commit": "2b8d8c335709046e224f4c43aa930144ae6854e7",
+  "required_design_documents": 7,
+  "local_markdown_links_checked": 48,
+  "source_and_reference_hashes_checked": 11,
+  "v2_artifact_tree": "c31d33c9f92873eee2265f77a1b4927432261146",
+  "v2_artifacts_unchanged": true,
+  "production_sources_unchanged": true,
+  "coupled_vv_guard_unchanged": true,
+  "new_solver_runs": 0,
+  "performance_runs": 0,
+  "exact_rational_D3Q15_witness": {
+    "rho": "1",
+    "dx": "1",
+    "dt": "1",
+    "fluid_velocity": ["0", "0", "0"],
+    "surface_velocity": ["1/100", "0", "0"],
+    "tau0": "4/5",
+    "gamma": "1/2",
+    "B": "3/16",
+    "sum_Omega_e": ["1/50", "0", "0"],
+    "J0": "3/800",
+    "cases": [
+      {"alpha": "1", "reaction_scale": "1", "J_fluid": "3/800", "J_particle": "-3/800", "residual": "0"},
+      {"alpha": "1/2", "reaction_scale": "1", "J_fluid": "3/1600", "J_particle": "-3/800", "residual": "-3/1600"},
+      {"alpha": "1", "reaction_scale": "2", "J_fluid": "3/800", "J_particle": "-3/400", "residual": "-3/800"}
+    ],
+    "method": "independent exact Fraction equilibrium/moment arithmetic; no MechSys solver execution",
+    "verdict": "PASS - conditional algebraic witness, not evidence that V2 activated these cases"
+  },
+  "coupled_implementation_validation": "NOT_RUN",
+  "coupled_restart": "NOT_VALIDATED",
+  "P2_B": "NOT_RUN"
+}
