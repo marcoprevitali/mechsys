@@ -1,0 +1,264 @@
+{
+  "date": "2026-10-16",
+  "baseline_commit": "7f99c4cef62686110b4bd7f85926e07228c8e86c",
+  "baseline": {
+    "path": "/tmp/mechsys-v1-followup.0hJdwE/evidence/v1_baseline_rebuilt.log",
+    "sha256": "9898508aea15ea885a3c0b90a3ad96e703d03d0b6fd8e0dad0a1f4376a2aa266",
+    "steps": 10,
+    "position": 0.09999999999999999,
+    "reference": 0.0,
+    "residual": 0.09999999999999999,
+    "repeat_rebuild_steps": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "repeat_rebuild_count": 8,
+    "direct": {
+      "residual": 0.04000000000000001,
+      "state_unchanged": 1.0,
+      "acceleration_unchanged": 1.0,
+      "history_unchanged": 1.0
+    },
+    "contact": {
+      "F1": -20.000000000000018,
+      "F2": 20.000000000000018,
+      "expected_abs_force": 20.0,
+      "action_reaction": 0.0
+    },
+    "common_force": {
+      "normal_x": 20.000000000000018,
+      "expected": 20.0
+    },
+    "rotation": {
+      "center_motion": 0.0,
+      "maximum_vertex_motion": 0.07068121901873389,
+      "expected": 0.07068121901873393
+    },
+    "accumulators": {
+      "zero_initialized": 1.0
+    }
+  },
+  "fixed_gpu": {
+    "path": "/tmp/mechsys-v1-followup.0hJdwE/evidence/final_gpu.log",
+    "sha256": "8b9b653c8b7239f90a14d42bdce480f49723a69819fa4600efd989fb8a0b2bc3",
+    "steps": 10,
+    "position": 0.09999999999999999,
+    "reference": 0.09,
+    "residual": 0.009999999999999995,
+    "repeat_rebuild_steps": [
+      2,
+      5,
+      8
+    ],
+    "repeat_rebuild_count": 3,
+    "direct": {
+      "residual": 0.0,
+      "state_unchanged": 1.0,
+      "acceleration_unchanged": 1.0,
+      "history_unchanged": 1.0
+    },
+    "contact": {
+      "F1": -20.000000000000018,
+      "F2": 20.000000000000018,
+      "expected_abs_force": 20.0,
+      "action_reaction": 0.0
+    },
+    "common_force": {
+      "normal_x": 20.000000000000018,
+      "expected": 20.0
+    },
+    "rotation": {
+      "center_motion": 0.0,
+      "maximum_vertex_motion": 0.07068121901873389,
+      "expected": 0.07068121901873393
+    },
+    "accumulators": {
+      "zero_initialized": 1.0
+    }
+  },
+  "fixed_persistent": {
+    "path": "/tmp/mechsys-v1-followup.0hJdwE/evidence/final_persistent.log",
+    "sha256": "5a0df5dff715f89a71b084caab22db97df7851dc06d1db73e55b9bb87c6176f2",
+    "steps": 10,
+    "position": 0.09999999999999999,
+    "reference": 0.09,
+    "residual": 0.009999999999999995,
+    "repeat_rebuild_steps": [
+      2,
+      5,
+      8
+    ],
+    "repeat_rebuild_count": 3,
+    "direct": {
+      "residual": 0.0,
+      "state_unchanged": 1.0,
+      "acceleration_unchanged": 1.0,
+      "history_unchanged": 1.0
+    },
+    "contact": {
+      "F1": -20.000000000000018,
+      "F2": 20.000000000000018,
+      "expected_abs_force": 20.0,
+      "action_reaction": 0.0
+    },
+    "common_force": {
+      "normal_x": 20.000000000000018,
+      "expected": 20.0
+    },
+    "rotation": {
+      "center_motion": 0.0,
+      "maximum_vertex_motion": 0.07068121901873389,
+      "expected": 0.07068121901873393
+    },
+    "accumulators": {
+      "zero_initialized": 1.0
+    }
+  },
+  "fixed_cpu": {
+    "path": "/tmp/mechsys-v1-followup.0hJdwE/evidence/final_cpu.log",
+    "sha256": "0fbc764cc60917656d11a8af8c2b3dff8fb1683f7df355ff543d328c1940cc1a",
+    "steps": 10,
+    "position": 0.09999999999999999,
+    "reference": 0.09,
+    "residual": 0.009999999999999995,
+    "contact": {
+      "F1": -20.000000000000018,
+      "F2": 20.000000000000018,
+      "expected_abs_force": 20.0,
+      "action_reaction": 0.0
+    }
+  },
+  "actual_vv": {
+    "binary": "/tmp/mechsys-v1-followup.0hJdwE/evidence/final_build/test_cu_04",
+    "binary_sha256": "c9502740b8b34c65e279b5f65eac9b1e9099edb39b5c69ca71de391c75c48f0b",
+    "persistent_reduction": false,
+    "velocity_verlet": true,
+    "cases": {
+      "A_dense": {
+        "input_sha256": "e9ebb25efb4d157d69410cf439962e25cbd58b0e88bcfdd15c69c025c3a3827b",
+        "log": "/tmp/mechsys-v1-followup.0hJdwE/evidence/final_actual_vv/A_dense/run.log",
+        "log_sha256": "a74957f153588171e4f61f317487b20fde99acdf141cae2019ad605645975160",
+        "returncode": 0,
+        "checks": 11001,
+        "command": [
+          "/tmp/mechsys-v1-followup.0hJdwE/evidence/final_build/test_cu_04",
+          "oracle_A_dense",
+          "2",
+          "4.0",
+          "0.0",
+          "1"
+        ],
+        "reference": 830486,
+        "matched": 830486,
+        "missing": 0,
+        "duplicates": 0,
+        "bad_periodicity": 0,
+        "integrator_selection_verified": true,
+        "verdict": "PASS"
+      },
+      "B_lowdens": {
+        "input_sha256": "0f219036129313ef51e73714f41764ef567db77b6d2825fb4ca634db845c6af9",
+        "log": "/tmp/mechsys-v1-followup.0hJdwE/evidence/final_actual_vv/B_lowdens/run.log",
+        "log_sha256": "84e9780f71158360aaa0b6f8915c17a64fc39ca6371284dc845cc961efccfbf2",
+        "returncode": 0,
+        "checks": 11001,
+        "command": [
+          "/tmp/mechsys-v1-followup.0hJdwE/evidence/final_build/test_cu_04",
+          "oracle_B_lowdens",
+          "2",
+          "4.0",
+          "0.0",
+          "1"
+        ],
+        "reference": 21566,
+        "matched": 21566,
+        "missing": 0,
+        "duplicates": 0,
+        "bad_periodicity": 0,
+        "integrator_selection_verified": true,
+        "verdict": "PASS"
+      },
+      "C_highacc": {
+        "input_sha256": "37feb802a2fc2a29308f0dfbf49d5b5523187e613f7a5a7a137b2c10e1ab5074",
+        "log": "/tmp/mechsys-v1-followup.0hJdwE/evidence/final_actual_vv/C_highacc/run.log",
+        "log_sha256": "f9889bef57f951fe0d41beb616e367fcf0fb72d66da1cb41f876b05b272624e0",
+        "returncode": 0,
+        "checks": 10401,
+        "command": [
+          "/tmp/mechsys-v1-followup.0hJdwE/evidence/final_build/test_cu_04",
+          "oracle_C_highacc",
+          "2",
+          "4.0",
+          "0.0",
+          "1"
+        ],
+        "reference": 367394,
+        "matched": 367394,
+        "missing": 0,
+        "duplicates": 0,
+        "bad_periodicity": 0,
+        "integrator_selection_verified": true,
+        "verdict": "PASS"
+      },
+      "D_shear": {
+        "input_sha256": "3a02d9674eefac7502aa3b75a23b399cd55be0993ecbf22bda8bd4d5721acf6f",
+        "log": "/tmp/mechsys-v1-followup.0hJdwE/evidence/final_actual_vv/D_shear/run.log",
+        "log_sha256": "77f9f69fff985a87c9970d5edabc95f1e4719ca625823e247df86ea126b28371",
+        "returncode": 0,
+        "checks": 12001,
+        "command": [
+          "/tmp/mechsys-v1-followup.0hJdwE/evidence/final_build/test_cu_04",
+          "oracle_D_shear",
+          "2",
+          "4.0",
+          "0.0",
+          "1"
+        ],
+        "reference": 4196361,
+        "matched": 4196361,
+        "missing": 0,
+        "duplicates": 0,
+        "bad_periodicity": 0,
+        "integrator_selection_verified": true,
+        "verdict": "PASS"
+      },
+      "E_squeeze": {
+        "input_sha256": "928ad39df34547bb30d3a697f3dbcdc8aec38d98557256771d61b20a8ada639f",
+        "log": "/tmp/mechsys-v1-followup.0hJdwE/evidence/final_actual_vv/E_squeeze/run.log",
+        "log_sha256": "87bb0ad6bb22162e7d8adea8e2afa9e16c21fe07bcd9824afa4dc51ca3de8ea3",
+        "returncode": 0,
+        "checks": 12001,
+        "command": [
+          "/tmp/mechsys-v1-followup.0hJdwE/evidence/final_build/test_cu_04",
+          "oracle_E_squeeze",
+          "2",
+          "4.0",
+          "0.0",
+          "1"
+        ],
+        "reference": 3643,
+        "matched": 3643,
+        "missing": 0,
+        "duplicates": 0,
+        "bad_periodicity": 0,
+        "integrator_selection_verified": true,
+        "verdict": "PASS"
+      }
+    }
+  },
+  "performance": "NO complete-simulation speedup measured; rebuild counts are diagnostic",
+  "accumulator_hazard": "Unassigned automatic fields found by source audit; no failure observed in this probe's baseline build",
+  "actual_vv_totals": {
+    "checks": 56405,
+    "reference": 5419450,
+    "missing": 0,
+    "duplicates": 0,
+    "bad_periodicity": 0
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "source_root": "/home/msys/git/mechsys-v1-vv",
+  "headers": {
+    "lib/dem/domain.h": "758eb65d599e41b1ba9606024cf33649ab37bd1390c2e69ad0d1ca0ae1f6a183",
+    "lib/dem/dem.cuh": "eec7b7c28ceb788ce075248071094e1f6431289fcbbc30c70bdf25ad8fbc311f"
+  },
+  "targets": {
+    "reference_cuda": {
+      "source_sha256": "fd65adb6937ae84883488f2278175e6206b841f066daff3b54ed055aba383db7",
+      "binary_sha256": "67922d2b20f80e9c0728b0c38e6fb6bcdeaf3c343b7f061e485158519135874c",
+      "compile": [
+        "/usr/local/cuda-12.6/bin/nvcc",
+        "-arch=sm_86",
+        "-Xcompiler=-fopenmp",
+        "-DUSE_CUDA",
+        "-std=c++17",
+        "-O3",
+        "-DH5Gcreate_vers=2",
+        "-DH5Gopen_vers=2",
+        "-DH5_NO_DEPRECATED_SYMBOLS",
+        "-DHAS_IGRAPH",
+        "-DUSE_CHECK_OVERLAP",
+        "-DUSE_GPU_DOUBLE",
+        "-DUSE_HDF5",
+        "-DUSE_OMP",
+        "-DUSE_STDVECTOR",
+        "-I/home/msys/git/mechsys-v1-vv",
+        "--options-file",
+        "/tmp/mechsys_v1_build/tdem/CMakeFiles/test_cu_04.dir/includes_CUDA.rsp",
+        "-c",
+        "/tmp/mechsys-v1-followup.0hJdwE/benchmarks/v1_reference/reference_probe.cu",
+        "-o",
+        "/tmp/mechsys-v1-followup.0hJdwE/evidence/baseline_rebuilt/reference_cuda.o"
+      ],
+      "link": [
+        "g++",
+        "-fopenmp",
+        "/tmp/mechsys-v1-followup.0hJdwE/evidence/baseline_rebuilt/reference_cuda.o",
+        "-o",
+        "/tmp/mechsys-v1-followup.0hJdwE/evidence/baseline_rebuilt/reference_cuda",
+        "@/tmp/mechsys_v1_build/tdem/CMakeFiles/test_cu_04.dir/linkLibs.rsp",
+        "-L/usr/local/cuda-12.6/targets/x86_64-linux/lib"
+      ]
+    }
+  }
+}

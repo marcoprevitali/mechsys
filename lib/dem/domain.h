@@ -3707,7 +3707,9 @@ inline void Domain::UpLoadDevice(size_t Nc, bool first,bool updateState)
         real   r2   = Particles[i2]->Props.R;
         DEM::CInteracton * Ci = PairtoCInt[hash];
         InteractonCU     Icu;
-        ComInteractonCU CIcu;
+        // A VV pre-force rebuild uploads these AFTER pReset. Initialize the new
+        // accumulators too; that reset only cleared the previous contact array.
+        ComInteractonCU CIcu = {};
         Icu.BothFree= Ci->BothFree;
         Icu.Kn      = Ci->Kn;
         Icu.Kt      = Ci->Kt;
@@ -4163,9 +4165,16 @@ inline void Domain::UpdateContactsDevicePreForce()
     // the device A/Wdot untouched and first=false keeps particles/verts untouched
     UpLoadDevice(Nproc,false,false);
 
-    // re-issue the device displacement-reference reset so the new list is valid
-    // from the current (post-drift) geometry onward
-    ResetMaxD<<<demaux.nparts/Nthread+1,Nthread>>>(pVertsCU, pVertsoCU, pMaxDCU, pParticlesCU, pDynParticlesCU, pdemaux);
+    // ResetMaxD above is a wrapping operation: non-wrapped particles deliberately
+    // keep their old references. A completed rebuild needs a new reference for
+    // EVERY vertex, otherwise VV rebuilds on every subsequent step. These copies
+    // touch only list-validity bookkeeping; particle state and A/Wdot stay intact.
+    if (demaux.nverts>0)
+    {
+        if (cudaMemcpyAsync(pVertsoCU,pVertsCU,demaux.nverts*sizeof(real3),cudaMemcpyDeviceToDevice)!=cudaSuccess ||
+            cudaMemsetAsync(pMaxDCU,0,demaux.nverts*sizeof(real))!=cudaSuccess)
+            throw new Fatal("Pre-force rebuild: failed to reset displacement reference");
+    }
 }
 
 inline void Domain::UpdateContactsDevice()

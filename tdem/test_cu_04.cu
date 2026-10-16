@@ -337,6 +337,12 @@ int main(int argc, char **argv) try
     size_t cl = 0;
     if (contactlaw=="hertz") cl=1;
     DEM::Domain dom(&dat,cl);
+    // Optional final argv value selects VV for registered validation; default unchanged.
+    if (argc>=6)
+    {
+        dom.UseVelocityVerlet=atoi(argv[5])!=0;
+        printf("DEM_BENCHMARK_INTEGRATOR velocity_verlet=%d\n",int(dom.UseVelocityVerlet));
+    }
     dom.Alpha=verlet;
     dom.Dilate = true;
     //dom.Nthread = 128;
