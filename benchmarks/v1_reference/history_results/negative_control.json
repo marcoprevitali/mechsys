@@ -1,0 +1,233 @@
+{
+  "absolute_tolerance": 1e-10,
+  "relative_tolerance": 1e-09,
+  "runs": {
+    "case0_0.001_cpu": {
+      "command": [
+        "/tmp/mechsys-vv-history.nPkO2A/unpatched-build/history_cpu",
+        "0",
+        "0.001"
+      ],
+      "binary_sha256": "dcb485233ae09bb12acce13c500632fe2e2165a3f6d7a2acec82958abd562656",
+      "log_sha256": "9f91dfff33564cc3d8090c6904f92b2718793263e11467359ffed3e40466db58",
+      "exit_code": 0,
+      "snapshots": 1001,
+      "transitions": [
+        {
+          "step": 0,
+          "contact": 1
+        }
+      ],
+      "rebuild_reference_changes": 200,
+      "candidate_oracle_checks": 0,
+      "reference_contacts": 0,
+      "host_rolling_mismatch_count": 0,
+      "first_host_mismatch": [],
+      "errors": []
+    },
+    "case0_0.001_cuda": {
+      "command": [
+        "/tmp/mechsys-vv-history.nPkO2A/unpatched-build/history_cuda",
+        "0",
+        "0.001"
+      ],
+      "binary_sha256": "96c953f53ec4a7473282dde1448027972a7e5a74b5c1e4b8c5a4c8d8f3304bf0",
+      "log_sha256": "85ce0f7c08f33b553268d0626c853131d62ea1dc8e70372d233613c94a997e14",
+      "exit_code": 0,
+      "snapshots": 1001,
+      "transitions": [
+        {
+          "step": 0,
+          "contact": 1
+        }
+      ],
+      "rebuild_reference_changes": 200,
+      "candidate_oracle_checks": 1000,
+      "reference_contacts": 1000,
+      "host_rolling_mismatch_count": 2001,
+      "first_host_mismatch": [
+        {
+          "step": 0,
+          "component": 1,
+          "device": 7.2e-05,
+          "host": 1.2000000000000002e-05
+        }
+      ],
+      "errors": [
+        "analytic initial rolling force failed (Kr=6, Vr=0.1, dt=2e-5)"
+      ]
+    },
+    "case0_1.0_cpu": {
+      "command": [
+        "/tmp/mechsys-vv-history.nPkO2A/unpatched-build/history_cpu",
+        "0",
+        "1.0"
+      ],
+      "binary_sha256": "dcb485233ae09bb12acce13c500632fe2e2165a3f6d7a2acec82958abd562656",
+      "log_sha256": "11b5eaf14cfda061504035c58c0de4d4b465695001fd722d4fea71c720b56bb0",
+      "exit_code": 0,
+      "snapshots": 1001,
+      "transitions": [
+        {
+          "step": 0,
+          "contact": 1
+        }
+      ],
+      "rebuild_reference_changes": 0,
+      "candidate_oracle_checks": 0,
+      "reference_contacts": 0,
+      "host_rolling_mismatch_count": 0,
+      "first_host_mismatch": [],
+      "errors": []
+    },
+    "case0_1.0_cuda": {
+      "command": [
+        "/tmp/mechsys-vv-history.nPkO2A/unpatched-build/history_cuda",
+        "0",
+        "1.0"
+      ],
+      "binary_sha256": "96c953f53ec4a7473282dde1448027972a7e5a74b5c1e4b8c5a4c8d8f3304bf0",
+      "log_sha256": "4f0ff3c7a92b85e85253bf13463f51b06499abb1efbf50e71ac1c6d625ad4544",
+      "exit_code": 0,
+      "snapshots": 1001,
+      "transitions": [
+        {
+          "step": 0,
+          "contact": 1
+        }
+      ],
+      "rebuild_reference_changes": 0,
+      "candidate_oracle_checks": 1000,
+      "reference_contacts": 1000,
+      "host_rolling_mismatch_count": 2001,
+      "first_host_mismatch": [
+        {
+          "step": 0,
+          "component": 1,
+          "device": 7.2e-05,
+          "host": 1.2000000000000002e-05
+        }
+      ],
+      "errors": [
+        "analytic initial rolling force failed (Kr=6, Vr=0.1, dt=2e-5)"
+      ]
+    }
+  },
+  "comparisons": {
+    "case0_0.001_cpu_vs_cuda": {
+      "failures": 11699,
+      "first_failure": [
+        {
+          "step": 0,
+          "field": "fr",
+          "component": 1,
+          "left": 1.2000000000000002e-05,
+          "right": 7.2e-05,
+          "error": 6e-05
+        }
+      ],
+      "max_absolute_errors": {
+        "x0": 1.6653345369377348e-16,
+        "v0": 5.684341886080802e-14,
+        "w0": 0.005569228798301351,
+        "F0": 2.5002222514558525e-13,
+        "T0": 5.999999998787913e-06,
+        "Q0": 3.170646856391537e-05,
+        "x1": 1.1102230246251565e-16,
+        "v1": 5.684341886080802e-14,
+        "w1": 0.005569228798304016,
+        "F1": 2.5002222514558525e-13,
+        "T1": 5.999999998787917e-06,
+        "Q1": 3.1702289885457424e-05,
+        "ft": 6.765421556309548e-17,
+        "fr": 6e-05,
+        "host_fr": 0.007777018941228744,
+        "contact": 0.0,
+        "overlap": 2.498001805406602e-16,
+        "Epot": 2.498001805406602e-16,
+        "dEvis": 0.0,
+        "dEfric": 0.0
+      }
+    },
+    "case0_1.0_cpu_vs_cuda": {
+      "failures": 11699,
+      "first_failure": [
+        {
+          "step": 0,
+          "field": "fr",
+          "component": 1,
+          "left": 1.2000000000000002e-05,
+          "right": 7.2e-05,
+          "error": 6e-05
+        }
+      ],
+      "max_absolute_errors": {
+        "x0": 1.6653345369377348e-16,
+        "v0": 5.684341886080802e-14,
+        "w0": 0.005569228798301573,
+        "F0": 2.5002222514558525e-13,
+        "T0": 5.999999998787913e-06,
+        "Q0": 3.170646856391938e-05,
+        "x1": 1.1102230246251565e-16,
+        "v1": 5.684341886080802e-14,
+        "w1": 0.0055692287983035715,
+        "F1": 2.5002222514558525e-13,
+        "T1": 5.999999998787917e-06,
+        "Q1": 3.1702289885457424e-05,
+        "ft": 6.418476861114186e-17,
+        "fr": 6e-05,
+        "host_fr": 0.007777018941228745,
+        "contact": 0.0,
+        "overlap": 2.498001805406602e-16,
+        "Epot": 2.498001805406602e-16,
+        "dEvis": 0.0,
+        "dEfric": 0.0
+      }
+    },
+    "persistent_skin_control_cpu": {
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_errors": {
+        "x0": 0.0,
+        "v0": 0.0,
+        "w0": 0.0,
+        "F0": 0.0,
+        "T0": 0.0,
+        "Q0": 0.0,
+        "x1": 0.0,
+        "v1": 0.0,
+        "w1": 0.0,
+        "F1": 0.0,
+        "T1": 0.0,
+        "Q1": 0.0,
+        "ft": 0.0,
+        "fr": 0.0,
+        "contact": 0.0,
+        "overlap": 0.0
+      }
+    },
+    "persistent_skin_control_cuda": {
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_errors": {
+        "x0": 0.0,
+        "v0": 2.7755575615628914e-17,
+        "w0": 2.220446049250313e-16,
+        "F0": 1.0408340855860843e-17,
+        "T0": 1.3010426069826053e-18,
+        "Q0": 4.0115480381963664e-18,
+        "x1": 0.0,
+        "v1": 2.7755575615628914e-17,
+        "w1": 4.440892098500626e-16,
+        "F1": 1.0408340855860843e-17,
+        "T1": 1.3010426069826053e-18,
+        "Q1": 0.0,
+        "ft": 1.0408340855860843e-17,
+        "fr": 5.204170427930421e-18,
+        "contact": 0.0,
+        "overlap": 0.0
+      }
+    }
+  },
+  "pass": false
+}

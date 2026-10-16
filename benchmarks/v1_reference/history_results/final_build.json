@@ -1,0 +1,119 @@
+{
+  "source_root": "/tmp/mechsys-vv-history.nPkO2A/work",
+  "headers": {
+    "lib/dem/domain.h": "1a36d07ec635e0a245fa1786b8fb9900f84521d5727ef0ebf28e2ab1060f4c53",
+    "lib/dem/dem.cuh": "eec7b7c28ceb788ce075248071094e1f6431289fcbbc30c70bdf25ad8fbc311f"
+  },
+  "targets": {
+    "history_cpu": {
+      "source_sha256": "613d5531cd0632046cd6f19d20f78fd01acd4670a1636efcf51e2e8f7e42d81f",
+      "binary_sha256": "dcb485233ae09bb12acce13c500632fe2e2165a3f6d7a2acec82958abd562656",
+      "compile": [
+        "g++",
+        "-fopenmp",
+        "-x",
+        "c++",
+        "-std=c++17",
+        "-O3",
+        "-DH5Gcreate_vers=2",
+        "-DH5Gopen_vers=2",
+        "-DH5_NO_DEPRECATED_SYMBOLS",
+        "-DHAS_IGRAPH",
+        "-DUSE_CHECK_OVERLAP",
+        "-DUSE_GPU_DOUBLE",
+        "-DUSE_HDF5",
+        "-DUSE_OMP",
+        "-DUSE_STDVECTOR",
+        "-I/tmp/mechsys-vv-history.nPkO2A/work",
+        "@/tmp/mechsys_v1_build/tdem/CMakeFiles/test_cu_04.dir/includes_CUDA.rsp",
+        "-c",
+        "/tmp/mechsys-vv-history.nPkO2A/work/benchmarks/v1_reference/history_probe.cu",
+        "-o",
+        "/tmp/mechsys-vv-history.nPkO2A/final-build/history_cpu.o"
+      ],
+      "link": [
+        "g++",
+        "-fopenmp",
+        "/tmp/mechsys-vv-history.nPkO2A/final-build/history_cpu.o",
+        "-o",
+        "/tmp/mechsys-vv-history.nPkO2A/final-build/history_cpu",
+        "@/tmp/mechsys_v1_build/tdem/CMakeFiles/test_cu_04.dir/linkLibs.rsp",
+        "-L/usr/local/cuda-12.6/targets/x86_64-linux/lib"
+      ]
+    },
+    "history_cuda": {
+      "source_sha256": "613d5531cd0632046cd6f19d20f78fd01acd4670a1636efcf51e2e8f7e42d81f",
+      "binary_sha256": "921766bd8360d745a575fbaf76a42fef381e637b1cc3e3b1d9a9caae56bc3348",
+      "compile": [
+        "/usr/local/cuda-12.6/bin/nvcc",
+        "-arch=sm_86",
+        "-Xcompiler=-fopenmp",
+        "-DUSE_CUDA",
+        "-std=c++17",
+        "-O3",
+        "-DH5Gcreate_vers=2",
+        "-DH5Gopen_vers=2",
+        "-DH5_NO_DEPRECATED_SYMBOLS",
+        "-DHAS_IGRAPH",
+        "-DUSE_CHECK_OVERLAP",
+        "-DUSE_GPU_DOUBLE",
+        "-DUSE_HDF5",
+        "-DUSE_OMP",
+        "-DUSE_STDVECTOR",
+        "-I/tmp/mechsys-vv-history.nPkO2A/work",
+        "--options-file",
+        "/tmp/mechsys_v1_build/tdem/CMakeFiles/test_cu_04.dir/includes_CUDA.rsp",
+        "-c",
+        "/tmp/mechsys-vv-history.nPkO2A/work/benchmarks/v1_reference/history_probe.cu",
+        "-o",
+        "/tmp/mechsys-vv-history.nPkO2A/final-build/history_cuda.o"
+      ],
+      "link": [
+        "g++",
+        "-fopenmp",
+        "/tmp/mechsys-vv-history.nPkO2A/final-build/history_cuda.o",
+        "-o",
+        "/tmp/mechsys-vv-history.nPkO2A/final-build/history_cuda",
+        "@/tmp/mechsys_v1_build/tdem/CMakeFiles/test_cu_04.dir/linkLibs.rsp",
+        "-L/usr/local/cuda-12.6/targets/x86_64-linux/lib"
+      ]
+    },
+    "test_cu_04": {
+      "source_sha256": "e4bc8230ff9ad4d160bb4e99e5294b48bec28feb0ff19369a413d3a74ac01cb2",
+      "binary_sha256": "8b82cd875c12a9ebf6d2dcd49d8001ceb5fe1c4d6c70c9ab663c0cd3a0310b75",
+      "compile": [
+        "/usr/local/cuda-12.6/bin/nvcc",
+        "-arch=sm_86",
+        "-Xcompiler=-fopenmp",
+        "-DUSE_CUDA",
+        "-std=c++17",
+        "-O3",
+        "-DH5Gcreate_vers=2",
+        "-DH5Gopen_vers=2",
+        "-DH5_NO_DEPRECATED_SYMBOLS",
+        "-DHAS_IGRAPH",
+        "-DUSE_CHECK_OVERLAP",
+        "-DUSE_GPU_DOUBLE",
+        "-DUSE_HDF5",
+        "-DUSE_OMP",
+        "-DUSE_STDVECTOR",
+        "-I/tmp/mechsys-vv-history.nPkO2A/work",
+        "--options-file",
+        "/tmp/mechsys_v1_build/tdem/CMakeFiles/test_cu_04.dir/includes_CUDA.rsp",
+        "-c",
+        "/tmp/mechsys-vv-history.nPkO2A/work/tdem/test_cu_04.cu",
+        "-o",
+        "/tmp/mechsys-vv-history.nPkO2A/final-build/test_cu_04.o"
+      ],
+      "link": [
+        "g++",
+        "-fopenmp",
+        "/tmp/mechsys-vv-history.nPkO2A/final-build/test_cu_04.o",
+        "-o",
+        "/tmp/mechsys-vv-history.nPkO2A/final-build/test_cu_04",
+        "@/tmp/mechsys_v1_build/tdem/CMakeFiles/test_cu_04.dir/linkLibs.rsp",
+        "-L/usr/local/cuda-12.6/targets/x86_64-linux/lib"
+      ]
+    }
+  }
+}

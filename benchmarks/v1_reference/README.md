@@ -1,5 +1,11 @@
 # V1 follow-up: completed-rebuild reference refresh — 2026-10-16
 
+**Current extension:** VV is now the reference mode by user decision. The
+subsequent evolving sphere-history validation found and fixed a rolling-force
+transfer-unit defect; see [HISTORY_REPORT.md](HISTORY_REPORT.md) and
+`history_results/`. The report below remains the preserved reference-reset
+milestone, not the latest closure of all VV gates.
+
 Branch `fix/vv-reference-reset`, based on verified V1 commit
 `7f99c4cef62686110b4bd7f85926e07228c8e86c`. Work is isolated from the original
 checkout, V1 clone, and all P1 clones. Persistent clone:

@@ -1,0 +1,39 @@
+{
+  "source_commit": "8d878da7269440a72a1f37ca8ba68b9d84d9ae49",
+  "source_sha256": {
+    "AGENTS.md": "52260d356c53bb2e217d01f7fa4091614324bcf797342b347652555047d4c6c8",
+    "lib/dem/domain.h": "1a36d07ec635e0a245fa1786b8fb9900f84521d5727ef0ebf28e2ab1060f4c53",
+    "lib/dem/dem.cuh": "eec7b7c28ceb788ce075248071094e1f6431289fcbbc30c70bdf25ad8fbc311f",
+    "lib/dem/interacton.h": "94f473e545bdf809c584e164aca8003595b2738c29907c87032fe6da16592aa0",
+    "lib/dem/particle.h": "e81b65e715ef3f747b72ea072b9af8afd3e3c242b822b944c286cc4a7c9f9630",
+    "benchmarks/v1_reference/history_probe.cu": "613d5531cd0632046cd6f19d20f78fd01acd4670a1636efcf51e2e8f7e42d81f",
+    "benchmarks/v1_reference/check_history.py": "30a55852ee3b711120881433e219d302d27a91b34785dd9be326c1cbc60673e0",
+    "benchmarks/v1_reference/reference_probe.cu": "fd65adb6937ae84883488f2278175e6206b841f066daff3b54ed055aba383db7",
+    "tdem/test_cu_04.cu": "e4bc8230ff9ad4d160bb4e99e5294b48bec28feb0ff19369a413d3a74ac01cb2"
+  },
+  "raw_evidence": "/tmp/mechsys-vv-history.nPkO2A",
+  "archive_sha256": {
+    "history_validation.json": "32339d5e86ef3e3c160bb1ebc23fe8d45e76a54955a2be602fc6776b61be8eb5",
+    "negative_control.json": "dbed315593f24858e65575360c8aa7497a087f5b57f9aeb174e86adce38ed253",
+    "registered_vv.json": "03dc6dc6e838b44af2b5bf902eeb1502212c6327a0584443e04f2831dbeaaa0d",
+    "final_build.json": "bc2d04c19556b692bd4467b32aaf3d1484d6be9dcce934095bba6834ef19239f",
+    "reference_coupled_build.json": "5f55d2cfe535a51f286cbd04f6059d2d4aa777b90d330293548acc56c55fd6fa",
+    "negative_build.json": "bfdafa916125b47799c2510662ac19230ed4f1bd72ab6dca5ecd6de6f66f70d5",
+    "reference_cpu.log": "15144fd08abce94ecba9bc15ad84149f6b45cbe381b68860eaa94553a2bbe475",
+    "reference_gpu.log": "34c29cc1bd05b20f29fcf3ab4c18cb57eaa3565b6db60bbd109927ebb92d396b",
+    "reference_persistent.log": "f039bf9e008693103a668dcf99e08356d3b030e105bbe2ee497afcf82fd1cd45"
+  },
+  "registered_totals": {
+    "checks": 56405,
+    "reference": 5419450,
+    "missing": 0,
+    "duplicates": 0,
+    "bad_periodicity": 0
+  },
+  "history_runs": 12,
+  "history_candidate_checks": 6000,
+  "history_reference_contacts": 2460,
+  "negative_control_exit_code": 1,
+  "coupled_gate": "compile/link only, no runtime",
+  "performance": "not measured; diagnostic readbacks/output enabled"
+}

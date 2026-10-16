@@ -1,0 +1,533 @@
+{
+  "absolute_tolerance": 1e-10,
+  "relative_tolerance": 1e-09,
+  "runs": {
+    "case0_0.001_cpu": {
+      "command": [
+        "/tmp/mechsys-vv-history.nPkO2A/final-build/history_cpu",
+        "0",
+        "0.001"
+      ],
+      "binary_sha256": "dcb485233ae09bb12acce13c500632fe2e2165a3f6d7a2acec82958abd562656",
+      "log_sha256": "1c99ccb771fc37690bca8500257c7fcf396a505ede30e0a234442e4184c86274",
+      "exit_code": 0,
+      "snapshots": 1001,
+      "transitions": [
+        {
+          "step": 0,
+          "contact": 1
+        }
+      ],
+      "rebuild_reference_changes": 200,
+      "candidate_oracle_checks": 0,
+      "reference_contacts": 0,
+      "host_rolling_mismatch_count": 0,
+      "first_host_mismatch": [],
+      "errors": []
+    },
+    "case0_0.001_cuda": {
+      "command": [
+        "/tmp/mechsys-vv-history.nPkO2A/final-build/history_cuda",
+        "0",
+        "0.001"
+      ],
+      "binary_sha256": "921766bd8360d745a575fbaf76a42fef381e637b1cc3e3b1d9a9caae56bc3348",
+      "log_sha256": "80d83a80146b1a15fa6770c580b9c0e29faafd2a95156a022f398cfa2d5b5b3f",
+      "exit_code": 0,
+      "snapshots": 1001,
+      "transitions": [
+        {
+          "step": 0,
+          "contact": 1
+        }
+      ],
+      "rebuild_reference_changes": 200,
+      "candidate_oracle_checks": 1000,
+      "reference_contacts": 1000,
+      "host_rolling_mismatch_count": 0,
+      "first_host_mismatch": [],
+      "errors": []
+    },
+    "case0_1.0_cpu": {
+      "command": [
+        "/tmp/mechsys-vv-history.nPkO2A/final-build/history_cpu",
+        "0",
+        "1.0"
+      ],
+      "binary_sha256": "dcb485233ae09bb12acce13c500632fe2e2165a3f6d7a2acec82958abd562656",
+      "log_sha256": "fbee23ce6faec2078826e68e05100f5e027d061971e773c7e024532ea12a4941",
+      "exit_code": 0,
+      "snapshots": 1001,
+      "transitions": [
+        {
+          "step": 0,
+          "contact": 1
+        }
+      ],
+      "rebuild_reference_changes": 0,
+      "candidate_oracle_checks": 0,
+      "reference_contacts": 0,
+      "host_rolling_mismatch_count": 0,
+      "first_host_mismatch": [],
+      "errors": []
+    },
+    "case0_1.0_cuda": {
+      "command": [
+        "/tmp/mechsys-vv-history.nPkO2A/final-build/history_cuda",
+        "0",
+        "1.0"
+      ],
+      "binary_sha256": "921766bd8360d745a575fbaf76a42fef381e637b1cc3e3b1d9a9caae56bc3348",
+      "log_sha256": "bf581e54a0427265e8fd0916df033207779fcf98096452fb4198b903ac846232",
+      "exit_code": 0,
+      "snapshots": 1001,
+      "transitions": [
+        {
+          "step": 0,
+          "contact": 1
+        }
+      ],
+      "rebuild_reference_changes": 0,
+      "candidate_oracle_checks": 1000,
+      "reference_contacts": 1000,
+      "host_rolling_mismatch_count": 0,
+      "first_host_mismatch": [],
+      "errors": []
+    },
+    "case1_0.001_cpu": {
+      "command": [
+        "/tmp/mechsys-vv-history.nPkO2A/final-build/history_cpu",
+        "1",
+        "0.001"
+      ],
+      "binary_sha256": "dcb485233ae09bb12acce13c500632fe2e2165a3f6d7a2acec82958abd562656",
+      "log_sha256": "4290d654deaf11c803017628dde08f1f26328f273e1fd71664b62684a03de41d",
+      "exit_code": 0,
+      "snapshots": 1001,
+      "transitions": [
+        {
+          "step": 0,
+          "contact": 1
+        },
+        {
+          "step": 75,
+          "contact": 0
+        }
+      ],
+      "rebuild_reference_changes": 200,
+      "candidate_oracle_checks": 0,
+      "reference_contacts": 0,
+      "host_rolling_mismatch_count": 0,
+      "first_host_mismatch": [],
+      "errors": []
+    },
+    "case1_0.001_cuda": {
+      "command": [
+        "/tmp/mechsys-vv-history.nPkO2A/final-build/history_cuda",
+        "1",
+        "0.001"
+      ],
+      "binary_sha256": "921766bd8360d745a575fbaf76a42fef381e637b1cc3e3b1d9a9caae56bc3348",
+      "log_sha256": "00d1aa34c06dd43a332889839f6ad66c1c00629d481572c91d7bda2a80fd7d57",
+      "exit_code": 0,
+      "snapshots": 1001,
+      "transitions": [
+        {
+          "step": 0,
+          "contact": 1
+        },
+        {
+          "step": 75,
+          "contact": 0
+        }
+      ],
+      "rebuild_reference_changes": 200,
+      "candidate_oracle_checks": 1000,
+      "reference_contacts": 74,
+      "host_rolling_mismatch_count": 0,
+      "first_host_mismatch": [],
+      "errors": []
+    },
+    "case1_1.0_cpu": {
+      "command": [
+        "/tmp/mechsys-vv-history.nPkO2A/final-build/history_cpu",
+        "1",
+        "1.0"
+      ],
+      "binary_sha256": "dcb485233ae09bb12acce13c500632fe2e2165a3f6d7a2acec82958abd562656",
+      "log_sha256": "c663d8de623ffb49a2ff0a705b1202817557326d449814a6fbc898e36dfcdbed",
+      "exit_code": 0,
+      "snapshots": 1001,
+      "transitions": [
+        {
+          "step": 0,
+          "contact": 1
+        },
+        {
+          "step": 75,
+          "contact": 0
+        }
+      ],
+      "rebuild_reference_changes": 0,
+      "candidate_oracle_checks": 0,
+      "reference_contacts": 0,
+      "host_rolling_mismatch_count": 0,
+      "first_host_mismatch": [],
+      "errors": []
+    },
+    "case1_1.0_cuda": {
+      "command": [
+        "/tmp/mechsys-vv-history.nPkO2A/final-build/history_cuda",
+        "1",
+        "1.0"
+      ],
+      "binary_sha256": "921766bd8360d745a575fbaf76a42fef381e637b1cc3e3b1d9a9caae56bc3348",
+      "log_sha256": "3d6d21ddb50126fad30c94424b3735836c6440e01e24572cf72cdc4c7b0e0dd9",
+      "exit_code": 0,
+      "snapshots": 1001,
+      "transitions": [
+        {
+          "step": 0,
+          "contact": 1
+        },
+        {
+          "step": 75,
+          "contact": 0
+        }
+      ],
+      "rebuild_reference_changes": 0,
+      "candidate_oracle_checks": 1000,
+      "reference_contacts": 74,
+      "host_rolling_mismatch_count": 0,
+      "first_host_mismatch": [],
+      "errors": []
+    },
+    "case2_0.001_cpu": {
+      "command": [
+        "/tmp/mechsys-vv-history.nPkO2A/final-build/history_cpu",
+        "2",
+        "0.001"
+      ],
+      "binary_sha256": "dcb485233ae09bb12acce13c500632fe2e2165a3f6d7a2acec82958abd562656",
+      "log_sha256": "b0c71d660f361f005af6b71f67ae8a9684ee42962d5c460f6dcbc0877d151115",
+      "exit_code": 0,
+      "snapshots": 1001,
+      "transitions": [
+        {
+          "step": 0,
+          "contact": 1
+        },
+        {
+          "step": 67,
+          "contact": 0
+        },
+        {
+          "step": 911,
+          "contact": 1
+        }
+      ],
+      "rebuild_reference_changes": 200,
+      "candidate_oracle_checks": 0,
+      "reference_contacts": 0,
+      "host_rolling_mismatch_count": 0,
+      "first_host_mismatch": [],
+      "errors": []
+    },
+    "case2_0.001_cuda": {
+      "command": [
+        "/tmp/mechsys-vv-history.nPkO2A/final-build/history_cuda",
+        "2",
+        "0.001"
+      ],
+      "binary_sha256": "921766bd8360d745a575fbaf76a42fef381e637b1cc3e3b1d9a9caae56bc3348",
+      "log_sha256": "406ba852faba6d5247b30549d46d328bf9b8db43698942737bfcabc089056e50",
+      "exit_code": 0,
+      "snapshots": 1001,
+      "transitions": [
+        {
+          "step": 0,
+          "contact": 1
+        },
+        {
+          "step": 67,
+          "contact": 0
+        },
+        {
+          "step": 911,
+          "contact": 1
+        }
+      ],
+      "rebuild_reference_changes": 200,
+      "candidate_oracle_checks": 1000,
+      "reference_contacts": 156,
+      "host_rolling_mismatch_count": 0,
+      "first_host_mismatch": [],
+      "errors": []
+    },
+    "case2_1.0_cpu": {
+      "command": [
+        "/tmp/mechsys-vv-history.nPkO2A/final-build/history_cpu",
+        "2",
+        "1.0"
+      ],
+      "binary_sha256": "dcb485233ae09bb12acce13c500632fe2e2165a3f6d7a2acec82958abd562656",
+      "log_sha256": "9074799773e15e2e930ed4ce60f87d0c2fbd145ce19934517ee2375e692b08a8",
+      "exit_code": 0,
+      "snapshots": 1001,
+      "transitions": [
+        {
+          "step": 0,
+          "contact": 1
+        },
+        {
+          "step": 67,
+          "contact": 0
+        },
+        {
+          "step": 911,
+          "contact": 1
+        }
+      ],
+      "rebuild_reference_changes": 0,
+      "candidate_oracle_checks": 0,
+      "reference_contacts": 0,
+      "host_rolling_mismatch_count": 0,
+      "first_host_mismatch": [],
+      "errors": []
+    },
+    "case2_1.0_cuda": {
+      "command": [
+        "/tmp/mechsys-vv-history.nPkO2A/final-build/history_cuda",
+        "2",
+        "1.0"
+      ],
+      "binary_sha256": "921766bd8360d745a575fbaf76a42fef381e637b1cc3e3b1d9a9caae56bc3348",
+      "log_sha256": "101616ee45e790bb396c36a4a8343b7e7cb37aef9867e6cac9d7b78c5f8eab99",
+      "exit_code": 0,
+      "snapshots": 1001,
+      "transitions": [
+        {
+          "step": 0,
+          "contact": 1
+        },
+        {
+          "step": 67,
+          "contact": 0
+        },
+        {
+          "step": 911,
+          "contact": 1
+        }
+      ],
+      "rebuild_reference_changes": 0,
+      "candidate_oracle_checks": 1000,
+      "reference_contacts": 156,
+      "host_rolling_mismatch_count": 0,
+      "first_host_mismatch": [],
+      "errors": []
+    }
+  },
+  "comparisons": {
+    "case0_0.001_cpu_vs_cuda": {
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_errors": {
+        "x0": 1.6653345369377348e-16,
+        "v0": 5.684341886080802e-14,
+        "w0": 5.551115123125783e-16,
+        "F0": 2.5002222514558525e-13,
+        "T0": 9.595189226496714e-18,
+        "Q0": 2.220446049250313e-16,
+        "x1": 1.1102230246251565e-16,
+        "v1": 5.684341886080802e-14,
+        "w1": 1.7763568394002505e-15,
+        "F1": 2.5002222514558525e-13,
+        "T1": 9.107298248878237e-18,
+        "Q1": 2.220446049250313e-16,
+        "ft": 8.500145032286355e-17,
+        "fr": 1.734723475976807e-18,
+        "host_fr": 1.734723475976807e-18,
+        "contact": 0.0,
+        "overlap": 2.498001805406602e-16,
+        "Epot": 2.498001805406602e-16,
+        "dEvis": 0.0,
+        "dEfric": 0.0
+      }
+    },
+    "case0_1.0_cpu_vs_cuda": {
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_errors": {
+        "x0": 1.6653345369377348e-16,
+        "v0": 5.684341886080802e-14,
+        "w0": 5.551115123125783e-16,
+        "F0": 2.5002222514558525e-13,
+        "T0": 9.161508357502512e-18,
+        "Q0": 2.220446049250313e-16,
+        "x1": 1.1102230246251565e-16,
+        "v1": 5.684341886080802e-14,
+        "w1": 1.7763568394002505e-15,
+        "F1": 2.5002222514558525e-13,
+        "T1": 8.673617379884035e-18,
+        "Q1": 2.220446049250313e-16,
+        "ft": 8.326672684688674e-17,
+        "fr": 1.734723475976807e-18,
+        "host_fr": 1.734723475976807e-18,
+        "contact": 0.0,
+        "overlap": 2.498001805406602e-16,
+        "Epot": 2.498001805406602e-16,
+        "dEvis": 0.0,
+        "dEfric": 0.0
+      }
+    },
+    "persistent_skin_control_cpu": {
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_errors": {
+        "x0": 0.0,
+        "v0": 0.0,
+        "w0": 0.0,
+        "F0": 0.0,
+        "T0": 0.0,
+        "Q0": 0.0,
+        "x1": 0.0,
+        "v1": 0.0,
+        "w1": 0.0,
+        "F1": 0.0,
+        "T1": 0.0,
+        "Q1": 0.0,
+        "ft": 0.0,
+        "fr": 0.0,
+        "contact": 0.0,
+        "overlap": 0.0
+      }
+    },
+    "persistent_skin_control_cuda": {
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_errors": {
+        "x0": 0.0,
+        "v0": 1.3877787807814457e-17,
+        "w0": 2.220446049250313e-16,
+        "F0": 1.1102230246251565e-16,
+        "T0": 1.3010426069826053e-18,
+        "Q0": 1.4094628242311558e-18,
+        "x1": 0.0,
+        "v1": 1.3877787807814457e-17,
+        "w1": 0.0,
+        "F1": 1.1102230246251565e-16,
+        "T1": 1.3010426069826053e-18,
+        "Q1": 0.0,
+        "ft": 1.3877787807814457e-17,
+        "fr": 0.0,
+        "contact": 0.0,
+        "overlap": 0.0
+      }
+    },
+    "case1_0.001_cpu_vs_cuda": {
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_errors": {
+        "x0": 4.440892098500626e-15,
+        "v0": 3.552713678800501e-15,
+        "w0": 4.038436252074007e-15,
+        "F0": 2.8477220581635265e-14,
+        "T0": 1.111090386363145e-15,
+        "Q0": 1.1102230246251565e-16,
+        "x1": 3.469446951953614e-18,
+        "v1": 3.552713678800501e-15,
+        "w1": 4.440892098500626e-15,
+        "F1": 2.8477220581635265e-14,
+        "T1": 1.1136924715771102e-15,
+        "Q1": 2.220446049250313e-16,
+        "ft": 1.1102230246251565e-14,
+        "fr": 2.168404344971009e-19,
+        "host_fr": 2.168404344971009e-19,
+        "contact": 0.0,
+        "overlap": 2.7755575615628914e-17,
+        "Epot": 1.1384122811097797e-16,
+        "dEvis": 0.0,
+        "dEfric": 1.6984027031985427e-16
+      }
+    },
+    "case1_1.0_cpu_vs_cuda": {
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_errors": {
+        "x0": 4.440892098500626e-15,
+        "v0": 3.552713678800501e-15,
+        "w0": 4.038436252074007e-15,
+        "F0": 2.8477220581635265e-14,
+        "T0": 1.111090386363145e-15,
+        "Q0": 1.1102230246251565e-16,
+        "x1": 3.469446951953614e-18,
+        "v1": 3.552713678800501e-15,
+        "w1": 4.440892098500626e-15,
+        "F1": 2.8477220581635265e-14,
+        "T1": 1.1136924715771102e-15,
+        "Q1": 2.220446049250313e-16,
+        "ft": 1.1102230246251565e-14,
+        "fr": 2.168404344971009e-19,
+        "host_fr": 2.168404344971009e-19,
+        "contact": 0.0,
+        "overlap": 3.774758283725532e-15,
+        "Epot": 1.1384122811097797e-16,
+        "dEvis": 0.0,
+        "dEfric": 1.6984027031985427e-16
+      }
+    },
+    "case2_0.001_cpu_vs_cuda": {
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_errors": {
+        "x0": 2.7755575615628914e-17,
+        "v0": 1.7763568394002505e-14,
+        "w0": 0.0,
+        "F0": 5.573319583618286e-14,
+        "T0": 1.5178830414797062e-18,
+        "Q0": 2.220446049250313e-16,
+        "x1": 6.776263578034403e-21,
+        "v1": 1.7763568394002505e-14,
+        "w1": 0.0,
+        "F1": 5.573319583618286e-14,
+        "T1": 2.3852447794681098e-18,
+        "Q1": 2.220446049250313e-16,
+        "ft": 1.214306433183765e-17,
+        "fr": 1.0842021724855044e-19,
+        "host_fr": 1.0842021724855044e-19,
+        "contact": 0.0,
+        "overlap": 5.551115123125783e-17,
+        "Epot": 6.635317295611287e-17,
+        "dEvis": 0.0,
+        "dEfric": 1.852884572118782e-22
+      }
+    },
+    "case2_1.0_cpu_vs_cuda": {
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_errors": {
+        "x0": 2.7755575615628914e-17,
+        "v0": 1.7763568394002505e-14,
+        "w0": 0.0,
+        "F0": 5.573319583618286e-14,
+        "T0": 1.6263032587282567e-18,
+        "Q0": 2.220446049250313e-16,
+        "x1": 6.776263578034403e-21,
+        "v1": 1.7763568394002505e-14,
+        "w1": 0.0,
+        "F1": 5.573319583618286e-14,
+        "T1": 1.8431436932253575e-18,
+        "Q1": 2.220446049250313e-16,
+        "ft": 1.214306433183765e-17,
+        "fr": 1.0842021724855044e-19,
+        "host_fr": 1.0842021724855044e-19,
+        "contact": 0.0,
+        "overlap": 5.551115123125783e-17,
+        "Epot": 6.635317295611287e-17,
+        "dEvis": 0.0,
+        "dEfric": 2.6469779601696886e-22
+      }
+    }
+  },
+  "pass": true
+}

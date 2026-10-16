@@ -1,0 +1,94 @@
+
+[1;33m--- Initializing particles ------------------------------------------------------[0m
+[1;36m  Kinematic energy   = 0[0m
+[1;36m  Potential energy   = 0[0m
+[1;37m  Total energy       = 0[0m
+[1;34m  Elapsed time       = 0.000009s  CPU 0.006151s  (11:20:01 => 11:20:01)[0m
+
+[1;33m--- Solving ---------------------------------------------------------------------[0m
+[1;36m  Total mass   of free particles            =  8.37758[0m
+[1;36m  Total volume of free particles            =  0.00837758[0m
+[1;37m  Total number of particles                 =  2[0m
+[1;37m  Time step                                 =  1e-08[0m
+[1;37m  Simulated Time                            =  1e-08[0m
+[1;37m  Verlet distance                           =  0.025[0m
+[1;35m  Suggested Time Step                       =  0.00647209[0m
+[1;37m  Using GPU:                                =  NVIDIA RTX A6000[0m
+  Using Number of CUDA threads:             =  256[0m
+  Number of vertices                        =  2[0m
+  Number of edges                           =  0[0m
+  Number of faces                           =  0[0m
+[1;36m  Total number of iterations                                = 1[0m
+[1;36m  Kinematic energy                                          = 2.38732e-17[0m
+[1;36m  Potential energy                                          = 0.0005[0m
+[1;37m  Total energy                                              = 0.0005[0m
+[1;34m  Elapsed time       = 0.115993s  CPU 0.122365s  (11:20:01 => 11:20:01)[0m
+V1_NEW_CONTACT_ACCUMULATORS zero_initialized=1
+V1_REFERENCE_DIRECT residual=0 state_unchanged=1 acceleration_unchanged=1 history_unchanged=1
+V1_VERTEX_ROTATION center_motion=0 maximum_vertex_motion=0.070681219018733893 expected=0.070681219018733935
+
+[1;33m--- Initializing particles ------------------------------------------------------[0m
+[1;36m  Kinematic energy   = 41887.9[0m
+[1;36m  Potential energy   = 0[0m
+[1;37m  Total energy       = 41887.9[0m
+[1;34m  Elapsed time       = 0.000003s  CPU 0.122730s  (11:20:01 => 11:20:01)[0m
+
+[1;33m--- Solving ---------------------------------------------------------------------[0m
+[1;36m  Total mass   of free particles            =  8.37758[0m
+[1;36m  Total volume of free particles            =  0.00837758[0m
+[1;37m  Total number of particles                 =  2[0m
+[1;37m  Time step                                 =  0.0001[0m
+[1;37m  Simulated Time                            =  0.00095[0m
+[1;37m  Verlet distance                           =  0.025[0m
+[1;35m  Suggested Time Step                       =  0.00647209[0m
+[1;37m  Using GPU:                                =  NVIDIA RTX A6000[0m
+  Using Number of CUDA threads:             =  256[0m
+  Number of vertices                        =  2[0m
+  Number of edges                           =  0[0m
+  Number of faces                           =  0[0m
+DEM_ORACLE_STEP iter=0 ref=0 matched=0 missing=0 dup=0 steps_since_rebuild=0 records=0 bad_periodicity=0
+DEM_ORACLE_STEP iter=1 ref=0 matched=0 missing=0 dup=0 steps_since_rebuild=1 records=0 bad_periodicity=0
+DEM_ORACLE_STEP iter=2 ref=0 matched=0 missing=0 dup=0 steps_since_rebuild=0 records=0 bad_periodicity=0
+DEM_ORACLE_STEP iter=3 ref=0 matched=0 missing=0 dup=0 steps_since_rebuild=1 records=0 bad_periodicity=0
+DEM_ORACLE_STEP iter=4 ref=0 matched=0 missing=0 dup=0 steps_since_rebuild=2 records=0 bad_periodicity=0
+DEM_ORACLE_STEP iter=5 ref=0 matched=0 missing=0 dup=0 steps_since_rebuild=0 records=0 bad_periodicity=0
+DEM_ORACLE_STEP iter=6 ref=0 matched=0 missing=0 dup=0 steps_since_rebuild=1 records=0 bad_periodicity=0
+DEM_ORACLE_STEP iter=7 ref=0 matched=0 missing=0 dup=0 steps_since_rebuild=2 records=0 bad_periodicity=0
+DEM_ORACLE_STEP iter=8 ref=0 matched=0 missing=0 dup=0 steps_since_rebuild=0 records=0 bad_periodicity=0
+DEM_ORACLE_STEP iter=9 ref=0 matched=0 missing=0 dup=0 steps_since_rebuild=1 records=0 bad_periodicity=0
+[1;36m  Total number of iterations                                = 10[0m
+[1;36m  Average number of iterations between contact list updates = 2[0m
+[1;36m  Kinematic energy                                          = 41887.9[0m
+[1;36m  Potential energy                                          = 0[0m
+[1;37m  Total energy                                              = 41887.9[0m
+[1;34m  Elapsed time       = 0.002420s  CPU 0.125190s  (11:20:01 => 11:20:01)[0m
+V1_REFERENCE_REPEAT steps=10 position=0.099999999999999992 reference=0.089999999999999997 residual=0.009999999999999995
+
+[1;33m--- Initializing particles ------------------------------------------------------[0m
+[1;36m  Kinematic energy   = 376991[0m
+[1;36m  Potential energy   = 0[0m
+[1;37m  Total energy       = 376991[0m
+[1;34m  Elapsed time       = 0.000001s  CPU 0.125217s  (11:20:01 => 11:20:01)[0m
+
+[1;33m--- Solving ---------------------------------------------------------------------[0m
+[1;36m  Total mass   of free particles            =  8.37758[0m
+[1;36m  Total volume of free particles            =  0.00837758[0m
+[1;37m  Total number of particles                 =  2[0m
+[1;37m  Time step                                 =  0.0001[0m
+[1;37m  Simulated Time                            =  0.0001[0m
+[1;37m  Verlet distance                           =  0.001[0m
+[1;35m  Suggested Time Step                       =  0.00647209[0m
+[1;37m  Using GPU:                                =  NVIDIA RTX A6000[0m
+  Using Number of CUDA threads:             =  256[0m
+  Number of vertices                        =  2[0m
+  Number of edges                           =  0[0m
+  Number of faces                           =  0[0m
+DEM_ORACLE_STEP iter=0 ref=1 matched=1 missing=0 dup=0 steps_since_rebuild=0 records=1 bad_periodicity=0
+[1;36m  Total number of iterations                                = 1[0m
+[1;36m  Average number of iterations between contact list updates = 0[0m
+[1;36m  Kinematic energy                                          = 376991[0m
+[1;36m  Potential energy                                          = 0.2[0m
+[1;37m  Total energy                                              = 376991[0m
+[1;34m  Elapsed time       = 0.001750s  CPU 0.126972s  (11:20:01 => 11:20:01)[0m
+V1_FAST_CONTACT F1=-20.000000000000018 F2=20.000000000000018 expected_abs_force=20 action_reaction=0
+V1_COMMON_FORCE normal_x=20.000000000000018 expected=20

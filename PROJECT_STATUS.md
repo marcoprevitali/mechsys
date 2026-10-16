@@ -1,13 +1,14 @@
 # MechSys GPU DEM optimization — PROJECT_STATUS.md
 
-**As-of:** 2026-10-16 (V1 repeated-rebuild follow-up)
-**State:** `V1 pre-force timing fix retained; device-reference defect FIXED` / `actual VV candidate oracle 5/5 PASS` / `CPU/GPU controlled force and preservation checks PASS` / `V0 evolving-history/restart/coupled runtime PARTIAL` / `P1-S DEFAULT-OFF, speed promotion unaccepted` / `P0-R1 and polyhedral count gap remain PARTIAL/UNRESOLVED`
-**Next authorized work:** extend stepwise FP64 force/history validation through repeated rebuilds, separation/recontact and restart, and close the relevant coupled runtime gate. Use an explicitly selected VV complete-solve baseline for future timing; previous default test_cu_04 timings exercise legacy integration. Delayed control/adaptive skins still require a displacement-validity proof. See §5.6 and `benchmarks/v1_reference/README.md`.
+**As-of:** 2026-10-16 (VV reference decision and evolving-history gate)
+**State:** `VV is the reference mode` / `V1 pre-force/reference fixes retained` / `linear sphere rolling-force transfer defect FIXED` / `stepwise CPU/GPU sphere history 6/6 PASS` / `actual VV candidate oracle 5/5 PASS` / `restart/coupled runtime and full V0 PARTIAL` / `P1-S DEFAULT-OFF, speed promotion unaccepted` / `P0-R1 and polyhedral count gap remain PARTIAL/UNRESOLVED`
+**Reference decision (user, 2026-10-16):** explicitly select `UseVelocityVerlet=true` for all new validation, profiling, benchmarks and optimization decisions. Legacy position-Verlet/leapfrog data are separately labeled controls, not VV reference evidence. `AGENTS.md` records this policy; the compatibility constructor default remains false. `test_cu_04 <input> <Nproc> <dthoot> <qin> 1` must print `DEM_BENCHMARK_INTEGRATOR velocity_verlet=1`; use `--vv` in the registered runner.
+**Next authorized work:** characterize the VV restart contract with a minimal save/load history counterexample, then design a versioned history-preserving checkpoint; close the relevant coupled runtime gate. Current Save/Load is not a history-safe checkpoint (interaction serialization is disabled). Obtain explicitly selected VV complete-solve timing windows before performance promotion. Delayed control/adaptive skins still require a displacement-validity proof. See §5.7 and `benchmarks/v1_reference/HISTORY_REPORT.md`.
 **Agent:** GLM-5.3 Flash (or successor); operational rules in `AGENTS.md`.
 **Original project:** https://github.com/Axtal/mechsys
 **Fork URL / owner:** https://github.com/marcoprevitali/mechsys / `marcoprevitali` (authenticated account and public fork metadata verified 2026-10-15)
 **Old local checkout:** `/home/msys/mechsys` at `e4ba163ec9f32c8bccb0fd8619ba79e000d3d6d8`; preserved dirty and not mutated during `F0`
-**Current clone:** `/home/msys/git/mechsys-v1-reference`, branch `fix/vv-reference-reset`, based on verified V1 commit `7f99c4cef62686110b4bd7f85926e07228c8e86c`. Original, V1 and P1 clones are preserved.
+**Current clone:** `/home/msys/git/mechsys-v1-reference`, branch `validation/vv-reference-history`, based on verified `517da81fac3a997b088558bf23d958994b55f0de`. Oracle/policy commit `e467fda`; implementation `8d878da7269440a72a1f37ca8ba68b9d84d9ae49`, followed by evidence/handoff commit (exact tip via `git rev-parse HEAD`). Previous branches and other clones are preserved. Only the explicitly requested VV note changes in the original checkout's AGENTS.md; original simulation source/Git state remains untouched.
 **Precision of historical benchmarks:** GPU double precision (`-DUSE_GPU_DOUBLE`) on NVIDIA RTX A6000 (84 SMs); do not assume the current host/GPU is unchanged.
 
 > **Evidence levels:** `HISTORICAL_REPORTED` means results transcribed from the user-supplied DeepSeek work summary dated 2026-10-14; they have **not** yet been independently reproduced or verified against source. `SOURCE_VERIFIED` requires auditing the actual local code. `MEASURED` requires raw timing/logs + code SHA. `PASS` requires documented numerical acceptance checks. Keep these labels distinct.
@@ -404,6 +405,35 @@ Registered inputs remain under the existing SIMS evidence root, unchanged.
 Original checkout SHA/F0 backup hashes remain those in §6. Re-entry from this
 clone/branch using the current report avoids treating historical gates as current.
 
+### 5.7 VV reference and evolving sphere histories (2026-10-16 / Codex)
+
+Canonical report: `benchmarks/v1_reference/HISTORY_REPORT.md`. Compact evidence:
+`benchmarks/v1_reference/history_results/`; full raw trajectories, failed and
+intermediate diagnostics retained at `/tmp/mechsys-vv-history.nPkO2A/` (temporary).
+Source base `517da81`; oracle/policy `e467fda`; rolling-unit fix `8d878da`.
+
+| Item | Verified result / limit |
+|---|---|
+| Reference policy | User explicitly selects VV as the reference for new work; AGENTS note added to fork and original workspace instructions; general constructor default unchanged |
+| Baseline defect | CPU Fdr and GPU Fr are forces, but linear-law transfer multiplied/divided by Kt*beta. Real bootstrap oracle expects 1.2e-5 N; old upload gives 7.2e-5 N. Identical oracle fails on previous source, exit 1; negative-control JSON retained |
+| Correction | Direct rolling-force transfer in both directions; Hertz already uses these units. No recurrence, force law, integration, precision or rebuild-control change. Shared linear GPU transfer affects VV and legacy paths; no new legacy performance/parity claim |
+| Stepwise sphere gate | Three actual VV fixtures x two skins x CPU/GPU, 1,000 steps each. All six CPU/GPU comparisons pass; persistent fixture has 200 rebuilds versus zero in its wide-skin control. Tangential/rolling histories, contact/overlap, physical tag identity, actual device force/torque, pose/velocity and per-step energy/work outputs agree |
+| Separation/recontact | Sliding fixture separates at step 75; attractive-force fixture separates at 67 and recontacts at 911 on both CPU/GPU, at both skins |
+| Tolerance/results | abs(error) <= 1e-10 + 1e-9*max(abs(values)); maximum particle-force difference 2.501e-13 N, rolling-history difference 1.735e-18 N; action-reaction and host/device rolling state checks PASS |
+| Candidate coverage | New histories: 6,000 force-time checks / 2,460 references, zero misses/duplicates/image errors. Existing five registered VV cases rerun: 56,405 checks / 5,419,450 references, zero misses/duplicates/image errors |
+| Reference regressions | CPU, GPU standard and GPU persistent-reduction reference-reset/analytic-contact probes PASS; persistent experimental mode still default-off |
+| Shared build | FP64 sm_86 DEM and tlbmdem_cu_02 compile/link PASS; coupled runtime NOT RUN |
+| Diagnostic limitations | Host Particle::T remains stale after CUDA download, so oracle records it separately and compares actual device torque. Frame-zero GPU common-contact energy accumulators differ from CPU bootstrap, so energy/work comparisons start at step 1. Neither is silently relabeled as dynamics parity |
+| Restart limitation | Save's interaction serialization is commented out; Load does not restore sphere contact histories. This pre-existing limitation is not fixed and blocks any claim of history-preserving VV restart |
+| Remaining gates | Nonzero damping, Hertz evolving histories, polyhedral features, reordered identities, complete energy-work balance and coupled runtime are not established by this bounded linear-sphere test. Full V0 remains PARTIAL; no speedup or architectural promotion |
+
+Exact commands and manifests are in HISTORY_REPORT.md/history_results. Toolchain:
+CUDA 12.6.85, GCC 13.3, FP64 sm_86; RTX A6000 UUID
+GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, driver 595.84. Diagnostic readbacks/output
+exclude these runs from timing evidence. The old seeded-value test in §5.6 remains
+valid but did not detect the initial CPU-to-device unit mismatch; it is extended,
+not treated as proof of real history evolution.
+
 ## 6. Git/repository topology and record
 
 
@@ -423,7 +453,8 @@ Baseline branch:    perf/gpu-baseline at c88dc99f415dbf7b7bc3b1764fdf5506f0d66c9
 P0/P1 source clones: mechsys-gpu-opt, mechsys-p1-sphere, mechsys-p1-poly (preserved)
 V1 source clone:    /home/msys/git/mechsys-v1-vv (preserved)
 Current clone:      /home/msys/git/mechsys-v1-reference
-Active topic:       fix/vv-reference-reset, base 7f99c4c; exact SHA via git rev-parse HEAD
+Previous topic:     fix/vv-reference-reset at 517da81 (preserved)
+Active topic:       validation/vv-reference-history, base 517da81; implementation 8d878da
 Protection:         `origin` = user's fork; `upstream` fetch-only / push-disabled
 ```
 
@@ -469,10 +500,12 @@ Protection:         `origin` = user's fork; `upstream` fetch-only / push-disable
 | 2026-10-15 | P0-R complete: HISTORICAL_REBUILD_SHARE_UNRECONCILED (record self-contradicts); poly 23.6 s rebuild = Nproc=1 (21.24 s measured); neeint 6.4x interaction-list gap discovered; V0-A/B UNPROVEN; first experiments recommended and gated | §5.4, benchmarks/p0_reconciliation/ | MEASURED |
 | 2026-10-15 | Concurrent agent session edited this clone during P0-R (branch deleted, domain.h temporarily broken) and an external MoFEM job contaminated timing reps; mitigations applied; session separation recommended | §5.4 environment incident | COORDINATION HAZARD — user action recommended |
 
-### Current bounded task (V1 follow-up; supersedes the older recommendations below)
+### Current bounded task (VV history follow-up; supersedes older recommendations)
 
-1. Extend the FP64 force/history oracle through repeated rebuilds, separation,
-   recontact and restart; retain the new reference-reset and fast-contact probes.
+1. VV is the reference mode. Controlled linear-sphere repeated-rebuild,
+   separation/recontact histories now pass (§5.7). Next: characterize the restart
+   contract with a minimal save/load history counterexample before designing a
+   versioned history-safe checkpoint; retain all existing probes and failure evidence.
 2. Close the relevant coupled runtime gate. Compile/link evidence remains separate.
 3. Register explicitly selected VV complete-solve timing windows before performance
    promotion. Keep persistent reduction default-off; large-scale benefit is inconclusive.
