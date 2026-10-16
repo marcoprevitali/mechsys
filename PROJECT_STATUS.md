@@ -343,6 +343,39 @@ compact results are committed. Raw P1 evidence remains under
 `/home/msys/SIMS/mechsys_p0_baseline/20261015-p1/`. Original F0 backup and hashes
 in §6 remain valid; original/parallel checkouts were read only in this session.
 
+### 5.5 V1 - Velocity-Verlet contact-list validity fix (2026-10-16; branch fix/vv-preforce-neighbor-validity)
+
+Full report: benchmarks/v1_vv/V1_REPORT.md (+ performance.md). Isolated clone:
+/home/msys/git/mechsys-v1-vv.
+
+Root cause: in the GPU Velocity-Verlet path the drift (pVerletStep1) precedes the force
+kernels within the same iteration, but the displacement check and rebuild ran only at the
+END of the iteration - one iteration too late. A contact formed by the drift was absent
+from the force-time candidate list (counterexample: two spheres R=0.1, separation 0.24,
+v=+/-300, dt=1e-4, Alpha=0.001 -> overlap 0.02 with an empty feature list; hardened oracle
+rejected=1 missing=1 at iter=1, records=0).
+
+Side-effect audit: a naive pre-force UpdateContactsDevice would clobber the device
+acceleration (stale host A/Wdot upload + RecomputeAccelerations against just-reset
+forces) and corrupt the next half-step. The implemented UpdateContactsDevicePreForce()
+uploads interaction structures and preserved contact histories only (no particle state,
+no A/Wdot, no RecomputeAccelerations) and resets the device displacement reference.
+
+Validation: baseline defect reproduced (V1-A); corrected probe passes with the contact
+record present, force evaluated (Fn=79382 N repulsive) and action-reaction exact (V1-D);
+all five registered oracle scenarios pass with identical reference-contact totals (V1-E);
+the valid-list regression case is bitwise-identical at printed precision with an
+effective cadence shift of at most one rebuild (V1-F); tlbmdem_cu_02 compiles (V1-G).
+The CPU (non-CUDA) Velocity-Verlet path was audited: its check was commented out
+entirely; a symmetric pre-force check was added (inspection-validated).
+
+Performance (V1-H): no measurable overhead at 18.6k (nominal -3-4.5%, within contended-
+environment uncertainty) or 154k (nominal -0.6-1.6%). The check was relocated, not added.
+
+Gate statuses: V1-A PASS, V1-B PASS, V1-C PASS, V1-D PASS, V1-E PASS, V1-F PASS,
+V1-G PASS (compile + audit; coupled runtime and CPU-oracle runs outstanding),
+V1-H PASS (measured, no overhead), V1-I on commit/push.
+
 ## 6. Git/repository topology and record
 
 
