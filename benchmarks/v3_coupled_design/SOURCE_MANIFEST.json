@@ -1,0 +1,61 @@
+{
+  "milestone": "V3-D DESIGN ONLY",
+  "client_date": "2026-10-16",
+  "client_timezone": "Asia/Shanghai",
+  "base_commit": "2b8d8c335709046e224f4c43aa930144ae6854e7",
+  "repository": "https://github.com/marcoprevitali/mechsys",
+  "parent": "Axtal/mechsys",
+  "branch": "design/v3-coupled-vv",
+  "is_shallow": false,
+  "origin": "https://github.com/marcoprevitali/mechsys.git",
+  "upstream_fetch": "https://github.com/Axtal/mechsys.git",
+  "upstream_push": "PUSH_DISABLED",
+  "audit_worktree": "/tmp/mechsys-v3-design.coivTF/work",
+  "persistent_clone": "/home/msys/git/mechsys-v3-coupled-design",
+  "production_changes": false,
+  "new_solver_runs": 0,
+  "performance_runs": 0,
+  "coupled_vv_status": "BLOCKED - design proposal is not numerical validation",
+  "coupled_restart_status": "NOT_VALIDATED",
+  "base_sha256": {
+    "lib/lbmdem/Domain.h": "7685d5d8fa2cd69d08d1f9f7c17d1c2598af2724ee91170b7c10f356ddc36c58",
+    "lib/lbmdem/lbmdem.cuh": "0c1744ec14d838ab000e6167744c3f3c2b37095dcb656db768e67d25b8bec207",
+    "lib/dem/domain.h": "b68d631763a77c99531d7b9cca174653dcce50211465d30510d24bff56b6ba24",
+    "lib/dem/dem.cuh": "eec7b7c28ceb788ce075248071094e1f6431289fcbbc30c70bdf25ad8fbc311f",
+    "lib/dem/particle.h": "0f1af5dc124ab18561409985c72068116d095d4b40937e81a6ca5bd8fe6653cb",
+    "lib/dem/interacton.h": "94f473e545bdf809c584e164aca8003595b2738c29907c87032fe6da16592aa0",
+    "lib/flbm/Domain.h": "40aae989fe6f23a73f424d0398eab2206e319c116621dbb783e700e4d9985d8a",
+    "lib/flbm/lbm.cuh": "a638cdc19d87f07fb00eccce71b866dfc20ed4087ea58ebe1401e3747f8b8ab4",
+    "AGENTS.md": "52260d356c53bb2e217d01f7fa4091614324bcf797342b347652555047d4c6c8",
+    "benchmarks/v2/V2_REPORT.md": "d404f67eb92de0a517cf50d2aabeda98aefbc1e8c01e708bc580ff294da392d2",
+    "benchmarks/v2/RESTART_STATE.md": "d57625e717496ceb437cf891c5aa49acb847b066e7bd89bda65b802c13a3c72b"
+  },
+  "v2_artifact_tree": "c31d33c9f92873eee2265f77a1b4927432261146",
+  "original_read_only": {
+    "path": "/home/msys/mechsys",
+    "head": "e4ba163ec9f32c8bccb0fd8619ba79e000d3d6d8",
+    "branch": "perf/p0-reconciliation",
+    "tracked_diff_sha256": "e98dcc578695992948f3d804f572f6b212888ac2381832ae261be9c4e99132e9",
+    "status": "preserved dirty; seven tracked modifications, nine untracked paths"
+  },
+  "previous_clone_read_only": {
+    "path": "/home/msys/git/mechsys-v2-restart",
+    "head": "2b8d8c335709046e224f4c43aa930144ae6854e7",
+    "branch": "validation/v2-restart-coupled",
+    "status": "clean"
+  },
+  "literature": [
+    {
+      "url": "https://arxiv.org/html/1702.04910v1",
+      "used": "Primary PSM variants and discrete force/torque context; not a source of a local acceptance claim"
+    },
+    {
+      "url": "https://journals.aps.org/pre/abstract/10.1103/PhysRevE.65.046308",
+      "used": "Primary accessible abstract on discrete forcing effects; full-paper equations not claimed as read"
+    },
+    {
+      "url": "https://www.worldscientific.com/doi/10.1142/S0129183198001084",
+      "access": "403; original full text not directly verified"
+    }
+  ]
+}
