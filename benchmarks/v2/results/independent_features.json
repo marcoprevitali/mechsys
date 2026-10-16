@@ -1,0 +1,298 @@
+{
+  "pass": true,
+  "geometry": {
+    "case11_law0_damp0_cpu_reference": {
+      "pass": true,
+      "checks": 300,
+      "EE": 0,
+      "VF": 300,
+      "FV": 0,
+      "missing": 0,
+      "duplicates": 0,
+      "log_sha256": "2a4114c556cf9a5b5f1bc71eb12783614854fa2b2b45f5c92f4f1b77fcc71a94"
+    },
+    "case11_law0_damp0_cuda_reference": {
+      "pass": true,
+      "checks": 300,
+      "EE": 0,
+      "VF": 300,
+      "FV": 0,
+      "missing": 0,
+      "duplicates": 0,
+      "log_sha256": "456df63e985ee511cf7bfef9c8d29c71d412c1b26813ab1ba0525b02880da088"
+    },
+    "case12_law0_damp0_cpu_reference": {
+      "pass": true,
+      "checks": 300,
+      "EE": 0,
+      "VF": 0,
+      "FV": 300,
+      "missing": 0,
+      "duplicates": 0,
+      "log_sha256": "e49c81ab854c246240be8bb9a18b06b080d8ccba93b0c30b75d58068464591c4"
+    },
+    "case12_law0_damp0_cuda_reference": {
+      "pass": true,
+      "checks": 300,
+      "EE": 0,
+      "VF": 0,
+      "FV": 300,
+      "missing": 0,
+      "duplicates": 0,
+      "log_sha256": "435b48bebaf50b681c3f5deae1ad959f91f0c40e1db1a74427096f325925650c"
+    },
+    "case13_law0_damp0_cpu_reference": {
+      "pass": true,
+      "checks": 300,
+      "EE": 1200,
+      "VF": 0,
+      "FV": 0,
+      "missing": 0,
+      "duplicates": 0,
+      "log_sha256": "3b5793598ea1445742c7f007f436ffa235808740ccba8c5ad1b0231356d2d59d"
+    },
+    "case13_law0_damp0_cuda_reference": {
+      "pass": true,
+      "checks": 300,
+      "EE": 1200,
+      "VF": 0,
+      "FV": 0,
+      "missing": 0,
+      "duplicates": 0,
+      "log_sha256": "1649a2ffc05ad4a058a4816faf927d9437976f377b2f2b043b8eb9d8d982c3d6"
+    },
+    "case14_law0_damp0_cpu_reference": {
+      "pass": true,
+      "checks": 300,
+      "EE": 1200,
+      "VF": 0,
+      "FV": 0,
+      "missing": 0,
+      "duplicates": 0,
+      "log_sha256": "a967b5ddb66481ed8717e45fb115c8a522fad0955f219d98d25150d3b3c50c3e"
+    },
+    "case14_law0_damp0_cuda_reference": {
+      "pass": true,
+      "checks": 300,
+      "EE": 1200,
+      "VF": 0,
+      "FV": 0,
+      "missing": 0,
+      "duplicates": 0,
+      "log_sha256": "b06cf444dd9bc2697795da7c8850db0a4a1c1e5bce37cb68d55d17336934bc2a"
+    },
+    "case15_law0_damp0_cpu_reference": {
+      "pass": true,
+      "checks": 600,
+      "EE": 1316,
+      "VF": 0,
+      "FV": 0,
+      "missing": 0,
+      "duplicates": 0,
+      "log_sha256": "022324d8f41743edcff998b2c6b77f2ac2410b46f96729f9db88e5e41af82ba1"
+    },
+    "case15_law0_damp0_cuda_reference": {
+      "pass": true,
+      "checks": 600,
+      "EE": 1316,
+      "VF": 0,
+      "FV": 0,
+      "missing": 0,
+      "duplicates": 0,
+      "log_sha256": "849d4f0770d67b4e31c687dec4911d3ae948935eedf0efc2a6c2d5b4a6c6e623"
+    },
+    "case16_law0_damp0_cpu_reference": {
+      "pass": true,
+      "checks": 300,
+      "EE": 0,
+      "VF": 300,
+      "FV": 0,
+      "missing": 0,
+      "duplicates": 0,
+      "log_sha256": "45d157a35f508387fa40945509476d8e59e168746eb145fe63810731f9e30b0f"
+    },
+    "case16_law0_damp0_cuda_reference": {
+      "pass": true,
+      "checks": 300,
+      "EE": 0,
+      "VF": 300,
+      "FV": 0,
+      "missing": 0,
+      "duplicates": 0,
+      "log_sha256": "8c5196926430ef8baddfeb547fafea91859fff2254e50fe0a50d820dc5553c54"
+    }
+  },
+  "analytical_normals": {
+    "case11_law0_damp0_cpu_reference": {
+      "pass": true,
+      "expected": [
+        -0.5,
+        0,
+        0
+      ],
+      "actual": [
+        -0.5000000000000039,
+        0,
+        0
+      ],
+      "max_absolute_error": 3.885780586188048e-15
+    },
+    "case11_law0_damp0_cuda_reference": {
+      "pass": true,
+      "expected": [
+        -0.5,
+        0,
+        0
+      ],
+      "actual": [
+        -0.5000000000000039,
+        -2.891228922941048e-17,
+        0
+      ],
+      "max_absolute_error": 3.885780586188048e-15
+    },
+    "case12_law0_damp0_cpu_reference": {
+      "pass": true,
+      "expected": [
+        0.5,
+        0,
+        0
+      ],
+      "actual": [
+        0.5000000000000039,
+        1.6930567341612995e-16,
+        0
+      ],
+      "max_absolute_error": 3.885780586188048e-15
+    },
+    "case12_law0_damp0_cuda_reference": {
+      "pass": true,
+      "expected": [
+        0.5,
+        0,
+        0
+      ],
+      "actual": [
+        0.5000000000000039,
+        1.1148133696873925e-16,
+        0
+      ],
+      "max_absolute_error": 3.885780586188048e-15
+    },
+    "case13_law0_damp0_cpu_reference": {
+      "pass": true,
+      "expected": [
+        0,
+        0,
+        2
+      ],
+      "actual": [
+        0,
+        9.860761315262648e-32,
+        2.0000000000000053
+      ],
+      "max_absolute_error": 5.329070518200751e-15
+    },
+    "case13_law0_damp0_cuda_reference": {
+      "pass": true,
+      "expected": [
+        0,
+        0,
+        2
+      ],
+      "actual": [
+        0,
+        -9.860761315262648e-32,
+        2.0000000000000053
+      ],
+      "max_absolute_error": 5.329070518200751e-15
+    },
+    "case16_law0_damp0_cpu_reference": {
+      "pass": true,
+      "expected": [
+        -0.5,
+        0,
+        0
+      ],
+      "actual": [
+        -0.5000000000000455,
+        0,
+        0
+      ],
+      "max_absolute_error": 4.551914400963142e-14
+    },
+    "case16_law0_damp0_cuda_reference": {
+      "pass": true,
+      "expected": [
+        -0.5,
+        0,
+        0
+      ],
+      "actual": [
+        -0.5000000000000455,
+        -2.891228922941299e-17,
+        0
+      ],
+      "max_absolute_error": 4.551914400963142e-14
+    }
+  },
+  "transitions": {
+    "case15_law0_damp0_cpu_reference": {
+      "pass": true,
+      "transitions": [
+        {
+          "step": 0,
+          "contact": false
+        },
+        {
+          "step": 91,
+          "contact": true
+        },
+        {
+          "step": 310,
+          "contact": false
+        },
+        {
+          "step": 491,
+          "contact": true
+        }
+      ]
+    },
+    "case15_law0_damp0_cuda_reference": {
+      "pass": true,
+      "transitions": [
+        {
+          "step": 0,
+          "contact": false
+        },
+        {
+          "step": 91,
+          "contact": true
+        },
+        {
+          "step": 310,
+          "contact": false
+        },
+        {
+          "step": 491,
+          "contact": true
+        }
+      ]
+    }
+  },
+  "negative_control": {
+    "pass": true,
+    "exit_code": 1,
+    "command": [
+      "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+      "negative",
+      "11",
+      "0",
+      "0",
+      "2",
+      "/tmp/mechsys-v2.g2YtyY/feature-audit/unused.vv.json"
+    ],
+    "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f",
+    "log_sha256": "2f20ff7a489c0de77e58ee4b58af185afc02cbbf38f2c921a1c4649cf035f12e"
+  }
+}

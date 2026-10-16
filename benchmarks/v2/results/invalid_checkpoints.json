@@ -1,0 +1,159 @@
+{
+  "pass": true,
+  "tests": {
+    "cpu_version": {
+      "pass": true,
+      "exit_code": 1,
+      "log_sha256": "1fab14f4f30021abdbc260c36bbb2e1c5fb84b51a0e1605366f709aa9ad66c17"
+    },
+    "cpu_precision": {
+      "pass": true,
+      "exit_code": 1,
+      "log_sha256": "2e09be864cb1f2a3d89b833bd462301760fe59b5580d2259ce8c64b7ad5395ce"
+    },
+    "cpu_phase": {
+      "pass": true,
+      "exit_code": 1,
+      "log_sha256": "3eb2f4729344c763fde13ad50d844301ed7e0b922fdf3acca3082371cb07fb47"
+    },
+    "cpu_backend": {
+      "pass": true,
+      "exit_code": 1,
+      "log_sha256": "ad209270a6e64b5539c3a7bbd061c7c00d34997d106eee63cf61f4018f8e09ae"
+    },
+    "cpu_particle_count": {
+      "pass": true,
+      "exit_code": 1,
+      "log_sha256": "3feb3c9a73a82845c3b4f67ab401da3780a3304112e7841f66540b425b67f944"
+    },
+    "cpu_duplicate_id": {
+      "pass": true,
+      "exit_code": 1,
+      "log_sha256": "ac996af7d34ef0dd7f54508ac35fd82a6f3e821dad4885d1f4fba70b50b87f05"
+    },
+    "cpu_unknown_endpoint": {
+      "pass": true,
+      "exit_code": 1,
+      "log_sha256": "c42c0306cff2da9a14542bcdcb418f75d767646aba361d1000b3310b5af27143"
+    },
+    "cpu_duplicate_contact": {
+      "pass": true,
+      "exit_code": 1,
+      "log_sha256": "c42c0306cff2da9a14542bcdcb418f75d767646aba361d1000b3310b5af27143"
+    },
+    "cpu_missing_history": {
+      "pass": true,
+      "exit_code": 1,
+      "log_sha256": "ba96ca7fda42a6e2dcf4e9f4d40d45d5f8e7360be63a2be6a659b0ea42a43a08"
+    },
+    "cpu_nonfinite": {
+      "pass": true,
+      "exit_code": 1,
+      "log_sha256": "3482a8ac8ae0c474b0e5dc6928f07ef6be6ecee99830a8a634771892d3382391"
+    },
+    "cpu_bad_fixity": {
+      "pass": true,
+      "exit_code": 1,
+      "log_sha256": "5705927e1bee3b6bddb7872760940a766da8111e8cb2c3ad4b02e3aa19af6828"
+    },
+    "cpu_invalid_mass": {
+      "pass": true,
+      "exit_code": 1,
+      "log_sha256": "7249314f2be51740c9fc0e171f0dc480d334f74ea970436cec2b02fb55cc6d23"
+    },
+    "cpu_no_overwrite": {
+      "pass": true,
+      "exit_code": 1,
+      "sha256_before": "95f5e295dcf2f0ac466484f17fec60fda0e99bf189a34fc8b2bc971ab648dc10",
+      "sha256_after": "95f5e295dcf2f0ac466484f17fec60fda0e99bf189a34fc8b2bc971ab648dc10"
+    },
+    "cpu_legacy_rejection": {
+      "pass": true,
+      "exit_code": 1,
+      "sha256_before": "a75b3bda83867fad3e21425a535d379b27f7270623cc48cb933d4c87f4e8b13d",
+      "sha256_after": "a75b3bda83867fad3e21425a535d379b27f7270623cc48cb933d4c87f4e8b13d"
+    },
+    "cuda_version": {
+      "pass": true,
+      "exit_code": 1,
+      "log_sha256": "1fab14f4f30021abdbc260c36bbb2e1c5fb84b51a0e1605366f709aa9ad66c17"
+    },
+    "cuda_precision": {
+      "pass": true,
+      "exit_code": 1,
+      "log_sha256": "2e09be864cb1f2a3d89b833bd462301760fe59b5580d2259ce8c64b7ad5395ce"
+    },
+    "cuda_phase": {
+      "pass": true,
+      "exit_code": 1,
+      "log_sha256": "3eb2f4729344c763fde13ad50d844301ed7e0b922fdf3acca3082371cb07fb47"
+    },
+    "cuda_backend": {
+      "pass": true,
+      "exit_code": 1,
+      "log_sha256": "c0484295e09d11f00b712540648f0a6e88e94a735637a2874f3f9702a0e31c8c"
+    },
+    "cuda_particle_count": {
+      "pass": true,
+      "exit_code": 1,
+      "log_sha256": "3feb3c9a73a82845c3b4f67ab401da3780a3304112e7841f66540b425b67f944"
+    },
+    "cuda_duplicate_id": {
+      "pass": true,
+      "exit_code": 1,
+      "log_sha256": "ac996af7d34ef0dd7f54508ac35fd82a6f3e821dad4885d1f4fba70b50b87f05"
+    },
+    "cuda_unknown_endpoint": {
+      "pass": true,
+      "exit_code": 1,
+      "log_sha256": "c42c0306cff2da9a14542bcdcb418f75d767646aba361d1000b3310b5af27143"
+    },
+    "cuda_duplicate_contact": {
+      "pass": true,
+      "exit_code": 1,
+      "log_sha256": "c42c0306cff2da9a14542bcdcb418f75d767646aba361d1000b3310b5af27143"
+    },
+    "cuda_missing_history": {
+      "pass": true,
+      "exit_code": 1,
+      "log_sha256": "ba96ca7fda42a6e2dcf4e9f4d40d45d5f8e7360be63a2be6a659b0ea42a43a08"
+    },
+    "cuda_nonfinite": {
+      "pass": true,
+      "exit_code": 1,
+      "log_sha256": "3482a8ac8ae0c474b0e5dc6928f07ef6be6ecee99830a8a634771892d3382391"
+    },
+    "cuda_bad_fixity": {
+      "pass": true,
+      "exit_code": 1,
+      "log_sha256": "5705927e1bee3b6bddb7872760940a766da8111e8cb2c3ad4b02e3aa19af6828"
+    },
+    "cuda_invalid_mass": {
+      "pass": true,
+      "exit_code": 1,
+      "log_sha256": "7249314f2be51740c9fc0e171f0dc480d334f74ea970436cec2b02fb55cc6d23"
+    },
+    "cuda_gpu_count": {
+      "pass": true,
+      "exit_code": 1,
+      "log_sha256": "745366064aaae864d9963669b630ee4007caa04a6fdaa92048010d4f5285565a"
+    },
+    "cuda_gpu_identity": {
+      "pass": true,
+      "exit_code": 1,
+      "log_sha256": "24e00c264b165b141768b2f03bb0e12326cf2481e4ecfcd3ff42246b5c1c27e4"
+    },
+    "cuda_no_overwrite": {
+      "pass": true,
+      "exit_code": 1,
+      "sha256_before": "f674be5a5a30bda022e2f8788065458ed45be4eb084b2f00455de6fb2226e196",
+      "sha256_after": "f674be5a5a30bda022e2f8788065458ed45be4eb084b2f00455de6fb2226e196"
+    },
+    "cuda_legacy_rejection": {
+      "pass": true,
+      "exit_code": 1,
+      "sha256_before": "a75b3bda83867fad3e21425a535d379b27f7270623cc48cb933d4c87f4e8b13d",
+      "sha256_after": "a75b3bda83867fad3e21425a535d379b27f7270623cc48cb933d4c87f4e8b13d"
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "cpu_vv0_fast0": {
+    "exit_code": 0,
+    "command": [
+      "/tmp/mechsys-v2.g2YtyY/coupled-build/cpu",
+      "0",
+      "0"
+    ]
+  },
+  "cpu_vv1_fast0": {
+    "exit_code": 0,
+    "command": [
+      "/tmp/mechsys-v2.g2YtyY/coupled-build/cpu",
+      "1",
+      "0"
+    ]
+  },
+  "cpu_vv1_fast1": {
+    "exit_code": 0,
+    "command": [
+      "/tmp/mechsys-v2.g2YtyY/coupled-build/cpu",
+      "1",
+      "1"
+    ]
+  },
+  "cuda_vv0_fast0": {
+    "exit_code": -11,
+    "command": [
+      "/tmp/mechsys-v2.g2YtyY/coupled-build/cuda",
+      "0",
+      "0"
+    ]
+  },
+  "cuda_vv1_fast0": {
+    "exit_code": -11,
+    "command": [
+      "/tmp/mechsys-v2.g2YtyY/coupled-build/cuda",
+      "1",
+      "0"
+    ]
+  },
+  "cuda_vv1_fast1": {
+    "exit_code": -11,
+    "command": [
+      "/tmp/mechsys-v2.g2YtyY/coupled-build/cuda",
+      "1",
+      "1"
+    ]
+  }
+}

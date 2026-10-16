@@ -1,0 +1,142 @@
+{
+  "absolute_tolerance": 1e-10,
+  "relative_tolerance": 1e-09,
+  "pass": true,
+  "runs": {
+    "case0_law0_damp0_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/final-build/cpu",
+        "reference",
+        "0",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/rebuild-before/case0_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "f6fb34a22dda0bcd94e1c3b0661a824434a3245e1a61668c47aa9c3f5da23365",
+      "binary_sha256": "daaa2d63ee4d4b498cc0a2627bb780ef317018a7c37a19bdf2fcf8d84f187909"
+    },
+    "case0_law0_damp0_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/final-build/cpu",
+        "split",
+        "0",
+        "0",
+        "0",
+        "4",
+        "/tmp/mechsys-v2.g2YtyY/rebuild-before/case0_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 5,
+      "log_sha256": "6a99ecdf34bbcb39daab42c6e7804c7d7f626ea1914cd0053af9e72551574a2c",
+      "binary_sha256": "daaa2d63ee4d4b498cc0a2627bb780ef317018a7c37a19bdf2fcf8d84f187909"
+    },
+    "case0_law0_damp0_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/final-build/cpu",
+        "continue",
+        "0",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/rebuild-before/case0_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 298,
+      "log_sha256": "b6938fc4f6c59b951d4aecf14ac033bd671a7de3647b48898a2cc5d54e5d8fe3",
+      "binary_sha256": "daaa2d63ee4d4b498cc0a2627bb780ef317018a7c37a19bdf2fcf8d84f187909"
+    },
+    "case0_law0_damp0_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/final-build/cuda",
+        "reference",
+        "0",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/rebuild-before/case0_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "e5bb47f7c77403547e78d7f2607d4a1fe4e2612fc8cfae5f1615e4e9f46adf4d",
+      "binary_sha256": "f2abcfa3d7a74c9377cd4b68166ed4f95006888f5cea9653e97b752f06b0f393"
+    },
+    "case0_law0_damp0_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/final-build/cuda",
+        "split",
+        "0",
+        "0",
+        "0",
+        "4",
+        "/tmp/mechsys-v2.g2YtyY/rebuild-before/case0_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 5,
+      "log_sha256": "2526ad458a8f44f25bf71cc56cd0e296deb4036eb2f3b318c9b3aa50264d8dca",
+      "binary_sha256": "f2abcfa3d7a74c9377cd4b68166ed4f95006888f5cea9653e97b752f06b0f393"
+    },
+    "case0_law0_damp0_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/final-build/cuda",
+        "continue",
+        "0",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/rebuild-before/case0_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 298,
+      "log_sha256": "fc694e290fcbde44d6fdf9c895cb0787d00ee9a23e7a353e5fe1da405ef75845",
+      "binary_sha256": "f2abcfa3d7a74c9377cd4b68166ed4f95006888f5cea9653e97b752f06b0f393"
+    }
+  },
+  "comparisons": {
+    "case0_law0_damp0_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 4
+    },
+    "case0_law0_damp0_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 4
+    },
+    "case0_law0_damp0_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 5.562217353372034e-14,
+      "bitwise_numeric": false,
+      "numbers": 24900
+    }
+  },
+  "analytical": {
+    "case0_law0_damp0_cpu": {
+      "expected": {
+        "normal": 1.0,
+        "tangent": 8e-05,
+        "tangent_damping": 0.0,
+        "rolling": 1.2000000000000002e-05
+      },
+      "pass": true,
+      "checks": {
+        "normal": true,
+        "tangent": true,
+        "tangent_damping": true,
+        "rolling": true
+      }
+    }
+  }
+}

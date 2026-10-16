@@ -1,0 +1,157 @@
+{
+  "reference_commit": "73466999e0601a083fb9718281d88d161c75231d",
+  "collection_commit": "88cdf555b8ac1d191d79dbe5fa4c29838b8e0ded",
+  "overall_status": "PARTIAL",
+  "C2": "BLOCKED: user deferred coupled VV design",
+  "P2_B": "NOT_RUN",
+  "raw_root": "/tmp/mechsys-v2.g2YtyY",
+  "files": {
+    "standalone": {
+      "source": "closure-matrix/validation.json",
+      "sha256": "fe5acf60c52c2bdce78a5ae274eed750d77c337bc68ba67cf7023775f07a4e34"
+    },
+    "polyhedra": {
+      "source": "poly-closure/validation.json",
+      "sha256": "7af6db1113c4d13261941db5e622aa8680ee4d753fe4c1f9684b200ad5808f56"
+    },
+    "rebuild_before": {
+      "source": "rebuild-before/validation.json",
+      "sha256": "89e2f5277e49196f8314cb098c2f36e26f111e0a03fd0235554c70d84cf36f77"
+    },
+    "rebuild_after": {
+      "source": "rebuild-after/validation.json",
+      "sha256": "eb2bf7103794cb98579e75698f7e9309e36a1d5a77a1f210e06d4cc8eb3a2f7f"
+    },
+    "separated_restart": {
+      "source": "separated-restart/validation.json",
+      "sha256": "3ed089731ba1c8ad469613bcae3d58b793eb8e1b247f780dd284d169375fae1a"
+    },
+    "independent_spheres": {
+      "source": "independent-closure.json",
+      "sha256": "7a69a186a612426aa234894ff99215b5a83597b839d71a676af4c923b37ec2d2"
+    },
+    "independent_features": {
+      "source": "feature-audit/results.json",
+      "sha256": "49527978e4d2457cc09e4723e3c2e42540c089342fdb045ecb4bb02a3c942a74"
+    },
+    "invalid_checkpoints": {
+      "source": "invalid-final/results.json",
+      "sha256": "7a3bac29f68d88ecf196b338fb80731d480ac0e8dbe5194e188b666b068da5fd"
+    },
+    "coupled_legacy_and_rejections": {
+      "source": "coupled-final-runs/results.json",
+      "sha256": "3cd05a6cf8f3d83facc64233326c2cf3b842d77c9adba439429877e9c1e4f165"
+    },
+    "coupled_original": {
+      "source": "coupled-runs/results.json",
+      "sha256": "549906bba01af618188af52b1c194d96823f2202b6562968cd7db30eb733a3ec"
+    },
+    "v1_regression": {
+      "source": "v1-regression-runs/results.json",
+      "sha256": "a13c6d95828c57483d31e1802c07fac8db0a3225d9a6e5e95e641d0681b4479b"
+    },
+    "registered_vv_regression": {
+      "source": "registered-vv-regression/results.json",
+      "sha256": "c944d572aaff5257d438fa371f201397fa8a41970ebe421ca2f512bb1b7e4f07"
+    },
+    "zero_candidates": {
+      "source": "zero-runs/results.json",
+      "sha256": "00b064e95f285829f24eb010b4bae3e5b353195e19501e1703b554942f3a88a6"
+    },
+    "poly_strict_storage_failure": {
+      "source": "poly-registered/validation.json",
+      "sha256": "7a7ee9f8f1e4376381159c2f61991541794cb58ec3fa6e733a1b8f6a0e870a84"
+    }
+  },
+  "build_verification": {
+    "closure-build": {
+      "all_headers_match": true,
+      "headers": {
+        "lib/dem/domain.h": true,
+        "lib/dem/checkpoint.h": true,
+        "lib/dem/particle.h": true,
+        "lib/dem/interacton.h": true,
+        "lib/dem/dem.cuh": true,
+        "lib/lbmdem/Domain.h": true
+      },
+      "source_sha256": "a8e611f0daa8115680e13df4761601520282a2a4eb427b86ea362d48f82e5708",
+      "final_probe_source_matches": true
+    },
+    "final-build": {
+      "all_headers_match": true,
+      "headers": {
+        "lib/dem/domain.h": true,
+        "lib/dem/checkpoint.h": true,
+        "lib/dem/particle.h": true,
+        "lib/dem/interacton.h": true,
+        "lib/dem/dem.cuh": true,
+        "lib/lbmdem/Domain.h": true
+      },
+      "source_sha256": "fc84778d0b7400c7dd67d06cc9f7c7b2b27ebb84333e748fa46afd9359cd8a7c",
+      "final_probe_source_matches": false
+    },
+    "registered-build": {
+      "all_headers_match": true,
+      "headers": {
+        "lib/dem/domain.h": true,
+        "lib/dem/checkpoint.h": true,
+        "lib/dem/particle.h": true,
+        "lib/dem/interacton.h": true,
+        "lib/dem/dem.cuh": true,
+        "lib/lbmdem/Domain.h": true
+      },
+      "source_sha256": "d18b31bb872bff62c7f8882563a094b4c84490d86afaf918c62439be1801a905",
+      "final_probe_source_matches": false
+    },
+    "coupled-final-build": {
+      "all_headers_match": true,
+      "headers": {
+        "lib/dem/domain.h": true,
+        "lib/dem/checkpoint.h": true,
+        "lib/dem/particle.h": true,
+        "lib/dem/interacton.h": true,
+        "lib/dem/dem.cuh": true,
+        "lib/lbmdem/Domain.h": true
+      },
+      "source_sha256": "5f63ab0d739f937f05fcc3dab766fbb32aaa11d9f0047354dd404e862e5c3417",
+      "final_probe_source_matches": true
+    },
+    "zero-build": {
+      "all_headers_match": true,
+      "headers": {
+        "lib/dem/domain.h": true,
+        "lib/dem/checkpoint.h": true,
+        "lib/dem/particle.h": true,
+        "lib/dem/interacton.h": true,
+        "lib/dem/dem.cuh": true,
+        "lib/lbmdem/Domain.h": true
+      },
+      "source_sha256": "cfff5c73beb15f364a68f2690004f2f968750a75452e29b8f089470ea81439b3",
+      "final_probe_source_matches": true
+    }
+  },
+  "final_auxiliary_source_sha256": "260fe8ab6f2110b8d459051ef2699bd0f19bda5bf9b86461b21eaee172111837",
+  "toolchain_response_files": {
+    "linkLibs.rsp": "3fb7d5688c537c9a63edd5732325783f21c546423e5baa0f70438a7a7954cb7d",
+    "includes_CUDA.rsp": "532b5a0917861941d4896e836db219de7e1e91481ae4ed82793af6b0834363bd",
+    "flags.make": "248554f100830c73f12919642fbcab6e25383e46e7116c57ff75b3a348a99305"
+  },
+  "aggregate": {
+    "restart_comparisons": 100,
+    "restart_bitwise_pass": 100,
+    "cpu_gpu_comparisons": 50,
+    "cpu_gpu_pass": 50,
+    "max_cpu_gpu_absolute_error": 1.425748408223626e-12
+  },
+  "independent_spheres": {
+    "pass": true,
+    "runs": 72,
+    "scalar_checks": 668272,
+    "max_absolute_error": 6.650235917504688e-14
+  },
+  "original_read_only_verification": {
+    "head": "e4ba163ec9f32c8bccb0fd8619ba79e000d3d6d8",
+    "status": " M lib/dem/dem.cuh\n M lib/dem/distance.h\n M lib/dem/domain.h\n M lib/dem/interacton.h\n M tdem/CMakeLists.txt\n M tdem/PID_v2.cpp\n M tdem/test_cu_01.cu\n?? AGENTS.md\n?? AGENTS_OLD.md\n?? PROJECT_STATE_OLD.md\n?? PROJECT_STATUS.md\n?? PROJECT_STATUS_OLD2.md\n?? tdem/TX_PID_periodic.cpp\n?? tdem/TX_PID_periodic.cu\n?? tdem/shearbox_LE_const_vol.cu\n?? tdem/test_tx_pid_periodic.inp\n",
+    "tracked_diff_sha256": "e98dcc578695992948f3d804f572f6b212888ac2381832ae261be9c4e99132e9"
+  }
+}

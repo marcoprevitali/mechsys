@@ -1,0 +1,8 @@
+{
+  "archive": "/home/msys/SIMS/mechsys_v2_validation/20261016-v2-standalone",
+  "files_verified": 1712,
+  "bytes_verified": 406225404,
+  "sorted_inventory_sha256": "486b871ecc0324af9d5c71d7117c3fbea4fade08bfe2a830d9e9c472ba7a7d7b",
+  "excluded": ["work/", "*.o"],
+  "pass": true
+}

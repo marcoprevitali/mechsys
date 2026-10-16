@@ -1,0 +1,21 @@
+{
+  "cpu": {
+    "exit_code": 0,
+    "command": [
+      "/tmp/mechsys-v2.g2YtyY/v1-regression-build/reference_cpu"
+    ]
+  },
+  "cuda": {
+    "exit_code": 0,
+    "command": [
+      "/tmp/mechsys-v2.g2YtyY/v1-regression-build/reference_cuda"
+    ]
+  },
+  "cuda_persistent": {
+    "exit_code": 0,
+    "command": [
+      "/tmp/mechsys-v2.g2YtyY/v1-regression-build/reference_cuda",
+      "--persistent"
+    ]
+  }
+}

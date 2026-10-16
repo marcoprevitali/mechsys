@@ -1,0 +1,20 @@
+{
+  "cpu": {
+    "pass": true,
+    "exit_code": 0,
+    "full_checkpoint_records_equal": true,
+    "command": [
+      "/tmp/mechsys-v2.g2YtyY/zero-build/cpu"
+    ],
+    "log_sha256": "9dd7b29d3fb5f110ac8703674477dd678e9e3c5cd44592f61292f4f264152fea"
+  },
+  "cuda": {
+    "pass": true,
+    "exit_code": 0,
+    "full_checkpoint_records_equal": true,
+    "command": [
+      "/tmp/mechsys-v2.g2YtyY/zero-build/cuda"
+    ],
+    "log_sha256": "746db651ebd1c79056d5e92690078202c5dfb69bf96fdbc606e948b942193fca"
+  }
+}

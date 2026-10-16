@@ -1,0 +1,118 @@
+{
+  "binary": "/tmp/mechsys-v2.g2YtyY/v1-regression-build/test_cu_04",
+  "binary_sha256": "00ec0e3ee3cf28efe3907da441c73f92a9a28c0cae602e16d28dda96ff0c57e5",
+  "persistent_reduction": false,
+  "velocity_verlet": true,
+  "cases": {
+    "A_dense": {
+      "input_sha256": "e9ebb25efb4d157d69410cf439962e25cbd58b0e88bcfdd15c69c025c3a3827b",
+      "log": "/tmp/mechsys-v2.g2YtyY/registered-vv-regression/A_dense/run.log",
+      "log_sha256": "86341d8b7c9b9f7783fd7acd88fe0fcf26b87b46afc3a6b0b8ad812b36db961e",
+      "returncode": 0,
+      "checks": 11001,
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/v1-regression-build/test_cu_04",
+        "oracle_A_dense",
+        "2",
+        "4.0",
+        "0.0",
+        "1"
+      ],
+      "reference": 830486,
+      "matched": 830486,
+      "missing": 0,
+      "duplicates": 0,
+      "bad_periodicity": 0,
+      "integrator_selection_verified": true,
+      "verdict": "PASS"
+    },
+    "B_lowdens": {
+      "input_sha256": "0f219036129313ef51e73714f41764ef567db77b6d2825fb4ca634db845c6af9",
+      "log": "/tmp/mechsys-v2.g2YtyY/registered-vv-regression/B_lowdens/run.log",
+      "log_sha256": "c0e3b0c484e181f976dcc313ae27ac0b8c55d60165d2b3e3be71b943de7b6ebd",
+      "returncode": 0,
+      "checks": 11001,
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/v1-regression-build/test_cu_04",
+        "oracle_B_lowdens",
+        "2",
+        "4.0",
+        "0.0",
+        "1"
+      ],
+      "reference": 21566,
+      "matched": 21566,
+      "missing": 0,
+      "duplicates": 0,
+      "bad_periodicity": 0,
+      "integrator_selection_verified": true,
+      "verdict": "PASS"
+    },
+    "C_highacc": {
+      "input_sha256": "37feb802a2fc2a29308f0dfbf49d5b5523187e613f7a5a7a137b2c10e1ab5074",
+      "log": "/tmp/mechsys-v2.g2YtyY/registered-vv-regression/C_highacc/run.log",
+      "log_sha256": "b18b6db4c6f7ba09b450528cfb24a75eb604bd47281ee25c4e5e1c2ddade84e8",
+      "returncode": 0,
+      "checks": 10401,
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/v1-regression-build/test_cu_04",
+        "oracle_C_highacc",
+        "2",
+        "4.0",
+        "0.0",
+        "1"
+      ],
+      "reference": 367394,
+      "matched": 367394,
+      "missing": 0,
+      "duplicates": 0,
+      "bad_periodicity": 0,
+      "integrator_selection_verified": true,
+      "verdict": "PASS"
+    },
+    "D_shear": {
+      "input_sha256": "3a02d9674eefac7502aa3b75a23b399cd55be0993ecbf22bda8bd4d5721acf6f",
+      "log": "/tmp/mechsys-v2.g2YtyY/registered-vv-regression/D_shear/run.log",
+      "log_sha256": "45d2eb6fe6b222aef95dfae07821661587dbc01b2464e792066da96c8ed127bc",
+      "returncode": 0,
+      "checks": 12001,
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/v1-regression-build/test_cu_04",
+        "oracle_D_shear",
+        "2",
+        "4.0",
+        "0.0",
+        "1"
+      ],
+      "reference": 4196361,
+      "matched": 4196361,
+      "missing": 0,
+      "duplicates": 0,
+      "bad_periodicity": 0,
+      "integrator_selection_verified": true,
+      "verdict": "PASS"
+    },
+    "E_squeeze": {
+      "input_sha256": "928ad39df34547bb30d3a697f3dbcdc8aec38d98557256771d61b20a8ada639f",
+      "log": "/tmp/mechsys-v2.g2YtyY/registered-vv-regression/E_squeeze/run.log",
+      "log_sha256": "ec0b448452660e29a1cb877b3fa40365af1bc0cb8ae14170f42bf824d1d5ca0b",
+      "returncode": 0,
+      "checks": 12001,
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/v1-regression-build/test_cu_04",
+        "oracle_E_squeeze",
+        "2",
+        "4.0",
+        "0.0",
+        "1"
+      ],
+      "reference": 3643,
+      "matched": 3643,
+      "missing": 0,
+      "duplicates": 0,
+      "bad_periodicity": 0,
+      "integrator_selection_verified": true,
+      "verdict": "PASS"
+    }
+  }
+}

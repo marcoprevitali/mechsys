@@ -1,0 +1,4821 @@
+{
+  "absolute_tolerance": 1e-10,
+  "relative_tolerance": 1e-09,
+  "pass": true,
+  "runs": {
+    "case0_law0_damp0_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "0",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case0_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "ad7eb82e533ccd393f444b5fc3660a5a2c0022151f97a310c82c3c63938a696a",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case0_law0_damp0_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "0",
+        "0",
+        "0",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case0_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "8f08bfa999fbcffec34fb1d0c07c46f25cfc2a57f443d0f1abd68f1624bf9e0f",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case0_law0_damp0_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "0",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case0_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "bfe54d62fed81c49b35bf05fc5e623d68241e5c67df13a15e68021b415ee5029",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case0_law0_damp0_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "0",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case0_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "b7dab6ee1169cdaaa95cb0c156be327bc8bc535e8351c425d415f82597ac071f",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case0_law0_damp0_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "0",
+        "0",
+        "0",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case0_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "fb05ddb67e2e7dd88d48315c77a39f5c601681e68c1d50e796fc4a419b848a7e",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case0_law0_damp0_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "0",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case0_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "ae31f0e320dc6be269ed56d314b1ec4cef68fafc92c74a5ccf26cdc074ffce04",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case0_law0_damp1_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "0",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case0_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "31d92c83986a71dc98926a6f305ba1107df78b46b7d312eeab29736756f1452c",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case0_law0_damp1_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "0",
+        "0",
+        "1",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case0_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "c02ecf8624f5b5761e67fbd74ee94e4dbc3ebf32c62b02d8d15ca885f87a7faf",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case0_law0_damp1_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "0",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case0_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "a4281000ff9a6f580f710f85ae8ce85a8760c2be99cc9bb11398601a0704159a",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case0_law0_damp1_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "0",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case0_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "c01f18fe1c7de527fc058dc73a09d85eae659d0205d32b1e525ad12bc0a7d4b9",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case0_law0_damp1_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "0",
+        "0",
+        "1",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case0_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "2809b0b4bed5736dfcc267036f3d90fcc3cbd7652548eb8fe1ba22bf5dad67f6",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case0_law0_damp1_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "0",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case0_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "6cd548aa93f7c4f6e3d35b9fd7adfc5d71cfa7562b65915ca1c1f272b99d97c5",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case0_law1_damp0_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "0",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case0_law1_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "c69d5eb121536c63eb8f16ef85099fb7327ac76a549406cae321d720def66930",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case0_law1_damp0_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "0",
+        "1",
+        "0",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case0_law1_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "88fcee877c4c313ea966a38a719099abffc717b545c73ab7d47fc163ff7467f7",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case0_law1_damp0_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "0",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case0_law1_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "3a900907e114870626703e43d003126f66c35d1cab274bea10dd9559675f2446",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case0_law1_damp0_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "0",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case0_law1_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "b19f304fbf5626714d539ee411a766c2c8b30fffb0b5e7df9ac2b3fa29c7b145",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case0_law1_damp0_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "0",
+        "1",
+        "0",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case0_law1_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "5816390557daa93d2187f18a35c962d7eaa78109a3c80983ecae82995d461f17",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case0_law1_damp0_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "0",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case0_law1_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "9c2260f999b81f02532efdee655b5bd7e83935b6f11016ced54a068d42590c54",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case0_law1_damp1_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "0",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case0_law1_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "c77da9dafa2a2deacadc7678163bbf2c67a09d8aa66ff9d502a5fb15717cd3e8",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case0_law1_damp1_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "0",
+        "1",
+        "1",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case0_law1_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "1d997442428b48136c4bb2af835e855d8d6eb1a31f93b6b031bd9577a4f9f977",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case0_law1_damp1_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "0",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case0_law1_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "61749fbf8534b21136734b1c1187bb7741d298c020c20a7e3e7b8546363984fd",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case0_law1_damp1_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "0",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case0_law1_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "33f150b4e398f45c1a0b65cd88e8d01c35bfebdcb78cedaf0ac191ac218a3a04",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case0_law1_damp1_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "0",
+        "1",
+        "1",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case0_law1_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "f16fef6f6bb5503da544916aaedcb53c6a2ae3866a6e1d05a166d13adde24738",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case0_law1_damp1_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "0",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case0_law1_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "c02cf077efd3ddc6f342bb55ae19ae39020fecb5caeba19597d81ed6b37ce8c4",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case1_law0_damp0_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "1",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case1_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "2baa3d4aaca9352356c411a92305e01d2fcc3e6fb8b82882fc8d7c0846977bf9",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case1_law0_damp0_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "1",
+        "0",
+        "0",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case1_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "d0e7a4daefb3e9e21d01793b026b1dfe04bcd3fc22dfcd130acf3078c625eff0",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case1_law0_damp0_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "1",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case1_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "251eff4a48cbd4829ddcd1d40cd3ee6ffb4a101421a250c6dc3b7797914a46ef",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case1_law0_damp0_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "1",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case1_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "dbf796bc06399db16dbc7aef482d644ed818fd8130bb34081ae403a9c915f1cc",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case1_law0_damp0_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "1",
+        "0",
+        "0",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case1_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "ab736d1cd3188adfb9a4b70df146f4da2f7a76fb306548ecbed17c926ec61de6",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case1_law0_damp0_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "1",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case1_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "1080062e97cfa7d5d7e9a86fa3fa46bf77a176698882642f1d37d51cf191d33d",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case1_law0_damp1_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "1",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case1_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "1b1a6863dc4deb3c9d84e0cc4ba8edabc79571570ef0ace570e280d37fef62b1",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case1_law0_damp1_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "1",
+        "0",
+        "1",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case1_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "927a7bc2b586c33ba692ac93739f57486839e54dcb0d613870c7bbd63b09b26e",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case1_law0_damp1_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "1",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case1_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "c9be3b761a6e78e08c72871823c813ddc853c5b1ce77310cf74e39d9106534a1",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case1_law0_damp1_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "1",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case1_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "89a5f156fd614d2d4a1e5403dba4df599add087634f0d46d36ed3f58f76c79b7",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case1_law0_damp1_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "1",
+        "0",
+        "1",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case1_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "d727557f68b758a2cf2bbdb51ed2b4f9d4071540c8e940c89839dbdb10e35fc5",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case1_law0_damp1_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "1",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case1_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "923bbd8f53a5d57802e39703d1f1b0d23a6d4cfc6ecb1898cfb29b7181cf3722",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case1_law1_damp0_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "1",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case1_law1_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "2378ab0ddcf4a17eab2cd72b806a43f3356cd92af087f3b7e96e030841fed71a",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case1_law1_damp0_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "1",
+        "1",
+        "0",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case1_law1_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "e39a53e11652689c57f290298340364636f874675adb71150702b6a3e3b4a855",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case1_law1_damp0_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "1",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case1_law1_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "ffeb771792ddd60908743abf142bca74bfe33ea07cd98641db3dfe2c45e77d08",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case1_law1_damp0_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "1",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case1_law1_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "b9dc5f5a7a9da650731a259466da3e5f8b591819fa0e6e5a46b855e102b22781",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case1_law1_damp0_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "1",
+        "1",
+        "0",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case1_law1_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "13d55f3dd73fbefafe78df29c41261418071aaacc9f3cab0c68499d6e276ddd5",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case1_law1_damp0_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "1",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case1_law1_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "7704044e10ff5c5bb13dacd2268620104771596a3d7f378a7835570fd70ef193",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case1_law1_damp1_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "1",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case1_law1_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "c46e8e93c527541740000397e46784e94ca9d0948fdccaa7726665ee04dc303a",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case1_law1_damp1_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "1",
+        "1",
+        "1",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case1_law1_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "07ad75d0160617b76608425752c1455cd8c8232fa075cecef1bdb5b3594ed0be",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case1_law1_damp1_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "1",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case1_law1_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "cf35a11d0d8c9bee303c2573cb74a0bdd8efdef78ad9ecf938dcecddb123948d",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case1_law1_damp1_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "1",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case1_law1_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "410584dda314a18e680b5f0c7520f2e680df9720d636abb35853abd148f5607b",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case1_law1_damp1_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "1",
+        "1",
+        "1",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case1_law1_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "3800138643189452fbdccaa41ce01ace54ed7c3032b9ac3457bbd93e7cb91a32",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case1_law1_damp1_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "1",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case1_law1_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "ac72f62eeb770cf3ef9afb9040988d289d556fcdc992386be6ad14807ad89cc5",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case2_law0_damp0_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "2",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case2_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "842450d3277eac604cf319d703cebfc97bc7b1de43d700ed37fa7b187ec360d1",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case2_law0_damp0_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "2",
+        "0",
+        "0",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case2_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "eabc4bde60b7ff442ab01502e929ce7d408708433a32bd2bcff35c2e82d4d934",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case2_law0_damp0_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "2",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case2_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "0809a18b567f06e3ac1968f9cc719be164a286c5337a76d3d1b0a43bd8708b97",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case2_law0_damp0_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "2",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case2_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "ac73081ca6ae4ab4725093540999c311117a7ac3b2176a87643d17ee397b12b3",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case2_law0_damp0_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "2",
+        "0",
+        "0",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case2_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "ba3046046312b6c5051f6453be1a9fd0d31ea6415edd0a4fba32423dc0087179",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case2_law0_damp0_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "2",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case2_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "d5d2651ab6bd635e26ea6114b051d274f74ffcd8320d1c5e44ab5e8d5c169d1f",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case2_law0_damp1_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "2",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case2_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "4cac43a7e9b373caeb172096af1e34d660cfef51d982b23bf4fba72933f47afa",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case2_law0_damp1_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "2",
+        "0",
+        "1",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case2_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "4d0808702867753cfb6bf3b4e2669084ba8cbe01b4ac1284b5bd2dc0a3654f7e",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case2_law0_damp1_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "2",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case2_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "f87b15d931906a09fc3dbc7462a434302f3f4f4c3a8dc46803a2d8fb8a9a583b",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case2_law0_damp1_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "2",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case2_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "42fbcfe3c08588c7eafda63766206f693709f2e18d3cee9be5e83e96e0cffa27",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case2_law0_damp1_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "2",
+        "0",
+        "1",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case2_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "42d28c1e41c15cdb93be9437684e93b17447b26e461e421bdcf0357356a4f27e",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case2_law0_damp1_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "2",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case2_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "6f91f1e4ddcaac9682b1cb1ee1e0a2d197653e05413002371d77f67bdcee0696",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case2_law1_damp0_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "2",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case2_law1_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "8739278c1c1974d5875e5184654cee96399e3d523ac1a48543edcdeca7c1341f",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case2_law1_damp0_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "2",
+        "1",
+        "0",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case2_law1_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "4b6d9011599d60925e1d2d1ce14eceb398577e225f7826fcd67f7f530a8a3bc9",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case2_law1_damp0_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "2",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case2_law1_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "bf5c7322b61449c097c522f057e8580463b924f47c54e6304e48bc4e86349ec3",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case2_law1_damp0_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "2",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case2_law1_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "3622a97139d1c01ea3c9cced130cfc7915f949a074c4ad925beb4eae11c65369",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case2_law1_damp0_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "2",
+        "1",
+        "0",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case2_law1_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "e79c94a586ff3b5c149359a73d7d4e6dd9bb153208415f8f24ef68113125ec6d",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case2_law1_damp0_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "2",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case2_law1_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "528a18e18612628a8b6d42ed3e6f18f64491539e420f88668dd5fe03405339a3",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case2_law1_damp1_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "2",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case2_law1_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "4e77e2f65c460198b3bc93b5b56b754d42fb6c736a311b0c8af3e2782cb3319e",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case2_law1_damp1_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "2",
+        "1",
+        "1",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case2_law1_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "b643b2b98ca6f91968a60969e317fe1de5c83daa6227e2a7f1f3a8dd5e9c29f9",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case2_law1_damp1_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "2",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case2_law1_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "ab06d1d84d23fb89077c15d55e462698de0b25f3fc4180c40c921fd5d4276516",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case2_law1_damp1_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "2",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case2_law1_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "6e2ee54f23b66b258944985c936e285ec52c2cd56a2bb97bb88245f296186409",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case2_law1_damp1_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "2",
+        "1",
+        "1",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case2_law1_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "5d5555df4c5616aeaedf64adffa314754f89c7e1545ce8eb4ce7740e0836bd23",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case2_law1_damp1_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "2",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case2_law1_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "2f9c91c7a3433972b8e1fbb4bf47062cdc307709f773d5ad5c1e3b8fc8913ab6",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case3_law0_damp0_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "3",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case3_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "81cf35bfa1133998501dc9d5953767445b3f53e0b78c12de33e5c7299a446f48",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case3_law0_damp0_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "3",
+        "0",
+        "0",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case3_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "d2cc46073e32c8160c85361209cc4adfe677513ca28b6038373998262e4a7a4c",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case3_law0_damp0_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "3",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case3_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "734a360c3247d02fd486ed9c2c72c04cc16ea72973e4e7ca406030446512ca7a",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case3_law0_damp0_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "3",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case3_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "2f67be8a2acdf30fbe0559f5cebb6b7e11f225526ae946608769c22e1582b9b2",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case3_law0_damp0_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "3",
+        "0",
+        "0",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case3_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "2cf87de3757be39d0b762621a7036e96578666ce43db5c09099cf6a7a902411a",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case3_law0_damp0_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "3",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case3_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "a2834876fdec3b33b8215321a25ce97cf03d5bbdccef04827b7c7499a268afc4",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case3_law0_damp1_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "3",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case3_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "687aad0f7150f2daeaaa99b586498935106448390a5dbae14fb4c45d3bbc1859",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case3_law0_damp1_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "3",
+        "0",
+        "1",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case3_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "53769e395278895dace194c09cbe448eefe44cc04c061e925098d801b43b9517",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case3_law0_damp1_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "3",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case3_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "d7dcd259c1da660122259f6697a07f94ac979d4927e1f8b82817fc51f5e43345",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case3_law0_damp1_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "3",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case3_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "9811c2cc8ddf70c62948352f719413c6e018e9295222be81c51baf2e1db5bc65",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case3_law0_damp1_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "3",
+        "0",
+        "1",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case3_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "5caa992b405a8ce35026cd241ca1e4d88d92f56ed954fddbf9ab424aeab68d0f",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case3_law0_damp1_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "3",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case3_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "112f856351834c092d8f542529ff635ecca996a2c6ffcafc7701aba1518b0c54",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case3_law1_damp0_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "3",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case3_law1_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "415a8e930e80208fadd29041b5857b1df622838e9afe7993234922360d32a4c5",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case3_law1_damp0_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "3",
+        "1",
+        "0",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case3_law1_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "8f1db33d01d28b2b4386620d9af0217ed01eaf1462a3f2685ec25b789a289836",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case3_law1_damp0_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "3",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case3_law1_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "26a1219b78dfc75fb5f9ccf893a527f78c1d5f641a8e5305b32fe72a43369805",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case3_law1_damp0_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "3",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case3_law1_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "7513d2ecbd3a4b6843b15d74372788b9c32b575282dfc11908d05ce1213e3803",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case3_law1_damp0_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "3",
+        "1",
+        "0",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case3_law1_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "335e82a94023cdd477f21f46aed66cfbc96f7b9861156b1f2cc41cbcf22bdc22",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case3_law1_damp0_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "3",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case3_law1_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "9aab099b22778afe49e932fbb0bf4ec1f474c1011c4a4927bb28907306d64da5",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case3_law1_damp1_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "3",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case3_law1_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "0d178e3b679e5a87a74166fc8a324e37eb2ca144d4946c82149c9073c50f9b2c",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case3_law1_damp1_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "3",
+        "1",
+        "1",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case3_law1_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "4f3aee649b7d381952a663d9c1e17daec9ff5e2e550f41f23a04a12ae9c702e2",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case3_law1_damp1_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "3",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case3_law1_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "f9b2989764e601f2ecc743137d88d9597b1a1be65ac56c0b06f380928dc941ed",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case3_law1_damp1_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "3",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case3_law1_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "4cafed62af5a8c35c1ebb2872682b32baf1767c7355c8744eba1061d00375d4e",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case3_law1_damp1_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "3",
+        "1",
+        "1",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case3_law1_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "d8dfc5cceb2c9901583972410914b8a899544f70bd8f597b9854768b61779a39",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case3_law1_damp1_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "3",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case3_law1_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "ea91ea0a5e91440ac64f93a9a3182b40b2d82a1d3b77f029ba3891b2bf37fa3d",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case4_law0_damp0_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "4",
+        "0",
+        "0",
+        "1000",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case4_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 1001,
+      "log_sha256": "a818c23f47cf7f50a682967b24f626d02f94c8865942d9c6f54ec8453259367a",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case4_law0_damp0_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "4",
+        "0",
+        "0",
+        "500",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case4_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 501,
+      "log_sha256": "31e860972db7c504943f8fc3a63d51c0e7ef7ec25258f220f9b798985c21ef4c",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case4_law0_damp0_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "4",
+        "0",
+        "0",
+        "1000",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case4_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 502,
+      "log_sha256": "893fa5dbd1c6e31abf0fb8648d3167b6a4fbf89ea387e22b3afa3286657ba282",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case4_law0_damp0_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "4",
+        "0",
+        "0",
+        "1000",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case4_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 1001,
+      "log_sha256": "9cbdad1ea38c6f5b1ebbd3fc7b89972135fc1f219ec4dc87e923fd8d06ec73d4",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case4_law0_damp0_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "4",
+        "0",
+        "0",
+        "500",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case4_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 501,
+      "log_sha256": "e8024b7709a7b1e75b1db0b44012433c2972b2224ec08fab2922cab2c296befc",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case4_law0_damp0_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "4",
+        "0",
+        "0",
+        "1000",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case4_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 502,
+      "log_sha256": "60a485117678be2444e2ca0e30db044dc27da953771e243efbab832496d4afc9",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case4_law0_damp1_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "4",
+        "0",
+        "1",
+        "1000",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case4_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 1001,
+      "log_sha256": "cd89a98b41cecffa98dddbd69ec88f0768eb1f53734b1474a541c28884c6d759",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case4_law0_damp1_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "4",
+        "0",
+        "1",
+        "500",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case4_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 501,
+      "log_sha256": "019f338eda3a5969e98aa755195de844f7fcc85fa2918cffe30adc2d6183bbc2",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case4_law0_damp1_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "4",
+        "0",
+        "1",
+        "1000",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case4_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 502,
+      "log_sha256": "8bb5c3f5c16e2ee9fcff988809a061e015df1116e07597a7e767e4f4de88bf0d",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case4_law0_damp1_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "4",
+        "0",
+        "1",
+        "1000",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case4_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 1001,
+      "log_sha256": "d77c6d42e607552f3af9407a6576cfb6594dbe13db085a2dd04f7a44d2f35594",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case4_law0_damp1_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "4",
+        "0",
+        "1",
+        "500",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case4_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 501,
+      "log_sha256": "eda53eabad49df6737c0eba7fc286508948a9f18b68399ebb8ea7d6c9f466fa7",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case4_law0_damp1_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "4",
+        "0",
+        "1",
+        "1000",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case4_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 502,
+      "log_sha256": "fc75a4b7af04592e42398cb44ad1f6663a200c204c7f781db06633c969cadb36",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case4_law1_damp0_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "4",
+        "1",
+        "0",
+        "1000",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case4_law1_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 1001,
+      "log_sha256": "00e7f1c7e9d229c04b8575bd0b9b5acf208009a9bd91ec169e94875732da69f9",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case4_law1_damp0_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "4",
+        "1",
+        "0",
+        "500",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case4_law1_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 501,
+      "log_sha256": "a2cbc48c1d655433a6077a21a57739bd2951738938e6c8f0af9b6c26fe851009",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case4_law1_damp0_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "4",
+        "1",
+        "0",
+        "1000",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case4_law1_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 502,
+      "log_sha256": "742c0bb8cf9fb6eb50e0cfc0290bf37871402822d495bd5d5868be1e046f1ad8",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case4_law1_damp0_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "4",
+        "1",
+        "0",
+        "1000",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case4_law1_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 1001,
+      "log_sha256": "fbb507f69ce025fcabe5a4fdff6949d86a8eccf6ec93bec85dd720474943ee99",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case4_law1_damp0_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "4",
+        "1",
+        "0",
+        "500",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case4_law1_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 501,
+      "log_sha256": "4728eb882fda93dfb2cec8741b1d7d010fd4899b6328c8ae90a4ad8d9cd5f3ee",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case4_law1_damp0_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "4",
+        "1",
+        "0",
+        "1000",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case4_law1_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 502,
+      "log_sha256": "1529093d86bfa7dc47601fa6083ceeb26af7012c437250697d04e5ae78fe5751",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case4_law1_damp1_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "4",
+        "1",
+        "1",
+        "1000",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case4_law1_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 1001,
+      "log_sha256": "8d2ab30e3edd1c788665940cedabd6c48ca3c9402bbc6f8835500afb09fb2f69",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case4_law1_damp1_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "4",
+        "1",
+        "1",
+        "500",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case4_law1_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 501,
+      "log_sha256": "29410d0ea9bfd7db6d1737a4830f5511e2bde153575e0ab81882b2a8bd410ba3",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case4_law1_damp1_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "4",
+        "1",
+        "1",
+        "1000",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case4_law1_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 502,
+      "log_sha256": "228b2343320497d2c8657e5bab2e22487d24b93ad0c9fa644a9026e6e1e2fd0a",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case4_law1_damp1_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "4",
+        "1",
+        "1",
+        "1000",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case4_law1_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 1001,
+      "log_sha256": "c1d1c2f415a67f3c589b91bcaccb08487b217c2d98240d64ecea49fa178ca874",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case4_law1_damp1_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "4",
+        "1",
+        "1",
+        "500",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case4_law1_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 501,
+      "log_sha256": "6f8e45f7aef3fdc02e3512213ae475af909be701e32bdc516e603f814c8b1d08",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case4_law1_damp1_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "4",
+        "1",
+        "1",
+        "1000",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case4_law1_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 502,
+      "log_sha256": "be7f2ef10e59f92d2be01f05af714e51ccfa84b299d576c439eff05fd3692bef",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case5_law0_damp0_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "5",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case5_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "2d5b66273ee81aa82e26b097430609b36da1ac1586b4ed2c6ff58e78de6e18d2",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case5_law0_damp0_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "5",
+        "0",
+        "0",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case5_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "218660eb28ba68339ec7db747bd744eefc415708a0e0751377a81a19f301f502",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case5_law0_damp0_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "5",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case5_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "fca6475987ca286e6a97b2870d730f5f417477b15f74d6ca1401ed501e9f2085",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case5_law0_damp0_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "5",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case5_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "9f23cbb365986b955c8cf8ca60d545253490acfb86616f1d56bec06a0cc9e546",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case5_law0_damp0_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "5",
+        "0",
+        "0",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case5_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "502add8b93b8a1633d82bd8b7cea81eb0144a69b81335f3052afe02b3b815c91",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case5_law0_damp0_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "5",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case5_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "817e4964d573750e688dcb979f43f6484d8a54b9dcaf198c5a30b81be707965e",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case5_law0_damp1_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "5",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case5_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "9abdb63a204574191aad9f5cd049d9260bd5f4c2e60f3641cd2fdd8f756eeef5",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case5_law0_damp1_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "5",
+        "0",
+        "1",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case5_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "8f12d0a0bfbf886bc87ab5f2e159015f1b56203a0801261fbe32cea2a8ba63ef",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case5_law0_damp1_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "5",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case5_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "f0d2309b4d7d68d1cbd3660251900969177f4f00630075afcf423ad09efa83a5",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case5_law0_damp1_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "5",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case5_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "e45513b6d60ade78da16bd5feb1d8a9eacbeb8ed7caafa66af491b5bbbd59996",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case5_law0_damp1_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "5",
+        "0",
+        "1",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case5_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "27fdebeb048d2e7e31c6ff8cdfa291a053603dfb21f8ffd626c1c62b802eab66",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case5_law0_damp1_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "5",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case5_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "ec5ffec4cb83ecf2c01d9c22c5047e3e68aa7d6861834fa243de9ca97c176d19",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case5_law1_damp0_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "5",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case5_law1_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "89926d481d9f4775e555760c127c80585f1f9d4cb734c02036920c5730669fe9",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case5_law1_damp0_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "5",
+        "1",
+        "0",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case5_law1_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "20abf1143854649ebb61204134757123707508828b20480b1056315fa751a690",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case5_law1_damp0_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "5",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case5_law1_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "e60836842bc408e1c98b28d15ad3105b81da47e6832ff76f4b3c800f4251cfed",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case5_law1_damp0_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "5",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case5_law1_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "2458ef963a4b6f40e68130a13ce35b86fd134485318db50a1e861b51e3fea9c6",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case5_law1_damp0_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "5",
+        "1",
+        "0",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case5_law1_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "a0ca8458269860f9de75135290ddf0eeb5bf08d9f607319e47151abf1c9fcec3",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case5_law1_damp0_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "5",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case5_law1_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "9a393b80c3e9f29ed0525bc77c58e02c4a6b22dcd04be9ef8c2b12cf6dc8670b",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case5_law1_damp1_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "5",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case5_law1_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "13a44fccc88e51eeb5dbc77deaa5f9cb733057f1638f297f27281d98f15fe495",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case5_law1_damp1_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "5",
+        "1",
+        "1",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case5_law1_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "95735d217345f16aa8e816aeed04109863cfdcc9d5226697ce691cbeef1b47a4",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case5_law1_damp1_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "5",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case5_law1_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "5bba13cfd7aa9b9da0743db5f96d18667b16bcf8b14e18f608eb5c33fae7dbeb",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case5_law1_damp1_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "5",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case5_law1_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "9a080ced0c087f8d0a5f25fbfaf3d2ff61bf9240f0cd95665495832e707f53a0",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case5_law1_damp1_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "5",
+        "1",
+        "1",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case5_law1_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "82bf06838987de3db97d3701dd06fbb0a056f913c526d8eddef641572b31e2f5",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case5_law1_damp1_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "5",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case5_law1_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "c6f48894c10ffd7f80cb76e26828a2e061b60be09d2551b0eb17732dab9572c9",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case6_law0_damp0_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "6",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case6_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "6649c86d23d8dd945beb4538365d32f273c51173a41820eec60aebaa5a169098",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case6_law0_damp0_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "6",
+        "0",
+        "0",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case6_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "9d2972bae2c795bc5e7c6e8b5dbaa4cda58a43a27f77e2379b3ded1ce81855fd",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case6_law0_damp0_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "6",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case6_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "41bdf34e31a6fd624aff5e10fc544bd18bc409673e1569ff6e107a9370e39639",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case6_law0_damp0_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "6",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case6_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "feda6e8f07c9d024d8485755caa0a74d1ab72ef4ffc6e85e789be23f15def78a",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case6_law0_damp0_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "6",
+        "0",
+        "0",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case6_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "f9fa588ad34cf6f0d76ea8e7f60c6896718b4a41d9b3549ca2799711d7d5504f",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case6_law0_damp0_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "6",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case6_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "479dd78f4958399191c91caf085bdef2f7c8d0a45ac82680c6b4317f8885ef63",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case6_law0_damp1_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "6",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case6_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "98e28470300cad9815a2aa4c9660eac5bc864ca167370de7aee0be299ef343f8",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case6_law0_damp1_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "6",
+        "0",
+        "1",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case6_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "abd0e4cbb106db28a6810f2b00ffa1aa5fc648f8f964392fe8f4e207ef71a8c9",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case6_law0_damp1_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "6",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case6_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "783c8b0e552ed7b2517a1b595bd8cc95291faa31a45d75089d05fe1627a0736a",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case6_law0_damp1_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "6",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case6_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "625bd384cdc0299a1adc5585ecfdf9ced61f13741687937d2b82aaef8ed6e037",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case6_law0_damp1_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "6",
+        "0",
+        "1",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case6_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "b5ab3a8a1c281344a49d09ee3590d894ca7429becda9460023a9f3a301c694c6",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case6_law0_damp1_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "6",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case6_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "6211bfebc74cc088facc1f4a7853ce4b381029951b94afe65303985ea6d88300",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case7_law0_damp0_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "7",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case7_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "86ed7a358d41ce859d0aa5ee3595cca0bb8a4fbeedbf1704560889e024dc76b9",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case7_law0_damp0_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "7",
+        "0",
+        "0",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case7_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "dbd6ed65faab7f36341997c436093b11248d37b8529ce91eca433b2d2d4b9f99",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case7_law0_damp0_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "7",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case7_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "77cf02e99360fdc443174e82f1f2c682c0c06662677fba86a63d2b7d86bac50d",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case7_law0_damp0_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "7",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case7_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "9dc30a79d16c2efa5348663811dfbefcc649c78e62e2e97c84aa756697acc1f5",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case7_law0_damp0_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "7",
+        "0",
+        "0",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case7_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "8842688a3c62595d15ee95c8b17a0e62591dace2d454661bc1b14a7687b9f578",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case7_law0_damp0_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "7",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case7_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "e595680208ba72e2c78f0ab02ce5f69d51416ad02023aa58371c2576a99fd932",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case7_law0_damp1_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "7",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case7_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "b386dbff7e15488a1b52021d419443ed48a725acb107ec5b419ea4391c561981",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case7_law0_damp1_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "7",
+        "0",
+        "1",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case7_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "f4b13c139ab198f02700656f52c949b0d269afc7be83079a98e4a3d76b9ad16e",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case7_law0_damp1_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "7",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case7_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "9ac55f94d6b9dd619de3f1b71a5729b4ef136b7db9d8acd091dea12239634861",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case7_law0_damp1_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "7",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case7_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "a48c2cc50718ada1c49a8ce448cff8e8c3a7883fa5a7cba90ecd1235139143eb",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case7_law0_damp1_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "7",
+        "0",
+        "1",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case7_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "a3b466ade1a4d89ddd552d03a520d48788e30546c4523b44afb7333f0fab24f3",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case7_law0_damp1_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "7",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case7_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "010e19d5c1ab28cc2be301e7fdc5d821ddefc9a0e0b3006852537766135da4fb",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case7_law1_damp0_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "7",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case7_law1_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "cafb1272aa8503eee59068475c1a90f01bdd11fdbbcc11a56f85ebbdc1f441c6",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case7_law1_damp0_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "7",
+        "1",
+        "0",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case7_law1_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "dca52652303c6b86fe6665634e989741783455f7c996d7d2eeab20e74344da7a",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case7_law1_damp0_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "7",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case7_law1_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "9877f141519fd143501c3534fe4e8c27ef32d5e76829742c47d8ad659fe32cb3",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case7_law1_damp0_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "7",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case7_law1_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "fb9d207d30a2c002e8075ac340413e51f7b2dcd915c1a7983c4b58804c49f76c",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case7_law1_damp0_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "7",
+        "1",
+        "0",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case7_law1_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "f15f75912fa49d6ca0396651a92ab5388da05477b16b9d904017d04a97163658",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case7_law1_damp0_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "7",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case7_law1_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "b5854cd111d6d615d5c1b4199763f0366e1ccde49f889180853f580e58f36388",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case7_law1_damp1_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "7",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case7_law1_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "f0282015659c6610958334cd82a7a24879fe4b17a23bbccbea818cdb1ef9e865",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case7_law1_damp1_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "7",
+        "1",
+        "1",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case7_law1_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "1b33582d7d7b1bcbe489b56946050510c13b0ceeb490197005063cdf823feb84",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case7_law1_damp1_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "7",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case7_law1_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "210a8a71860478571f2d4f90084e25e7455b1003484a140d965079459afb19f3",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case7_law1_damp1_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "7",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case7_law1_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "a2bd54e048f44832d1ff448ff0e97563130a63048ab1a49b8a73936725edea66",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case7_law1_damp1_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "7",
+        "1",
+        "1",
+        "50",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case7_law1_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 51,
+      "log_sha256": "14890bfafbbbe330a61bc952ccc43a24a11de8823fff607696acf103d5bb7209",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case7_law1_damp1_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "7",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case7_law1_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 252,
+      "log_sha256": "93c45c4e9e1fc1f1642ea346ca237a3759e4f09c076def440d961a82b76a0d57",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case9_law0_damp0_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "9",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case9_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "03a1067b4faec1ab7fe1e509ec79ee369baeddb9cac5663d1c0b96ac33466795",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case9_law0_damp0_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "9",
+        "0",
+        "0",
+        "200",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case9_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 201,
+      "log_sha256": "488200d606163ab7f57a42dcb182c57b673d90ea9284ab9e72e4c1e038bd6f49",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case9_law0_damp0_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "9",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case9_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 102,
+      "log_sha256": "43cbdfefe94a0bbe2ccf404a12d1be0c2d84fe617b8be645d10e364b6ba52844",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case9_law0_damp0_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "9",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case9_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "63de9891ac06c986ff3171aa4c92ab168a9d6f03764f511e9af9d01dcdf3e55c",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case9_law0_damp0_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "9",
+        "0",
+        "0",
+        "200",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case9_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 201,
+      "log_sha256": "d5cd585196222f078c09e32dae79561990ca7e332a9716880f205e81aa3210f5",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case9_law0_damp0_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "9",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case9_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 102,
+      "log_sha256": "86a48c1f31f3fb11a69fc3a68e2f88c1e82d0b8300d2095bed7ba9d7a88d3122",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case9_law0_damp1_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "9",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case9_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "dfec873e398ad343155bd634e5da6e54f2724e5635e5ebd4f168daf7b2dd7780",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case9_law0_damp1_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "9",
+        "0",
+        "1",
+        "200",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case9_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 201,
+      "log_sha256": "07e8d1fcf2ea1269820fb043043062180466b4dae7609b75da94e56261fadf43",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case9_law0_damp1_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "9",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case9_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 102,
+      "log_sha256": "ccfa886166d0ec7ffa9ae22c60970c6b2ac0cc8de4a57c6def093c66b6560745",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case9_law0_damp1_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "9",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case9_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "7477f7c8560d73f1c7cce655ed060120c950a4218b0761854d9230cdfe27a3a5",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case9_law0_damp1_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "9",
+        "0",
+        "1",
+        "200",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case9_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 201,
+      "log_sha256": "46ac3cf193e055c8df68ade15721bdbd8ca53736ceaa4ffd88a78d61ee289964",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case9_law0_damp1_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "9",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case9_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 102,
+      "log_sha256": "43500b6009cfdb2b0ca91c5a647d0ed291d7e32b3cdff85d964843302724ab5e",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case9_law1_damp0_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "9",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case9_law1_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "e2ff29be5b33864fd8b8151f99515076dd856dce1efe9a5f7e7e36e54baef053",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case9_law1_damp0_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "9",
+        "1",
+        "0",
+        "200",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case9_law1_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 201,
+      "log_sha256": "1759a902422832f414f66ef40ffae1beb804c255d0bd46de4366a0afd01eb483",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case9_law1_damp0_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "9",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case9_law1_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 102,
+      "log_sha256": "5f5cf69faff293809b8d7dbd8f1f51f927b9e40663bf59f8db2da1950b386b4e",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case9_law1_damp0_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "9",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case9_law1_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "67c96fa09f5da64cf9629f0765fbf89141d81a8429ba136965f48ad1fadfb324",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case9_law1_damp0_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "9",
+        "1",
+        "0",
+        "200",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case9_law1_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 201,
+      "log_sha256": "6d0ddab5d9de9eb80cdbea253fc188a9f4c95f94b7aa4e4dd5da8cdec5f230e6",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case9_law1_damp0_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "9",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case9_law1_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 102,
+      "log_sha256": "c5ae8eee6a64f3cbb687d2c6a448aefc746542ff1031f07caa12830f98e4a7ed",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case9_law1_damp1_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "9",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case9_law1_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "f625d72aaeb1d0ecde9544dcbefbf4ea5c8e5d01119406f30399788da0015d8e",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case9_law1_damp1_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "9",
+        "1",
+        "1",
+        "200",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case9_law1_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 201,
+      "log_sha256": "81d1a2544ec0b5d76d5378fc8d97da1f8faadb9dd3d99bb7b7a7c2ebd62bf4f7",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case9_law1_damp1_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "9",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case9_law1_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 102,
+      "log_sha256": "26cc5e56685b166cb563fde30a898fc424b423a2719ee0f59041736a56dfd7d9",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case9_law1_damp1_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "9",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case9_law1_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "98b4f1168f70d111147d68bc3907b00e17ae5db1bdfa98674e5f028abd2e35d5",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case9_law1_damp1_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "9",
+        "1",
+        "1",
+        "200",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case9_law1_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 201,
+      "log_sha256": "513c81c31ae623da855ed2e039b90d5349045228972373f2dd74e981a86dac59",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case9_law1_damp1_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "9",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case9_law1_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 102,
+      "log_sha256": "9251ad82eae1887b5b6d5dfe15ff1c3ecaaafeb146d3db9d19872fdb7be33ba6",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case10_law0_damp0_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "10",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case10_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "878e08b6b32e185995ddfe427c671f396d5c4622edcb2b01e0b0c1c423fb87fb",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case10_law0_damp0_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "10",
+        "0",
+        "0",
+        "200",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case10_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 201,
+      "log_sha256": "146c0e92125a7619bd7a76d134be6c212459c7ad68736f5c1ef878e183b7194c",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case10_law0_damp0_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "10",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case10_law0_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 102,
+      "log_sha256": "17af8cf0494b740d7103145a6e5ebcb95bcf3ad123fa39e5f5265a863ad0d699",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case10_law0_damp0_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "10",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case10_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "7c2ab4da3606769c05a36ed68318e267e2d71eba227c9827481551b6bf82cf11",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case10_law0_damp0_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "10",
+        "0",
+        "0",
+        "200",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case10_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 201,
+      "log_sha256": "e1b82aba85f1e6550948758a1d6adaf16c25887cc2336584d2e8ad75af8f4fde",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case10_law0_damp0_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "10",
+        "0",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case10_law0_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 102,
+      "log_sha256": "573f43e3ca9267c4c1bf3505c97e25b4330d02ac98f1b6469116c8597c77e12d",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case10_law0_damp1_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "10",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case10_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "ad5b25043c595125561e8ca7501cc4e53357e28e12b74adbd71820ad075f8c0c",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case10_law0_damp1_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "10",
+        "0",
+        "1",
+        "200",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case10_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 201,
+      "log_sha256": "8d56da53ac86a831da4a7700767f42bad694ff9c478766256ef130b5256e48d3",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case10_law0_damp1_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "10",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case10_law0_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 102,
+      "log_sha256": "e3efa423a580ea8b195409d873e237a27318cfab1c8ff1c48ec1f36218962419",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case10_law0_damp1_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "10",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case10_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "2600de487cb7df7515d67f95ed348b42da94bb3e4482ede72b647c6879f10578",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case10_law0_damp1_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "10",
+        "0",
+        "1",
+        "200",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case10_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 201,
+      "log_sha256": "9ad2a1c4f73ecf31d78a4de9827e9ea66b216e02a0b7405c34147deb03a1e20b",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case10_law0_damp1_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "10",
+        "0",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case10_law0_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 102,
+      "log_sha256": "673b73f14f2f897a8f415dc2a4b4abe2c84a80887481ce594ec0a552778d23b2",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case10_law1_damp0_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "10",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case10_law1_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "10d5ef5c8a1e253f43e428178d3b83717618d160059f82dab931c398d658f82a",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case10_law1_damp0_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "10",
+        "1",
+        "0",
+        "200",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case10_law1_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 201,
+      "log_sha256": "1195ea59e03b0ed6dcb2e066ee5f8db446b655dd2dad351f23b27b87c0990021",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case10_law1_damp0_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "10",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case10_law1_damp0_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 102,
+      "log_sha256": "2843d3a4914ea633caff9df2693c4a5f6dee4d1cec6b6bf8aa54f3b7e19bed6b",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case10_law1_damp0_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "10",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case10_law1_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "42b511de843ca9bd633b022bd485184f071e76dcf67b912dbf36e0d2d4bc3a98",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case10_law1_damp0_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "10",
+        "1",
+        "0",
+        "200",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case10_law1_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 201,
+      "log_sha256": "eca488ef4e53ce5f1620a429595ff51ae1037ef2003cb8a0d5ef929bb93289d8",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case10_law1_damp0_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "10",
+        "1",
+        "0",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case10_law1_damp0_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 102,
+      "log_sha256": "e1b71c07f65b6f71930707c95fba2cc1bd04cd16e92b043b1d57fa0cdde90f1b",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case10_law1_damp1_cpu_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "reference",
+        "10",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case10_law1_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "ae18c3a242be54abf933c8a269de8d6e870f0e4615c2f0d09e64e082f13c5dbf",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case10_law1_damp1_cpu_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "split",
+        "10",
+        "1",
+        "1",
+        "200",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case10_law1_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 201,
+      "log_sha256": "e7e7e7e7247dbf5b6c2b65ae90cbc4334d9bbac5587e571621cb1ca19d7cc83b",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case10_law1_damp1_cpu_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cpu",
+        "continue",
+        "10",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case10_law1_damp1_cpu.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 102,
+      "log_sha256": "c059f2e9a644c7de94f3c2a1daeaf95fb12f18e402cc919630f9bae08aef4944",
+      "binary_sha256": "f56092202fbeee925b52f0f1791cff14071fd74a1b626e291ee648cd120ccb86"
+    },
+    "case10_law1_damp1_cuda_reference": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "reference",
+        "10",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case10_law1_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 301,
+      "log_sha256": "5c7a455d83778feac7eb02b0213cdb4c882e968a4536c87b8b5626965d06bedb",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case10_law1_damp1_cuda_prefix": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "split",
+        "10",
+        "1",
+        "1",
+        "200",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case10_law1_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 201,
+      "log_sha256": "af1b8e016421ee29763f44c172fa8bd3f9ca830ecfbd303fafa440a6510dee54",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    },
+    "case10_law1_damp1_cuda_resumed": {
+      "command": [
+        "/tmp/mechsys-v2.g2YtyY/closure-build/cuda",
+        "continue",
+        "10",
+        "1",
+        "1",
+        "300",
+        "/tmp/mechsys-v2.g2YtyY/closure-matrix/case10_law1_damp1_cuda.vv.json"
+      ],
+      "exit_code": 0,
+      "snapshots": 102,
+      "log_sha256": "03bc76efb1aa933b06f84fd5fb3ab3b34df3b700e10368aa7b762a272f26606d",
+      "binary_sha256": "af0fd8b3d30f9b4edffffd1f0415115a18f04e9f8a69769d49f13ad867a52c5f"
+    }
+  },
+  "comparisons": {
+    "case0_law0_damp0_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case0_law0_damp0_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case0_law0_damp0_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 5.562217353372034e-14,
+      "bitwise_numeric": false,
+      "numbers": 24900,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 5.562217353372034e-14,
+        "bitwise_numeric": false,
+        "numbers": 24900
+      }
+    },
+    "case0_law0_damp1_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case0_law0_damp1_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case0_law0_damp1_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 5.562217353372034e-14,
+      "bitwise_numeric": false,
+      "numbers": 24900,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 5.562217353372034e-14,
+        "bitwise_numeric": false,
+        "numbers": 24900
+      }
+    },
+    "case0_law1_damp0_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case0_law1_damp0_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case0_law1_damp0_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 4.440892098500626e-16,
+      "bitwise_numeric": false,
+      "numbers": 24900,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 4.440892098500626e-16,
+        "bitwise_numeric": false,
+        "numbers": 24900
+      }
+    },
+    "case0_law1_damp1_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case0_law1_damp1_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case0_law1_damp1_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 2.4980018054066022e-15,
+      "bitwise_numeric": false,
+      "numbers": 24900,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 2.4980018054066022e-15,
+        "bitwise_numeric": false,
+        "numbers": 24900
+      }
+    },
+    "case1_law0_damp0_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case1_law0_damp0_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case1_law0_damp0_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 2.7977620220553945e-14,
+      "bitwise_numeric": false,
+      "numbers": 24900,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 2.7977620220553945e-14,
+        "bitwise_numeric": false,
+        "numbers": 24900
+      }
+    },
+    "case1_law0_damp1_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case1_law0_damp1_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case1_law0_damp1_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 5.562217353372034e-14,
+      "bitwise_numeric": false,
+      "numbers": 24900,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 5.562217353372034e-14,
+        "bitwise_numeric": false,
+        "numbers": 24900
+      }
+    },
+    "case1_law1_damp0_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case1_law1_damp0_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case1_law1_damp0_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 8.881784197001252e-16,
+      "bitwise_numeric": false,
+      "numbers": 24900,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 8.881784197001252e-16,
+        "bitwise_numeric": false,
+        "numbers": 24900
+      }
+    },
+    "case1_law1_damp1_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case1_law1_damp1_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case1_law1_damp1_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 3.3306690738754696e-15,
+      "bitwise_numeric": false,
+      "numbers": 24900,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 3.3306690738754696e-15,
+        "bitwise_numeric": false,
+        "numbers": 24900
+      }
+    },
+    "case2_law0_damp0_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 21249,
+      "restart_step": 50
+    },
+    "case2_law0_damp0_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 21249,
+      "restart_step": 50
+    },
+    "case2_law0_damp0_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 2.8477220581635265e-14,
+      "bitwise_numeric": false,
+      "numbers": 21000,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 2.8477220581635265e-14,
+        "bitwise_numeric": false,
+        "numbers": 21000
+      }
+    },
+    "case2_law0_damp1_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 21249,
+      "restart_step": 50
+    },
+    "case2_law0_damp1_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 21249,
+      "restart_step": 50
+    },
+    "case2_law0_damp1_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 2.8477220581635265e-14,
+      "bitwise_numeric": false,
+      "numbers": 21000,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 2.8477220581635265e-14,
+        "bitwise_numeric": false,
+        "numbers": 21000
+      }
+    },
+    "case2_law1_damp0_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 21999,
+      "restart_step": 50
+    },
+    "case2_law1_damp0_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 21999,
+      "restart_step": 50
+    },
+    "case2_law1_damp0_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 2.220446049250313e-16,
+      "bitwise_numeric": false,
+      "numbers": 21750,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 2.220446049250313e-16,
+        "bitwise_numeric": false,
+        "numbers": 21750
+      }
+    },
+    "case2_law1_damp1_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 23124,
+      "restart_step": 50
+    },
+    "case2_law1_damp1_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 23124,
+      "restart_step": 50
+    },
+    "case2_law1_damp1_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 6.561418075534675e-14,
+      "bitwise_numeric": false,
+      "numbers": 22875,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 6.561418075534675e-14,
+        "bitwise_numeric": false,
+        "numbers": 22875
+      }
+    },
+    "case3_law0_damp0_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case3_law0_damp0_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case3_law0_damp0_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 5.562217353372034e-14,
+      "bitwise_numeric": false,
+      "numbers": 24900,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 5.562217353372034e-14,
+        "bitwise_numeric": false,
+        "numbers": 24900
+      }
+    },
+    "case3_law0_damp1_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case3_law0_damp1_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case3_law0_damp1_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 5.562217353372034e-14,
+      "bitwise_numeric": false,
+      "numbers": 24900,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 5.562217353372034e-14,
+        "bitwise_numeric": false,
+        "numbers": 24900
+      }
+    },
+    "case3_law1_damp0_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case3_law1_damp0_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case3_law1_damp0_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 4.440892098500626e-16,
+      "bitwise_numeric": false,
+      "numbers": 24900,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 4.440892098500626e-16,
+        "bitwise_numeric": false,
+        "numbers": 24900
+      }
+    },
+    "case3_law1_damp1_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case3_law1_damp1_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case3_law1_damp1_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 2.4980018054066022e-15,
+      "bitwise_numeric": false,
+      "numbers": 24900,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 2.4980018054066022e-15,
+        "bitwise_numeric": false,
+        "numbers": 24900
+      }
+    },
+    "case4_law0_damp0_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 69699,
+      "restart_step": 500
+    },
+    "case4_law0_damp0_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 69699,
+      "restart_step": 500
+    },
+    "case4_law0_damp0_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 5.573319583618286e-14,
+      "bitwise_numeric": false,
+      "numbers": 69500,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 5.573319583618286e-14,
+        "bitwise_numeric": false,
+        "numbers": 69500
+      }
+    },
+    "case4_law0_damp1_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 69824,
+      "restart_step": 500
+    },
+    "case4_law0_damp1_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 69824,
+      "restart_step": 500
+    },
+    "case4_law0_damp1_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 5.5566662382489085e-14,
+      "bitwise_numeric": false,
+      "numbers": 69625,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 5.5566662382489085e-14,
+        "bitwise_numeric": false,
+        "numbers": 69625
+      }
+    },
+    "case4_law1_damp0_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 83249,
+      "restart_step": 500
+    },
+    "case4_law1_damp0_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 83249,
+      "restart_step": 500
+    },
+    "case4_law1_damp0_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 1.1546319456101628e-14,
+      "bitwise_numeric": false,
+      "numbers": 83000,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 1.1546319456101628e-14,
+        "bitwise_numeric": false,
+        "numbers": 83000
+      }
+    },
+    "case4_law1_damp1_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 83249,
+      "restart_step": 500
+    },
+    "case4_law1_damp1_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 83249,
+      "restart_step": 500
+    },
+    "case4_law1_damp1_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 1.948337324808591e-13,
+      "bitwise_numeric": false,
+      "numbers": 83000,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 1.948337324808591e-13,
+        "bitwise_numeric": false,
+        "numbers": 83000
+      }
+    },
+    "case5_law0_damp0_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case5_law0_damp0_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case5_law0_damp0_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 2.7977620220553945e-14,
+      "bitwise_numeric": false,
+      "numbers": 24900,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 2.7977620220553945e-14,
+        "bitwise_numeric": false,
+        "numbers": 24900
+      }
+    },
+    "case5_law0_damp1_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case5_law0_damp1_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case5_law0_damp1_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 1.389999226830696e-13,
+      "bitwise_numeric": false,
+      "numbers": 24900,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 1.389999226830696e-13,
+        "bitwise_numeric": false,
+        "numbers": 24900
+      }
+    },
+    "case5_law1_damp0_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case5_law1_damp0_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case5_law1_damp0_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 2.220446049250313e-16,
+      "bitwise_numeric": false,
+      "numbers": 24900,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 2.220446049250313e-16,
+        "bitwise_numeric": false,
+        "numbers": 24900
+      }
+    },
+    "case5_law1_damp1_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case5_law1_damp1_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 50
+    },
+    "case5_law1_damp1_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 1.0590486820838407e-15,
+      "bitwise_numeric": false,
+      "numbers": 24900,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 1.0590486820838407e-15,
+        "bitwise_numeric": false,
+        "numbers": 24900
+      }
+    },
+    "case6_law0_damp0_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 24240,
+      "restart_step": 50
+    },
+    "case6_law0_damp0_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 24240,
+      "restart_step": 50
+    },
+    "case6_law0_damp0_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 4.521860429520499e-16,
+      "bitwise_numeric": false,
+      "numbers": 24000,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 4.521860429520499e-16,
+        "bitwise_numeric": false,
+        "numbers": 24000
+      }
+    },
+    "case6_law0_damp1_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 24240,
+      "restart_step": 50
+    },
+    "case6_law0_damp1_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 24240,
+      "restart_step": 50
+    },
+    "case6_law0_damp1_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 1.1102230246251565e-16,
+      "bitwise_numeric": false,
+      "numbers": 24000,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 1.1102230246251565e-16,
+        "bitwise_numeric": false,
+        "numbers": 24000
+      }
+    },
+    "case7_law0_damp0_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 39996,
+      "restart_step": 50
+    },
+    "case7_law0_damp0_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 39996,
+      "restart_step": 50
+    },
+    "case7_law0_damp0_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 1.1124434706744069e-13,
+      "bitwise_numeric": false,
+      "numbers": 39600,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 1.1124434706744069e-13,
+        "bitwise_numeric": false,
+        "numbers": 39600
+      }
+    },
+    "case7_law0_damp1_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 39996,
+      "restart_step": 50
+    },
+    "case7_law0_damp1_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 39996,
+      "restart_step": 50
+    },
+    "case7_law0_damp1_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 1.1124434706744069e-13,
+      "bitwise_numeric": false,
+      "numbers": 39600,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 1.1124434706744069e-13,
+        "bitwise_numeric": false,
+        "numbers": 39600
+      }
+    },
+    "case7_law1_damp0_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 39996,
+      "restart_step": 50
+    },
+    "case7_law1_damp0_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 39996,
+      "restart_step": 50
+    },
+    "case7_law1_damp0_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 6.661338147750939e-16,
+      "bitwise_numeric": false,
+      "numbers": 39600,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 6.661338147750939e-16,
+        "bitwise_numeric": false,
+        "numbers": 39600
+      }
+    },
+    "case7_law1_damp1_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 39996,
+      "restart_step": 50
+    },
+    "case7_law1_damp1_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 39996,
+      "restart_step": 50
+    },
+    "case7_law1_damp1_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 1.5707921074969988e-15,
+      "bitwise_numeric": false,
+      "numbers": 39600,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 1.5707921074969988e-15,
+        "bitwise_numeric": false,
+        "numbers": 39600
+      }
+    },
+    "case9_law0_damp0_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 200
+    },
+    "case9_law0_damp0_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 200
+    },
+    "case9_law0_damp0_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 3.469446951953614e-18,
+      "bitwise_numeric": false,
+      "numbers": 24900,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 3.469446951953614e-18,
+        "bitwise_numeric": false,
+        "numbers": 24900
+      }
+    },
+    "case9_law0_damp1_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 200
+    },
+    "case9_law0_damp1_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 200
+    },
+    "case9_law0_damp1_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 3.469446951953614e-17,
+      "bitwise_numeric": false,
+      "numbers": 24900,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 3.469446951953614e-17,
+        "bitwise_numeric": false,
+        "numbers": 24900
+      }
+    },
+    "case9_law1_damp0_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 200
+    },
+    "case9_law1_damp0_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 200
+    },
+    "case9_law1_damp0_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 2.710505431213761e-20,
+      "bitwise_numeric": false,
+      "numbers": 24900,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 2.710505431213761e-20,
+        "bitwise_numeric": false,
+        "numbers": 24900
+      }
+    },
+    "case9_law1_damp1_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 200
+    },
+    "case9_law1_damp1_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 200
+    },
+    "case9_law1_damp1_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 2.710505431213761e-20,
+      "bitwise_numeric": false,
+      "numbers": 24900,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 2.710505431213761e-20,
+        "bitwise_numeric": false,
+        "numbers": 24900
+      }
+    },
+    "case10_law0_damp0_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 200
+    },
+    "case10_law0_damp0_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 200
+    },
+    "case10_law0_damp0_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 2.7977620220553945e-14,
+      "bitwise_numeric": false,
+      "numbers": 24900,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 2.7977620220553945e-14,
+        "bitwise_numeric": false,
+        "numbers": 24900
+      }
+    },
+    "case10_law0_damp1_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 200
+    },
+    "case10_law0_damp1_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 200
+    },
+    "case10_law0_damp1_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 2.786659791809143e-14,
+      "bitwise_numeric": false,
+      "numbers": 24900,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 2.786659791809143e-14,
+        "bitwise_numeric": false,
+        "numbers": 24900
+      }
+    },
+    "case10_law1_damp0_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 200
+    },
+    "case10_law1_damp0_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 200
+    },
+    "case10_law1_damp0_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 2.6020852139652106e-16,
+      "bitwise_numeric": false,
+      "numbers": 24900,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 2.6020852139652106e-16,
+        "bitwise_numeric": false,
+        "numbers": 24900
+      }
+    },
+    "case10_law1_damp1_cpu_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 200
+    },
+    "case10_law1_damp1_cuda_restart": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 0,
+      "bitwise_numeric": true,
+      "numbers": 25149,
+      "restart_step": 200
+    },
+    "case10_law1_damp1_cpu_vs_cuda": {
+      "pass": true,
+      "failures": 0,
+      "first_failure": [],
+      "max_absolute_error": 2.070565940925917e-14,
+      "bitwise_numeric": false,
+      "numbers": 24900,
+      "exact_zero_feature_slots_equivalent_to_absent": true,
+      "strict_storage_comparison": {
+        "pass": true,
+        "failures": 0,
+        "first_failure": [],
+        "max_absolute_error": 2.070565940925917e-14,
+        "bitwise_numeric": false,
+        "numbers": 24900
+      }
+    }
+  },
+  "analytical": {
+    "case0_law0_damp0_cpu": {
+      "expected": {
+        "normal": 1.0,
+        "tangent": 8e-05,
+        "tangent_damping": 0.0,
+        "rolling": 1.2000000000000002e-05
+      },
+      "pass": true,
+      "checks": {
+        "normal": true,
+        "tangent": true,
+        "tangent_damping": true,
+        "rolling": true
+      }
+    },
+    "case0_law0_damp1_cpu": {
+      "expected": {
+        "normal": 1.0,
+        "tangent": 8e-05,
+        "tangent_damping": 0.0008377580409572783,
+        "rolling": 1.2000000000000002e-05
+      },
+      "pass": true,
+      "checks": {
+        "normal": true,
+        "tangent": true,
+        "tangent_damping": true,
+        "rolling": true
+      }
+    },
+    "case0_law1_damp0_cpu": {
+      "expected": {
+        "normal": 0.0050283148884376705,
+        "tangent": 2.5859905140536596e-05,
+        "tangent_damping": 0.0,
+        "rolling": 3.87898577108049e-06
+      },
+      "pass": true,
+      "checks": {
+        "normal": true,
+        "tangent": true,
+        "tangent_damping": true,
+        "rolling": true
+      }
+    },
+    "case0_law1_damp1_cpu": {
+      "expected": {
+        "normal": 0.0050283148884376705,
+        "tangent": 2.5859905140536596e-05,
+        "tangent_damping": 0.07113117640155692,
+        "rolling": 3.87898577108049e-06
+      },
+      "pass": true,
+      "checks": {
+        "normal": true,
+        "tangent": true,
+        "tangent_damping": true,
+        "rolling": true
+      }
+    }
+  }
+}

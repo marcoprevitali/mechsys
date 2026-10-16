@@ -1,0 +1,86 @@
+{
+  "source_commit": "9f45398ee91f279fe11e6a72b275421414f00e1f",
+  "source": "/tmp/mechsys-v2.g2YtyY/work/benchmarks/v2/coupled_runtime.cu",
+  "source_sha256": "5f63ab0d739f937f05fcc3dab766fbb32aaa11d9f0047354dd404e862e5c3417",
+  "headers": {
+    "lib/dem/domain.h": "b68d631763a77c99531d7b9cca174653dcce50211465d30510d24bff56b6ba24",
+    "lib/dem/checkpoint.h": "df5f6b4f1fb07454e5eee79df61a1aca52b17a98f8ea720b057985d309176d92",
+    "lib/dem/particle.h": "0f1af5dc124ab18561409985c72068116d095d4b40937e81a6ca5bd8fe6653cb",
+    "lib/dem/interacton.h": "94f473e545bdf809c584e164aca8003595b2738c29907c87032fe6da16592aa0",
+    "lib/dem/dem.cuh": "eec7b7c28ceb788ce075248071094e1f6431289fcbbc30c70bdf25ad8fbc311f",
+    "lib/lbmdem/Domain.h": "7685d5d8fa2cd69d08d1f9f7c17d1c2598af2724ee91170b7c10f356ddc36c58"
+  },
+  "targets": {
+    "cpu": {
+      "compile": [
+        "g++",
+        "-fopenmp",
+        "-x",
+        "c++",
+        "-std=c++17",
+        "-O3",
+        "-DH5Gcreate_vers=2",
+        "-DH5Gopen_vers=2",
+        "-DH5_NO_DEPRECATED_SYMBOLS",
+        "-DHAS_IGRAPH",
+        "-DUSE_CHECK_OVERLAP",
+        "-DUSE_GPU_DOUBLE",
+        "-DUSE_HDF5",
+        "-DUSE_OMP",
+        "-DUSE_STDVECTOR",
+        "-I/tmp/mechsys-v2.g2YtyY/work",
+        "@/tmp/mechsys_v1_build/tdem/CMakeFiles/test_cu_04.dir/includes_CUDA.rsp",
+        "-c",
+        "/tmp/mechsys-v2.g2YtyY/work/benchmarks/v2/coupled_runtime.cu",
+        "-o",
+        "/tmp/mechsys-v2.g2YtyY/coupled-final-build/cpu.o"
+      ],
+      "link": [
+        "g++",
+        "-fopenmp",
+        "/tmp/mechsys-v2.g2YtyY/coupled-final-build/cpu.o",
+        "-o",
+        "/tmp/mechsys-v2.g2YtyY/coupled-final-build/cpu",
+        "@/tmp/mechsys_v1_build/tdem/CMakeFiles/test_cu_04.dir/linkLibs.rsp",
+        "-L/usr/local/cuda-12.6/targets/x86_64-linux/lib"
+      ],
+      "binary_sha256": "55819095133131ffd4d61a471fa73c19b167ac2d59bbf025da0eea0c6a600826"
+    },
+    "cuda": {
+      "compile": [
+        "/usr/local/cuda-12.6/bin/nvcc",
+        "-arch=sm_86",
+        "-Xcompiler=-fopenmp",
+        "-DUSE_CUDA",
+        "-std=c++17",
+        "-O3",
+        "-DH5Gcreate_vers=2",
+        "-DH5Gopen_vers=2",
+        "-DH5_NO_DEPRECATED_SYMBOLS",
+        "-DHAS_IGRAPH",
+        "-DUSE_CHECK_OVERLAP",
+        "-DUSE_GPU_DOUBLE",
+        "-DUSE_HDF5",
+        "-DUSE_OMP",
+        "-DUSE_STDVECTOR",
+        "-I/tmp/mechsys-v2.g2YtyY/work",
+        "--options-file",
+        "/tmp/mechsys_v1_build/tdem/CMakeFiles/test_cu_04.dir/includes_CUDA.rsp",
+        "-c",
+        "/tmp/mechsys-v2.g2YtyY/work/benchmarks/v2/coupled_runtime.cu",
+        "-o",
+        "/tmp/mechsys-v2.g2YtyY/coupled-final-build/cuda.o"
+      ],
+      "link": [
+        "g++",
+        "-fopenmp",
+        "/tmp/mechsys-v2.g2YtyY/coupled-final-build/cuda.o",
+        "-o",
+        "/tmp/mechsys-v2.g2YtyY/coupled-final-build/cuda",
+        "@/tmp/mechsys_v1_build/tdem/CMakeFiles/test_cu_04.dir/linkLibs.rsp",
+        "-L/usr/local/cuda-12.6/targets/x86_64-linux/lib"
+      ],
+      "binary_sha256": "141ec72fbd8f10774d518674da3f5e821ec45870ecbcea607923d721963ccaf1"
+    }
+  }
+}
