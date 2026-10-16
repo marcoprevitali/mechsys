@@ -408,14 +408,31 @@ void Domain::ImprintLattice()
         if (fabs(len)<1.0e-12) continue;
         double Tau = LBMDOM.Tau[0];
         double gamma  = len/(12.0*dx);
+#ifdef MECHSYS_EXCHANGE_AUDIT
+        MechSysExchangeAudit::Claim *audit_claim=nullptr;
+        if (MechSysExchangeAudit::cpu_claim) {
+            if (i>=MechSysExchangeAudit::claim_capacity)
+                throw new Fatal("Exchange audit claim capacity exceeded");
+            audit_claim=&MechSysExchangeAudit::cpu_claim[i];
+            audit_claim->computed=1; audit_claim->gamma=gamma;
+        }
+#endif
         if (gamma<LBMDOM.Gamma[n][m][l]) continue;
         LBMDOM.Gamma[n][m][l] = gamma;
+#ifdef MECHSYS_EXCHANGE_AUDIT
+        if (audit_claim) audit_claim->accepted=1;
+#endif
         //Vec3_t B      = C - Pa->x;
         Vec3_t B;
         DEM::BranchVec(Pa->x,C,B,Pert);
         Vec3_t tmp;
         Rotation(Pa->w,Pa->Q,tmp);
         Vec3_t VelP   = Pa->v + cross(tmp,B);
+#ifdef MECHSYS_EXCHANGE_AUDIT
+        if (audit_claim) for (size_t aj=0;aj<3;aj++) {
+            audit_claim->lever[aj]=B(aj); audit_claim->surface[aj]=VelP(aj);
+        }
+#endif
         double rho = LBMDOM.Rho[0][n][m][l];
         double Bn  = (gamma*(Tau-0.5))/((1.0-gamma)+(Tau-0.5));
         //double Bn  = gamma;
@@ -429,6 +446,9 @@ void Domain::ImprintLattice()
             //cell->Omeis[k] += Omega;
             //cell->Omeis[k] += gamma*Omega;
             LBMDOM.Omeis[n][m][l][k] = Omega;
+#ifdef MECHSYS_EXCHANGE_AUDIT
+            if (audit_claim) { audit_claim->B=Bn; audit_claim->omega[k]=Omega; }
+#endif
             Flbm += -Bn*Omega*LBMDOM.Cs*LBMDOM.Cs*dx*dx*LBMDOM.C[k];
         }
         Vec3_t Tlbm,Tt;
@@ -436,6 +456,13 @@ void Domain::ImprintLattice()
         Quaternion_t q;
         Conjugate    (Pa->Q,q);
         Rotation     (Tt,q,Tlbm);
+#ifdef MECHSYS_EXCHANGE_AUDIT
+        if (audit_claim) {
+            for (size_t aj=0;aj<3;aj++) {
+                audit_claim->force[aj]=Flbm(aj); audit_claim->torque[aj]=Tlbm(aj);
+            }
+        }
+#endif
         //std::cout << "1" << std::endl;
         omp_set_lock      (&Pa->lck);
         Pa->F          += Flbm;
@@ -810,8 +837,14 @@ inline void Domain::Solve(double Tf, double dtOut, ptDFun_t ptSetup, ptDFun_t pt
         //std::cout << "DEM Calculation of forces " << duration.count() << std::endl;
 
         //start = std::chrono::high_resolution_clock::now();
+#ifdef MECHSYS_EXCHANGE_AUDIT
+        MechSysExchangeAudit::notify(this,"before_imprint");
+#endif
         cudaImprintLatticeVC<<<lbmdemaux.nvc/Nthread+1,Nthread>>>(pfBn,pPaCeV,DEMDOM.pParticlesCU,DEMDOM.pDynParticlesCU,LBMDOM.pRho,pGamma,pOmeis,LBMDOM.pF,DEMDOM.pdemaux,LBMDOM.plbmaux,plbmdemaux);
         cudaImprintLatticeFC<<<lbmdemaux.nfc/Nthread+1,Nthread>>>(pPaCe,pPaCeF,DEMDOM.pFacesCU,DEMDOM.pFacidCU,DEMDOM.pVertsCU,DEMDOM.pParticlesCU,DEMDOM.pDynParticlesCU,LBMDOM.pRho,pGamma,pOmeis,LBMDOM.pF,DEMDOM.pdemaux,LBMDOM.plbmaux,plbmdemaux);
+#ifdef MECHSYS_EXCHANGE_AUDIT
+        MechSysExchangeAudit::notify(this,"after_imprint");
+#endif
         //cudaDeviceSynchronize();
         //stop  = std::chrono::high_resolution_clock::now();
 
@@ -837,9 +870,15 @@ inline void Domain::Solve(double Tf, double dtOut, ptDFun_t ptSetup, ptDFun_t pt
             numup++;
             iter_t+= iter - iter_b;
             iter_b = iter;
+#ifdef MECHSYS_EXCHANGE_AUDIT
+            MechSysExchangeAudit::notify(this,"before_rebuild");
+#endif
             DEMDOM.UpdateContactsDevice();
             ResetParCell();
             UpLoadDevice(Nproc,false);
+#ifdef MECHSYS_EXCHANGE_AUDIT
+            MechSysExchangeAudit::notify(this,"after_rebuild");
+#endif
         }
 
         //cudaDeviceSynchronize();
@@ -850,6 +889,9 @@ inline void Domain::Solve(double Tf, double dtOut, ptDFun_t ptSetup, ptDFun_t pt
         //std::cout << "DEM Final                " << duration.count() << std::endl;
 
         //start = std::chrono::high_resolution_clock::now();
+#ifdef MECHSYS_EXCHANGE_AUDIT
+        MechSysExchangeAudit::notify(this,"before_collision");
+#endif
         if (LBMDOM.Nl==1)
         {
             if (fabs(LBMDOM.G[0])>1.0e-12)
@@ -868,6 +910,9 @@ inline void Domain::Solve(double Tf, double dtOut, ptDFun_t ptSetup, ptDFun_t pt
 
             cudaCollideMPDEM<<<LBMDOM.Ncells/Nthread+1,Nthread>>>(pfBn,LBMDOM.pIsSolid,LBMDOM.pF,LBMDOM.pFtemp,LBMDOM.pBForce,LBMDOM.pVel,LBMDOM.pRho,pGamma,pOmeis,LBMDOM.plbmaux);
         }
+#ifdef MECHSYS_EXCHANGE_AUDIT
+        MechSysExchangeAudit::notify(this,"after_collision");
+#endif
         real * tmp = LBMDOM.pF;
         LBMDOM.pF = LBMDOM.pFtemp;
         LBMDOM.pFtemp = tmp;
@@ -917,7 +962,13 @@ inline void Domain::Solve(double Tf, double dtOut, ptDFun_t ptSetup, ptDFun_t pt
         
         //std::cout << "3" <<std::endl;
         //Imprint the DEM into the LBM lattice to calcualte forces
+#ifdef MECHSYS_EXCHANGE_AUDIT
+        MechSysExchangeAudit::notify(this,"before_imprint");
+#endif
         ImprintLattice();
+#ifdef MECHSYS_EXCHANGE_AUDIT
+        MechSysExchangeAudit::notify(this,"after_imprint");
+#endif
         #pragma omp parallel for schedule(static) num_threads(Nproc)
         for (size_t i=0;i<Nproc;i++)
         {
@@ -943,11 +994,23 @@ inline void Domain::Solve(double Tf, double dtOut, ptDFun_t ptSetup, ptDFun_t pt
 
         if (maxdis>Alpha)
         {
+#ifdef MECHSYS_EXCHANGE_AUDIT
+            MechSysExchangeAudit::notify(this,"before_rebuild");
+#endif
             DEMDOM.UpdateContacts();
             ResetParCell();
+#ifdef MECHSYS_EXCHANGE_AUDIT
+            MechSysExchangeAudit::notify(this,"after_rebuild");
+#endif
         }
 
+#ifdef MECHSYS_EXCHANGE_AUDIT
+        MechSysExchangeAudit::notify(this,"before_collision");
+#endif
         LBMDOM.CollideSCDEM();
+#ifdef MECHSYS_EXCHANGE_AUDIT
+        MechSysExchangeAudit::notify(this,"after_collision");
+#endif
         LBMDOM.StreamSC();
 #endif
         

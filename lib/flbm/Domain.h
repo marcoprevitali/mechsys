@@ -37,6 +37,7 @@
 
 //STD
 #include<iostream>
+#include <mechsys/flbm/exchange_audit.h>
 
 // Mechsys
 #include <mechsys/linalg/matvec.h>
@@ -1445,6 +1446,16 @@ inline void Domain::CollideSCDEM()
                     double Ome = Omeis[ix][iy][iz][k];
                     double noneq = (1.0 - Bn)*NonEq[k]/tau-Bn*Ome;
                     Ftemp[0][ix][iy][iz][k] = F[0][ix][iy][iz][k] - alpha*(noneq);
+#ifdef MECHSYS_EXCHANGE_AUDIT
+                    if (MechSysExchangeAudit::cpu_collision) {
+                        size_t ai=((iz*ny+iy)*nx+ix)*Nneigh+k;
+                        if (ai>=MechSysExchangeAudit::collision_capacity)
+                            throw new Fatal("Exchange audit collision capacity exceeded");
+                        MechSysExchangeAudit::capture(MechSysExchangeAudit::cpu_collision[ai],
+                            F[0][ix][iy][iz][k],Ftemp[0][ix][iy][iz][k],NonEq[k],Ome,
+                            gamma,Bn,rho,Tau[0],tau,alpha);
+                    }
+#endif
                     if (Ftemp[0][ix][iy][iz][k]<-1.0e-12)
                     {
                         //std::cout << Ftemp[0][ix][iy][iz][k] << std::endl;

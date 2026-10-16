@@ -453,6 +453,15 @@ __global__ void cudaCollideSCDEM(FuncBn fBn,bool const * IsSolid, real * F, real
                 real Ome   = Omeis[ic*lbmaux[0].Nneigh + k];
                 real noneq = (1.0 - Bn)*NonEq[k]/tau-Bn*Ome;
                 Ftemp[ic*lbmaux[0].Nneigh + k] = F[ic*lbmaux[0].Nneigh + k] - alpha*(noneq);
+#ifdef MECHSYS_EXCHANGE_AUDIT
+                if (MechSysExchangeAudit::gpu_collision) {
+                    size_t ai=ic*lbmaux[0].Nneigh+k;
+                    if (ai<MechSysExchangeAudit::gpu_collision_capacity)
+                        MechSysExchangeAudit::capture_device(MechSysExchangeAudit::gpu_collision[ai],
+                            F[ai],Ftemp[ai],NonEq[k],Ome,gamma,Bn,rho,lbmaux[0].Tau[0],tau,alpha);
+                    else atomicExch(&MechSysExchangeAudit::gpu_overflow,1);
+                }
+#endif
                 //if((ic==555||ic==556||ic==557||ic==558)&&(k==1)) printf("ic %lu Ftk %g Fk %g iter %lu \n",ic,Ftemp[ic*lbmaux[0].Nneigh + k],F[ic*lbmaux[0].Nneigh + k],lbmaux[0].iter); 
                 if (Ftemp[ic*lbmaux[0].Nneigh + k]<0.0)
                 {
@@ -571,12 +580,30 @@ __global__ void cudaImprintLatticeVC(FuncBn fBn, size_t const * PaCeV, DEM::Part
     len = cudaSphereCube(Xs,C,Par[ip].Dmax,lbmaux[0].dx);
     if (fabs(len)<1.0e-12) return;
     real gamma  = len/(12.0*lbmaux[0].dx);
+#ifdef MECHSYS_EXCHANGE_AUDIT
+    MechSysExchangeAudit::Claim *audit_claim=nullptr;
+    if (MechSysExchangeAudit::gpu_claim) {
+        if (ic<MechSysExchangeAudit::gpu_claim_capacity) {
+            audit_claim=&MechSysExchangeAudit::gpu_claim[ic];
+            audit_claim->computed=1; audit_claim->gamma=gamma;
+        } else atomicExch(&MechSysExchangeAudit::gpu_overflow,1);
+    }
+#endif
     if (gamma<Gamma[ice]) return;
     Gamma[ice] = gamma;
+#ifdef MECHSYS_EXCHANGE_AUDIT
+    if (audit_claim) audit_claim->accepted=1;
+#endif
     real3 tmp;
     Rotation(DPar[ip].w,DPar[ip].Q,tmp);
     real3 VelP   = DPar[ip].v + cross(tmp,B);
 
+#ifdef MECHSYS_EXCHANGE_AUDIT
+    if (audit_claim) {
+        audit_claim->lever[0]=B.x; audit_claim->lever[1]=B.y; audit_claim->lever[2]=B.z;
+        audit_claim->surface[0]=VelP.x; audit_claim->surface[1]=VelP.y; audit_claim->surface[2]=VelP.z;
+    }
+#endif
     size_t ncells = lbmaux[0].Nneigh;
     real3 Flbm = make_real3(0.0,0.0,0.0);
     for (size_t il=0;il<lbmaux[0].Nl;il++)
@@ -589,6 +616,9 @@ __global__ void cudaImprintLatticeVC(FuncBn fBn, size_t const * PaCeV, DEM::Part
             real Fvp      = FLBM::FeqFluid(k              ,rho,VelP,lbmaux);
             real Omega    = F[ice*lbmaux[0].Nneigh + il*lbmaux[0].Nneigh*lbmaux[0].Ncells + lbmaux[0].Op[k]] - Fvpp - (F[ice*lbmaux[0].Nneigh + il*lbmaux[0].Nneigh*lbmaux[0].Ncells + k] - Fvp);
             Omeis[ice*lbmaux[0].Nneigh + il*lbmaux[0].Nneigh*lbmaux[0].Ncells + k] = Omega;
+#ifdef MECHSYS_EXCHANGE_AUDIT
+            if (audit_claim && il==0) { audit_claim->B=Bn; audit_claim->omega[k]=Omega; }
+#endif
             Flbm = Flbm - lbmdemaux[0].Fconv*Bn*Omega*lbmaux[0].Cs*lbmaux[0].Cs*lbmaux[0].dx*lbmaux[0].dx*lbmaux[0].C[k];
         }
     }
@@ -597,6 +627,13 @@ __global__ void cudaImprintLatticeVC(FuncBn fBn, size_t const * PaCeV, DEM::Part
     real4 q;
     Conjugate    (DPar[ip].Q,q);
     Rotation     (Tt,q,Tlbm);
+
+#ifdef MECHSYS_EXCHANGE_AUDIT
+    if (audit_claim) {
+        audit_claim->force[0]=Flbm.x; audit_claim->force[1]=Flbm.y; audit_claim->force[2]=Flbm.z;
+        audit_claim->torque[0]=Tlbm.x; audit_claim->torque[1]=Tlbm.y; audit_claim->torque[2]=Tlbm.z;
+    }
+#endif
 
     atomicAdd(&DPar[ip].F   .x,Flbm.x);
     atomicAdd(&DPar[ip].F   .y,Flbm.y);
