@@ -1,14 +1,14 @@
 # MechSys GPU DEM optimization — PROJECT_STATUS.md
 
-**As-of:** 2026-10-16 (V2 standalone checkpoint/reference validation checkpoint)
-**State:** `V2 OVERALL PARTIAL` / `VV reference retained` / `R1-R4 PASS within documented standalone support` / `C1 PASS registered linear/Hertz sphere suite` / `C3 PASS bounded physical polyhedral suite; strict zero-slot storage difference retained` / `C2 BLOCKED: coupled VV not implemented, user deferred design` / `P2-B NOT_RUN` / `no production optimization accepted; persistent reduction DEFAULT-OFF`
+**As-of:** 2026-10-16 (V3-D coupled time-centering design handoff; no implementation)
+**State:** `V3-D design delivered for review` / `coupled implementation NOT_STARTED` / `V2 OVERALL PARTIAL, bounded standalone gates retained` / `C2 BLOCKED: no coupled VV validation` / `coupled restart NOT_VALIDATED` / `P2-B NOT_RUN` / `VV reference and default-off optimization policy unchanged`
 **Reference decision (user, 2026-10-16):** explicitly select `UseVelocityVerlet=true` for all new validation, profiling, benchmarks and optimization decisions. Legacy position-Verlet/leapfrog data are separately labeled controls, not VV reference evidence. `AGENTS.md` records this policy; the compatibility constructor default remains false. `test_cu_04 <input> <Nproc> <dthoot> <qin> 1` must print `DEM_BENCHMARK_INTEGRATOR velocity_verlet=1`; use `--vv` in the registered runner.
-**Next bounded milestone (user choice):** record coupled VV as a blocker and design a separately validated fluid/particle VV time-centering contract next. Do not silently run legacy integration as VV. No coupled scheme implemented in V2; no P2-B timings while required correctness remains open. Standalone results, limitations and exact commands: `benchmarks/v2/V2_REPORT.md`; state contract: `benchmarks/v2/RESTART_STATE.md`. Original checkout and every pre-V2 clone remain READ ONLY.
+**Next bounded proposal (requires design review/authorization):** V3-I0 observational cell-exchange and CPU/GPU occupancy audit with the existing coupled VV guard intact, before a separate default-off Scheme A prototype. Recommendation: explicit left-state interval impulse followed by the V2 VV mechanical step; expected coupled accuracy is first-order, not an untested second-order claim. Start at `benchmarks/v3_coupled_design/DESIGN_DECISION.md`. No implementation or P2-B in V3-D. Original and all pre-V3 clones remain READ ONLY.
 **Agent:** GLM-5.3 Flash (or successor); operational rules in `AGENTS.md`.
 **Original project:** https://github.com/Axtal/mechsys
 **Fork URL / owner:** https://github.com/marcoprevitali/mechsys / `marcoprevitali` (authenticated account and public fork metadata verified 2026-10-15)
 **Old local checkout:** `/home/msys/mechsys` at `e4ba163ec9f32c8bccb0fd8619ba79e000d3d6d8`; preserved dirty and not mutated during `F0`
-**Current clone:** `/home/msys/git/mechsys-v2-restart`, branch `validation/v2-restart-coupled`, from verified reference `73466999e0601a083fb9718281d88d161c75231d`. V2 implementation commits `91dc185` (checkpoint), `8402d38` (coupled guard/legacy startup), harness `88cdf55`; final evidence/handoff commits follow (exact tip: `git rev-parse HEAD`). Origin is the verified user fork; upstream push is `PUSH_DISABLED`. Previous reference clone `/home/msys/git/mechsys-v1-reference` remains clean at 7346699, and all older clones are preserved. No V2 edits to the original checkout.
+**Current clone:** `/home/msys/git/mechsys-v3-coupled-design`, branch `design/v3-coupled-vv`, separate full user-fork clone from `2b8d8c335709046e224f4c43aa930144ae6854e7`. Source-audit/ledger commit `3f6903bdd046f3ade825b58f72e35c9e1a3f9bba`; proposed contract/test-plan commit `88294764eafa15a27cb641d4aa535837a13826c8`; decision/handoff commit follows (exact tip: `git rev-parse HEAD`). Origin is the verified user fork; upstream push is `PUSH_DISABLED`. V2 clone `/home/msys/git/mechsys-v2-restart` remains clean at 2b8d8c3; all older clones and original dirty checkout are preserved. No production source changed in V3-D.
 **Precision of historical benchmarks:** GPU double precision (`-DUSE_GPU_DOUBLE`) on NVIDIA RTX A6000 (84 SMs); do not assume the current host/GPU is unchanged.
 
 > **Evidence levels:** `HISTORICAL_REPORTED` means results transcribed from the user-supplied DeepSeek work summary dated 2026-10-14; they have **not** yet been independently reproduced or verified against source. `SOURCE_VERIFIED` requires auditing the actual local code. `MEASURED` requires raw timing/logs + code SHA. `PASS` requires documented numerical acceptance checks. Keep these labels distinct.
@@ -505,6 +505,56 @@ candidate-validity and conservation oracles before implementation; coupled
 restart is separate. Only then revisit gated P2-B. The historical sixfold
 polyhedral feature-count/provenance discrepancy remains unresolved.
 
+### 5.9 V3-D — coupled VV time-centering design (2026-10-16 Asia/Shanghai / Codex)
+
+**Design only, ready for review; coupled VV remains BLOCKED.** User work order
+starts from verified V2 `2b8d8c335709046e224f4c43aa930144ae6854e7`. Separate
+full/non-shallow user-fork clone and `design/v3-coupled-vv`; only this state
+document and `benchmarks/v3_coupled_design/` are changed. No solver execution,
+production kernel/guard/contact-law change, V2 artifact edit, P2-B or performance
+branch merge. Source hashes and V2 tree `c31d33c9f92873eee2265f77a1b4927432261146`
+are recorded in SOURCE_MANIFEST.json.
+
+| Item | Design finding / status |
+|---|---|
+| Current CPU/GPU coupled sequence | SOURCE_VERIFIED: reset -> entry contact/history -> imprint reaction -> legacy translate/rotate -> end-motion list/map rebuild -> collision -> stream -> raw moments. Stored legacy velocities do not have synchronized full-step VV semantics |
+| Main inconsistency | Imprint uses entry fluid/geometry and applies particle reaction before actual collision scaling; neither an endpoint nor a derived midpoint hydro force. Enabling the VV flag or moving just the rebuild does not fix it |
+| Exchange formulation | DERIVED: actual solid population increment delta_f_h, fluid J=dx^3 Cs sum(delta_f_h C), particle -J, same image lever for world angular impulse then body transform. Pair solid exchange only; preserve separate BGK/body-force, clipping, boundary, support and periodic transport ledgers |
+| Source hazards | CPU outside-center cell cutoff differs from GPU VC; Gamma/Omega ownership writes are not atomic/locked and overwritten owners can retain particle reaction; alpha and Fconv inconsistent with reaction; Gammaf, multiphase FC indexing, Gv/Gm/gyro paths differ. Individual causes of V2 runtime residuals NOT_MEASURED |
+| Candidate schemes | A explicit staggered; B midpoint-pose predictor/corrector with one accepted fluid advance; C iterated trials. B1 still uses old fluid populations; B2 second-order-target fluid derivation is unresolved. No need for C demonstrated in the full solver |
+| Recommendation | A, conditional bounded reference proposal: one actual interval J/K kick, then unchanged nonhydrodynamic VV stage/history sequence; no hydro duplicated into old/new acceleration caches. Expected at best first-order coupling, supported by local splitting-error derivation, not numerical convergence evidence |
+| Initial scope | FP64 D3Q15/Nl=1, smooth Bn, Sc=0, alpha=1, Fconv=1, Gammaf=0, fluid BForce=0, Gv/Gm=0, isotropic spheres; ambiguous positive shared-cell ownership rejected. Not general suspension support; no silent parameter/model changes to existing campaigns |
+| Independent requirements | A–J specifications, G0–G9 acceptance ladder, actual-record force-time and particle–cell oracles, supports/torque/image ledgers, original V2 history regression, physically consistent lattice refinement; all future solver tests NOT_RUN |
+| Coupled restart | NOT_VALIDATED; future schema needs fluid populations/roles and phase, DEM state/history/nonhydro caches, forcing/BC, occupancy/map references and pending J/K plus consumption state. V2 standalone checkpoint unchanged |
+| Documentation verification | PASS source/doc/algebra checks only: seven required documents, 48 local links, 11 source/reference hashes, unchanged V2 tree; exact rational D3Q15 impulse witnesses. Not coupled numerical acceptance |
+| Performance | NOT_RUN; no optimization promotion and no new authoritative VV performance baseline |
+
+The full-grid raw-population momentum ledger is not automatically physical
+exterior-fluid momentum; interior-fluid inertia/added mass requires a separate
+interpretation and validation, not a compensating force or changed particle mass.
+Cellwise angular exchange cancellation is distinct from finite-step rigid-body
+angular integration error. Periodic angular momentum needs image transport.
+Timestep h/2 with fixed dx requires changing tau to preserve physical nu and
+changes lattice/PSM error; the refinement plan records those distinctions.
+
+Required artifacts, review entry and evidence:
+`benchmarks/v3_coupled_design/DESIGN_DECISION.md`, CURRENT_COUPLED_SEQUENCE.md,
+COUPLED_VV_TIME_CONTRACT.md, MOMENTUM_EXCHANGE_LEDGER.md, SCHEME_COMPARISON.md,
+VALIDATION_PLAN.md, IMPLEMENTATION_PLAN.md, SOURCE_MANIFEST.json and
+DESIGN_VERIFICATION.json. Source audit commands use `rg -n` and `nl -ba` on
+the eight audited headers; independent exact Fraction arithmetic checks the
+ledger witnesses, not a new MechSys solve. `git diff --check` and source/V2 hash
+checks establish documentation-only scope. Original tracked-diff hash remains
+`e98dcc578695992948f3d804f572f6b212888ac2381832ae261be9c4e99132e9`, inventory unchanged;
+old backup/provenance in §6 retained. Previously measured V2 results remain as
+reported in §5.8 and are not relabeled as V3 tests.
+
+**Next bounded milestone proposal:** after user review of first-order accuracy
+and initial support, V3-I0 observational one-cell/one-sphere impulse and CPU/GPU
+cell-parity audit with the guard intact. Review any diagnosed parity/ownership
+model corrections separately before a default-off Scheme A harness. Shared-cell,
+limiter, force-unit, anisotropic or physical added-mass support is not inferred.
+
 ## 6. Git/repository topology and record
 
 
@@ -524,10 +574,12 @@ Baseline branch:    perf/gpu-baseline at c88dc99f415dbf7b7bc3b1764fdf5506f0d66c9
 P0/P1 source clones: mechsys-gpu-opt, mechsys-p1-sphere, mechsys-p1-poly (preserved)
 V1 source clone:    /home/msys/git/mechsys-v1-vv (preserved)
 V1 reference clone: /home/msys/git/mechsys-v1-reference (clean 7346699, preserved)
-Current clone:      /home/msys/git/mechsys-v2-restart
+V2 reference clone: /home/msys/git/mechsys-v2-restart (clean 2b8d8c3, preserved)
+Current clone:      /home/msys/git/mechsys-v3-coupled-design
 Previous topic:     fix/vv-reference-reset at 517da81 (preserved)
 V1 topic:           validation/vv-reference-history at 7346699 (preserved)
-Active topic:       validation/v2-restart-coupled, base 7346699; checkpoint 91dc185, coupled guard 8402d38
+V2 topic:           validation/v2-restart-coupled at 2b8d8c3 (preserved)
+Active topic:       design/v3-coupled-vv, base 2b8d8c3; audit 3f6903b, contract 8829476
 Protection:         `origin` = user's fork; `upstream` fetch-only / push-disabled
 ```
 
@@ -573,7 +625,21 @@ Protection:         `origin` = user's fork; `upstream` fetch-only / push-disable
 | 2026-10-15 | P0-R complete: HISTORICAL_REBUILD_SHARE_UNRECONCILED (record self-contradicts); poly 23.6 s rebuild = Nproc=1 (21.24 s measured); neeint 6.4x interaction-list gap discovered; V0-A/B UNPROVEN; first experiments recommended and gated | §5.4, benchmarks/p0_reconciliation/ | MEASURED |
 | 2026-10-15 | Concurrent agent session edited this clone during P0-R (branch deleted, domain.h temporarily broken) and an external MoFEM job contaminated timing reps; mitigations applied; session separation recommended | §5.4 environment incident | COORDINATION HAZARD — user action recommended |
 
-### Current bounded task (after V2 standalone checkpoint; supersedes older recommendations)
+### Current bounded task (after V3-D design; supersedes older recommendations)
+
+1. Read §5.9 and `benchmarks/v3_coupled_design/DESIGN_DECISION.md`. V3-D is a
+   design deliverable, not coupled numerical acceptance. C2 remains BLOCKED,
+   coupled restart NOT_VALIDATED, P2-B NOT_RUN; original guard stays intact.
+2. Review Scheme A's explicit first-order coupling and restricted support.
+   If second-order coupling is required, close B2's kinetic/time-forcing design
+   rather than declaring particle VV sufficient. No implementation in V3-D.
+3. After explicit authorization, next proposed task is V3-I0 observational
+   exchange and CPU/GPU cell-coverage audit, with independent ledger and failed
+   evidence retained. Separate any model/parity correction from instrumentation.
+4. Preserve all V2 results, previous conclusions, original/older clones and
+   default-off performance policy. No automatic P2-B after a design or probe PASS.
+
+The superseded post-V2 task is retained as context:
 
 1. Read §5.8 and `benchmarks/v2/V2_REPORT.md`. Keep V2 overall PARTIAL: C2 BLOCKED,
    P2-B NOT_RUN. Standalone restart is accepted only within the documented support.
