@@ -16,7 +16,10 @@ for backend in ['cpu','cuda']:
     runs=json.loads((final/('runs-'+backend)/'runs.json').read_text());run_count+=sum('mode' in x for x in runs)
     for r in runs:
         if 'bitwise_serialized_states' in r:
-            assert all(r['bitwise_serialized_states'].values()),r;reg.append(r)
+            if r['case']!='shared':assert all(r['bitwise_serialized_states'].values()),r
+            # Shared ownership is preregistered unsupported. Preserve its strict FAIL;
+            # do not normalize fields or use it as observational-equivalence evidence.
+            reg.append(r)
         elif r['case']=='VV fail-closed':assert r['exit']!=0
         else:assert r['exit']==0
 (dest/'REGRESSION.json').write_text(json.dumps({'bounded_runs':run_count,'comparisons':reg},indent=2)+'\n')

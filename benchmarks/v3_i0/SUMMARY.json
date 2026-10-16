@@ -1,0 +1,497 @@
+{
+  "reference_precision_decimal_digits": 70,
+  "direction_checks": 660000,
+  "cell_checks": 44000,
+  "maxima": {
+    "decomposition": "4.955142741437656983549686628975905478000640869140625E-20",
+    "independent_impulse": "6.071532165918824830441735684871673583984375000000000002503E-17",
+    "population_write": "1.679832453886557357456360105537596603681217681463738596E-16",
+    "legacy_residual": "0.01256402599766904558475455553484545490050550142768770456314086914062500",
+    "omega_reference": "4.25915775782400794762156759180961077524321668369454781E-17"
+  },
+  "failures": [],
+  "failures_count": 0,
+  "known_mathematical_proxy_failures": 16,
+  "shared": [
+    {
+      "backend": "cpu",
+      "step": 0,
+      "geometric_conflicts": 9,
+      "accepted_claimants": [
+        [
+          0,
+          553
+        ],
+        [
+          0,
+          544
+        ],
+        [
+          0,
+          454
+        ],
+        [
+          0,
+          554
+        ],
+        [
+          0,
+          654
+        ],
+        [
+          0,
+          564
+        ],
+        [
+          0,
+          555
+        ],
+        [
+          1,
+          546
+        ],
+        [
+          1,
+          456
+        ],
+        [
+          1,
+          556
+        ],
+        [
+          1,
+          656
+        ],
+        [
+          1,
+          566
+        ],
+        [
+          1,
+          557
+        ]
+      ],
+      "legacy_J": [
+        "-0.004443636018200652730569810699989830027334392070770263671875",
+        "0.004150664401519046399491319476737771765328943729400634765625",
+        "-0.002075332200759540980661288500641603604890406131744384765625"
+      ],
+      "solid_J": [
+        "0.00444363601820065200550960785030873978485033148899674415588378906250",
+        "-0.00415066440151904604034934984091442800036020344123244285583496093750",
+        "0.00207533220075954100099007923474481174253014614805579185485839843750"
+      ],
+      "residual": [
+        "-7.2506020284968109024248406058177351951599121093750E-19",
+        "3.5914196963582334376496874028816819190979003906250E-19",
+        "2.032879073410320813763974001631140708923339843750E-20"
+      ],
+      "shared_cell_residual_sum": [
+        "0E-67",
+        "0E-67",
+        "-2.71050543121376108501863200217485427856445312500E-20"
+      ],
+      "unattributed_residual": [
+        "-7.2506020284968109024248406058177351951599121093750E-19",
+        "3.5914196963582334376496874028816819190979003906250E-19",
+        "4.743384504624081898782606003805994987487792968750E-20"
+      ],
+      "support": "BLOCKED; no unique conservative ownership model",
+      "raw": "/tmp/mechsys-v3-i0.30PYI0/raw/final/runs-cpu/cpu/shared/enabled"
+    },
+    {
+      "backend": "cuda",
+      "step": 0,
+      "geometric_conflicts": 9,
+      "accepted_claimants": [
+        [
+          0,
+          443
+        ],
+        [
+          0,
+          543
+        ],
+        [
+          0,
+          643
+        ],
+        [
+          0,
+          453
+        ],
+        [
+          0,
+          553
+        ],
+        [
+          0,
+          653
+        ],
+        [
+          0,
+          463
+        ],
+        [
+          0,
+          563
+        ],
+        [
+          0,
+          663
+        ],
+        [
+          0,
+          444
+        ],
+        [
+          0,
+          544
+        ],
+        [
+          0,
+          644
+        ],
+        [
+          0,
+          454
+        ],
+        [
+          0,
+          554
+        ],
+        [
+          0,
+          654
+        ],
+        [
+          0,
+          464
+        ],
+        [
+          0,
+          564
+        ],
+        [
+          0,
+          664
+        ],
+        [
+          0,
+          445
+        ],
+        [
+          0,
+          545
+        ],
+        [
+          0,
+          645
+        ],
+        [
+          0,
+          455
+        ],
+        [
+          0,
+          555
+        ],
+        [
+          0,
+          655
+        ],
+        [
+          0,
+          465
+        ],
+        [
+          0,
+          565
+        ],
+        [
+          0,
+          665
+        ],
+        [
+          1,
+          445
+        ],
+        [
+          1,
+          545
+        ],
+        [
+          1,
+          645
+        ],
+        [
+          1,
+          455
+        ],
+        [
+          1,
+          555
+        ],
+        [
+          1,
+          655
+        ],
+        [
+          1,
+          465
+        ],
+        [
+          1,
+          565
+        ],
+        [
+          1,
+          665
+        ],
+        [
+          1,
+          446
+        ],
+        [
+          1,
+          546
+        ],
+        [
+          1,
+          646
+        ],
+        [
+          1,
+          456
+        ],
+        [
+          1,
+          556
+        ],
+        [
+          1,
+          656
+        ],
+        [
+          1,
+          466
+        ],
+        [
+          1,
+          566
+        ],
+        [
+          1,
+          666
+        ],
+        [
+          1,
+          447
+        ],
+        [
+          1,
+          547
+        ],
+        [
+          1,
+          647
+        ],
+        [
+          1,
+          457
+        ],
+        [
+          1,
+          557
+        ],
+        [
+          1,
+          657
+        ],
+        [
+          1,
+          467
+        ],
+        [
+          1,
+          567
+        ],
+        [
+          1,
+          667
+        ]
+      ],
+      "legacy_J": [
+        "-0.006209859184874781147522870838884045951999723911285400390625",
+        "0.006209859184874504440493727698557879790541846887208521366119384765625",
+        "-0.003104929592437255699011178222690432448871433734893798828125"
+      ],
+      "solid_J": [
+        "0.005342272749040302066191594049758550877271545687108300626277923583984375",
+        "-0.005635244365721427279591429515027967145357479239464737474918365478515625",
+        "0.002817622182860717491360405041224412858724690522649325430393218994140625"
+      ],
+      "residual": [
+        "-0.000867586435834479081331276789125495074728178224177099764347076416015625",
+        "0.000574614819153077160902298183529912645184367647743783891201019287109375",
+        "-0.000287307409576538207650773181466019590146743212244473397731781005859375"
+      ],
+      "shared_cell_residual_sum": [
+        "-0.0008675864358344798487431270015216022706283638399327173829078674316406250",
+        "0.0005746148191530762173075949422393349230731018906226381659507751464843750",
+        "-0.0002873074095765384770072504083335274138732984283706173300743103027343750"
+      ],
+      "unattributed_residual": [
+        "7.674118502123961071959001856157556176185607910156250000E-19",
+        "9.435947032412905777221112657571211457252502441406250000E-19",
+        "2.693564772268675078237265552161261439323425292968750000E-19"
+      ],
+      "support": "BLOCKED; no unique conservative ownership model",
+      "raw": "/tmp/mechsys-v3-i0.30PYI0/raw/final/runs-cuda/cuda/shared/enabled"
+    }
+  ],
+  "cpu_gpu_first_step": [
+    {
+      "case": "boundary",
+      "step": 0,
+      "common_cells": 10,
+      "CPU_only": 0,
+      "GPU_only": 14,
+      "gamma_max_difference": "0E-52",
+      "B_max_difference": "0E-70",
+      "Omega_max_difference": "6.071532165918824830441735684871673583984375E-18",
+      "solid_increment_max_difference": "5.312590645178971726636518724262714385986328125E-18",
+      "parity": "FAIL_COVERAGE"
+    },
+    {
+      "case": "contact",
+      "step": 0,
+      "common_cells": 0,
+      "CPU_only": 0,
+      "GPU_only": 0,
+      "gamma_max_difference": "0",
+      "B_max_difference": "0",
+      "Omega_max_difference": "0",
+      "solid_increment_max_difference": "0",
+      "parity": "PASS"
+    },
+    {
+      "case": "fconv",
+      "step": 0,
+      "common_cells": 7,
+      "CPU_only": 0,
+      "GPU_only": 20,
+      "gamma_max_difference": "0E-54",
+      "B_max_difference": "0E-70",
+      "Omega_max_difference": "6.071532165918824830441735684871673583984375E-18",
+      "solid_increment_max_difference": "6.071532165918824830441735684871673583984375E-18",
+      "parity": "FAIL_COVERAGE"
+    },
+    {
+      "case": "fixed",
+      "step": 0,
+      "common_cells": 7,
+      "CPU_only": 0,
+      "GPU_only": 20,
+      "gamma_max_difference": "0E-54",
+      "B_max_difference": "0E-70",
+      "Omega_max_difference": "0",
+      "solid_increment_max_difference": "0",
+      "parity": "FAIL_COVERAGE"
+    },
+    {
+      "case": "moving",
+      "step": 0,
+      "common_cells": 7,
+      "CPU_only": 0,
+      "GPU_only": 20,
+      "gamma_max_difference": "0E-54",
+      "B_max_difference": "0E-70",
+      "Omega_max_difference": "6.071532165918824830441735684871673583984375E-18",
+      "solid_increment_max_difference": "6.071532165918824830441735684871673583984375E-18",
+      "parity": "FAIL_COVERAGE"
+    },
+    {
+      "case": "partial",
+      "step": 0,
+      "common_cells": 6,
+      "CPU_only": 0,
+      "GPU_only": 22,
+      "gamma_max_difference": "0E-51",
+      "B_max_difference": "0E-70",
+      "Omega_max_difference": "6.071532165918824830441735684871673583984375E-18",
+      "solid_increment_max_difference": "4.11996825544491684922832064330577850341796875E-18",
+      "parity": "FAIL_COVERAGE"
+    },
+    {
+      "case": "periodic",
+      "step": 0,
+      "common_cells": 6,
+      "CPU_only": 0,
+      "GPU_only": 20,
+      "gamma_max_difference": "0E-54",
+      "B_max_difference": "0E-70",
+      "Omega_max_difference": "6.071532165918824830441735684871673583984375E-18",
+      "solid_increment_max_difference": "6.071532165918824830441735684871673583984375E-18",
+      "parity": "FAIL_COVERAGE"
+    },
+    {
+      "case": "rebuild",
+      "step": 0,
+      "common_cells": 7,
+      "CPU_only": 0,
+      "GPU_only": 0,
+      "gamma_max_difference": "0E-54",
+      "B_max_difference": "0E-70",
+      "Omega_max_difference": "6.071532165918824830441735684871673583984375E-18",
+      "solid_increment_max_difference": "6.071532165918824830441735684871673583984375E-18",
+      "parity": "PASS"
+    },
+    {
+      "case": "rotating",
+      "step": 0,
+      "common_cells": 7,
+      "CPU_only": 0,
+      "GPU_only": 20,
+      "gamma_max_difference": "0E-54",
+      "B_max_difference": "0E-70",
+      "Omega_max_difference": "1.233576432733800298802151473864796571433544158935546875E-17",
+      "solid_increment_max_difference": "2.237578816481355548090505952636752882982664068556083111771748406226834E-18",
+      "parity": "FAIL_COVERAGE"
+    },
+    {
+      "case": "shared",
+      "step": 0,
+      "common_cells": 13,
+      "CPU_only": 0,
+      "GPU_only": 32,
+      "gamma_max_difference": "0E-54",
+      "B_max_difference": "0E-70",
+      "Omega_max_difference": "0.0019999999999999909343351145452061246032826602458953857421875",
+      "solid_increment_max_difference": "0.000292971616681382483987454434792851998281548731029033660888671875",
+      "parity": "FAIL_COVERAGE"
+    },
+    {
+      "case": "zero",
+      "step": 0,
+      "common_cells": 0,
+      "CPU_only": 0,
+      "GPU_only": 0,
+      "gamma_max_difference": "0",
+      "B_max_difference": "0",
+      "Omega_max_difference": "0",
+      "solid_increment_max_difference": "0",
+      "parity": "PASS"
+    }
+  ],
+  "synthetic_limiter": {
+    "label": "SYNTHETIC full 15-direction exact-rational witness only; not a production limiter activation",
+    "alpha": "1/2",
+    "unlimited_J": "3/800",
+    "limited_J": "3/1600",
+    "legacy_J": "-3/800",
+    "residual": "-3/1600",
+    "pass": true,
+    "missing_alpha_negative_detected": true
+  }
+}

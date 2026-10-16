@@ -1,14 +1,14 @@
 # MechSys GPU DEM optimization — PROJECT_STATUS.md
 
-**As-of:** 2026-10-16 (V3-D coupled time-centering design handoff; no implementation)
-**State:** `V3-D design delivered for review` / `coupled implementation NOT_STARTED` / `V2 OVERALL PARTIAL, bounded standalone gates retained` / `C2 BLOCKED: no coupled VV validation` / `coupled restart NOT_VALIDATED` / `P2-B NOT_RUN` / `VV reference and default-off optimization policy unchanged`
+**As-of:** 2026-10-16 (V3-I0 observational exchange/cell-parity audit)
+**State:** `V3-I0 PARITY BLOCKED, observational audit delivered` / `A/H PARTIAL: shared-cell strict regression failure retained` / `single-owner increment/torque audit PASS within registered alpha=1 scope` / `Scheme A NOT_STARTED` / `V2 OVERALL PARTIAL, standalone gates retained` / `C2 BLOCKED` / `coupled restart NOT_VALIDATED` / `P2-B NOT_RUN`
 **Reference decision (user, 2026-10-16):** explicitly select `UseVelocityVerlet=true` for all new validation, profiling, benchmarks and optimization decisions. Legacy position-Verlet/leapfrog data are separately labeled controls, not VV reference evidence. `AGENTS.md` records this policy; the compatibility constructor default remains false. `test_cu_04 <input> <Nproc> <dthoot> <qin> 1` must print `DEM_BENCHMARK_INTEGRATOR velocity_verlet=1`; use `--vv` in the registered runner.
-**Next bounded proposal (requires design review/authorization):** V3-I0 observational cell-exchange and CPU/GPU occupancy audit with the existing coupled VV guard intact, before a separate default-off Scheme A prototype. Recommendation: explicit left-state interval impulse followed by the V2 VV mechanical step; expected coupled accuracy is first-order, not an untested second-order claim. Start at `benchmarks/v3_coupled_design/DESIGN_DECISION.md`. No implementation or P2-B in V3-D. Original and all pre-V3 clones remain READ ONLY.
+**Next bounded proposal (requires separate authorization):** V3-I0-P1 conservative sphere–cell candidate/imprint coverage parity correction. ResetParCell's sphere-center eligibility and the CPU imprint cutoff both omit positive-proxy cells; changing only CPU imprint is insufficient. Preserve the actual legacy proxy arithmetic for this bounded parity patch; its newly measured early-continue defect needs a separate reviewed decision. No automatic Scheme A/P2-B. Start at `benchmarks/v3_i0/V3_I0_DECISION.md`; guard intact, shared positive cells unsupported. V3-D's explicit first-order Scheme A recommendation remains conditional, not implemented.
 **Agent:** GLM-5.3 Flash (or successor); operational rules in `AGENTS.md`.
 **Original project:** https://github.com/Axtal/mechsys
 **Fork URL / owner:** https://github.com/marcoprevitali/mechsys / `marcoprevitali` (authenticated account and public fork metadata verified 2026-10-15)
 **Old local checkout:** `/home/msys/mechsys` at `e4ba163ec9f32c8bccb0fd8619ba79e000d3d6d8`; preserved dirty and not mutated during `F0`
-**Current clone:** `/home/msys/git/mechsys-v3-coupled-design`, branch `design/v3-coupled-vv`, separate full user-fork clone from `2b8d8c335709046e224f4c43aa930144ae6854e7`. Source-audit/ledger commit `3f6903bdd046f3ade825b58f72e35c9e1a3f9bba`; proposed contract/test-plan commit `88294764eafa15a27cb641d4aa535837a13826c8`; decision/handoff commit follows (exact tip: `git rev-parse HEAD`). Origin is the verified user fork; upstream push is `PUSH_DISABLED`. V2 clone `/home/msys/git/mechsys-v2-restart` remains clean at 2b8d8c3; all older clones and original dirty checkout are preserved. No production source changed in V3-D.
+**Current work:** `validation/v3-i0-exchange-audit`, separate full user-fork clone based on exact V3-D `d801c80cce15691b2a886a31d7e0bd864de35c10`, prepared in `/tmp/mechsys-v3-i0.30PYI0/work`. Preregistered tests `9f6a5e98e2618092b639286011facacb63fa9c6c`; observer `28e292f2f421a7254a18889dfb2b50d7590ba42f`; probe/oracles `30a65e16260d47875584055f8b0c26a5a62f5502`, with shared-negative collection qualification in handoff. Persistent delivery target `/home/msys/git/mechsys-v3-i0-exchange-audit` is created/verified in the final delivery step; external `DELIVERY.json` records exact final/remote SHA and clean state, avoiding a self-referential commit claim. Origin verified marcoprevitali/mechsys, upstream Axtal push `PUSH_DISABLED`. V2/V3-D prior clones remain clean at 2b8d8c3/d801c80 and READ ONLY; original dirty checkout is preserved.
 **Precision of historical benchmarks:** GPU double precision (`-DUSE_GPU_DOUBLE`) on NVIDIA RTX A6000 (84 SMs); do not assume the current host/GPU is unchanged.
 
 > **Evidence levels:** `HISTORICAL_REPORTED` means results transcribed from the user-supplied DeepSeek work summary dated 2026-10-14; they have **not** yet been independently reproduced or verified against source. `SOURCE_VERIFIED` requires auditing the actual local code. `MEASURED` requires raw timing/logs + code SHA. `PASS` requires documented numerical acceptance checks. Keep these labels distinct.
@@ -555,6 +555,90 @@ cell-parity audit with the guard intact. Review any diagnosed parity/ownership
 model corrections separately before a default-off Scheme A harness. Shared-cell,
 limiter, force-unit, anisotropic or physical added-mass support is not inferred.
 
+### 5.10 V3-I0 — observational fluid exchange and cell parity (2026-10-16 / Codex)
+
+**PARITY BLOCKED; audit delivered, not coupled acceptance.** Legacy integration,
+collision/contact/occupancy arithmetic and VV guard unchanged; only default-off
+observers plus bounded fixtures/oracles/reports. No standalone/checkpoint/V2 or
+V3-D source/result changes, no Scheme A, coupled restart, P2-B or merge.
+
+| Gate | Verdict / evidence |
+|---|---|
+| I0-A | PARTIAL: actual CPU/CUDA imprint and collision writes captured; 20 non-shared off/on bitwise controls; shared negative equivalence NOT_ESTABLISHED |
+| I0-B | PASS registered alpha=1: 44,000 cells, 660,000 directions; independent 70-digit moments/equilibrium/full population writes and solid/BGK/other increments |
+| I0-C | PASS diagnostic: unit single-owner residual <=4.9552e-18; Fconv/shared discrepancies measured and independently attributed |
+| I0-D | PASS fixed-pose exchange: nonidentity Q, actual body torque, correct periodic levers/supports; not full-step angular conservation |
+| I0-E | FAIL parity/completeness: centered 27 reference vs CPU 7/GPU 27; small-skin candidates omit 20 on both, including after actual rebuild |
+| I0-F | PASS negative diagnosis; shared support BLOCKED: nine conflict cells; CUDA retains both reactions while cell overwritten/mixed |
+| I0-G | PASS allowed negative scope: actual Fconv=2; exact 15-direction synthetic alpha=.5 witness; production limiter activation NOT_VALIDATED |
+| I0-H | PARTIAL: all 20 non-shared off/on comparisons bitwise; CUDA shared state-1 strict FAIL retained, not normalized |
+| I0-I | PASS reports/scripts/recommended separate correction complete |
+| I0-J | Exact final origin SHA/clean-tree/archive proof recorded by final delivery, external DELIVERY.json; no unverified push claim in this pre-commit record |
+
+Maximum collision decomposition component 4.955142741437657e-20 M L/T;
+independent BGK/solid impulse error 6.071532165918825e-17; independent population
+write 1.6798324538865574e-16 density units. V3-D budget unchanged:
+128*2^-52*S_cell + 1e-12*Jref_cell, Jref_cell=.01, Jref_problem=10; maximum
+global bound 6.684825336157286e-11, normalized 6.684825336157286e-12 (<1e-8 ceiling).
+No unexplained collision, conversion or shared-reaction attribution residual.
+All actual production alpha=1; synthetic limiting is not a production PASS.
+World angular identity <=7.3e-72 in independent 70-digit algebra; actual body
+torque discrepancy after conversion <=2.929790657836655e-18. Zero wrong observed
+image levers/duplicates/extra accepted pairs; missing periodic cells still FAIL.
+
+New measured findings, beyond V3-D's source hazards:
+
+- CPU imprint Dmax center cutoff omits 20 centered positive-proxy cells that
+  CUDA admits. On common single-owner cells gamma/B match exactly and Omega
+  differs <=1.24e-17; net-force parity is invalid on different occupied sets.
+- ResetParCell's vertex distance <R+2Alpha can omit partial cells on **both**
+  backends: periodic fixture misses one, small Alpha=.0001 misses 20 before and
+  after rebuild. A wider CPU imprint alone cannot close coverage.
+- CPU SphereCube and CUDA cudaSphereCube contain edge-group `continue` that
+  skips later bottom/vertical edges. Sixteen captured computed gamma values
+  FAIL the mathematical 12-edge sum; independent control-flow oracle explains
+  them without tolerance change. Boundary reference 28 positive cells vs legacy
+  control-flow 24; partial 29 vs 28. Preserve this as a separate proxy defect,
+  not an exact-volume model substitution. Original strict failures retained.
+- GPU Fconv=2: Jsolid,x=.012564025997669036 vs actual hFx=-.02512805199533808;
+  residual .012564025997669046. CPU ignores Fconv. Unit-Fconv each backend's
+  unique-owner reaction pairs within 4.96e-18 despite different coverage.
+- Shared CUDA: nine conflicted cells, 54 accepted claims / 45 distinct cells;
+  residual max .0008675864358344791, explained by shared-cell overwrite/reaction
+  terms to <=9.44e-19. Five conflicted cells lack a consistent gamma+Omega
+  owner match. No owner/mixture fix, no support acceptance.
+- Expanded shared strict regression fails (CUDA state 1: 58 reference/off fields,
+  five reference/enabled fields differ; some populations ~4.88e-5). Earlier
+  narrower pilot happened to match. Stop affected shared equivalence; no
+  serialization or force/model fix. Non-shared controls all remain bitwise.
+
+Scope: FP64 D3Q15, Nl=1, 10³ cells, dx=dt=1, nu=.1/tau=.8, Sc/Gammaf/BForce/
+Gv/Gm=0, isotropic spheres, Nproc=1, 1–3 steps, no random initialization.
+66 final controls plus two guard rejections. RTX A6000 UUID
+GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, driver 595.84, CUDA 12.6.85/sm_86,
+g++13.3. Measured source/executable/input hashes and exact compiler/runner
+commands in `benchmarks/v3_i0/PROVENANCE.json`, README and raw run/build manifests.
+Actual reads precede collision swaps/streaming; impulse geometry is entry imprint
+pose. Rebuild map snapshots are not claimed as fresh accepted occupancy.
+
+Required reports/CSVs in `benchmarks/v3_i0/`, entry V3_I0_DECISION.md. Raw
+archive `/home/msys/SIMS/mechsys_v3_i0_validation/20261016-v3-i0-exchange-audit/V3_I0_RAW.tgz`,
+SHA256 `9a33398a9f88d1f0aa48acd6f2539784daf3b6d7b6940fc3913cb35345d19e2e`.
+It retains 1,265 payload files (~1.095 GB uncompressed), failed builds, pilots,
+strict proxy failures, all population/claim/pose traces and joined per-direction
+ledgers; ARTIFACT_INDEX.csv and external verification/delivery files prove it.
+Original tracked-diff hash remains e98dcc...132e9; V2/V3-D clones clean and
+their source/artifact trees unchanged. No reattribution of the different V2
+fast fixture's residual is claimed without replay.
+
+**One next task:** separately authorize V3-I0-P1 conservative sphere-cell
+candidate/imprint cutoff parity, with independent positive-proxy completeness
+before/after rebuild and periodic crossings. Preserve current legacy proxy
+arithmetic; review/fix its early-continue defect separately. Shared support,
+production limiting and broader models remain blocked/unvalidated. Scheme A
+harness is not ready for common positive CPU/GPU acceptance. Do not start next
+work or P2-B automatically.
+
 ## 6. Git/repository topology and record
 
 
@@ -575,11 +659,13 @@ P0/P1 source clones: mechsys-gpu-opt, mechsys-p1-sphere, mechsys-p1-poly (preser
 V1 source clone:    /home/msys/git/mechsys-v1-vv (preserved)
 V1 reference clone: /home/msys/git/mechsys-v1-reference (clean 7346699, preserved)
 V2 reference clone: /home/msys/git/mechsys-v2-restart (clean 2b8d8c3, preserved)
-Current clone:      /home/msys/git/mechsys-v3-coupled-design
+V3-D reference:    /home/msys/git/mechsys-v3-coupled-design (clean d801c80, preserved)
+Delivery target:   /home/msys/git/mechsys-v3-i0-exchange-audit (final DELIVERY.json verification)
 Previous topic:     fix/vv-reference-reset at 517da81 (preserved)
 V1 topic:           validation/vv-reference-history at 7346699 (preserved)
 V2 topic:           validation/v2-restart-coupled at 2b8d8c3 (preserved)
-Active topic:       design/v3-coupled-vv, base 2b8d8c3; audit 3f6903b, contract 8829476
+V3-D topic:         design/v3-coupled-vv at d801c80 (preserved)
+Active topic:       validation/v3-i0-exchange-audit, base d801c80; prereg 9f6a5e9, observer 28e292f, probes 30a65e1
 Protection:         `origin` = user's fork; `upstream` fetch-only / push-disabled
 ```
 
@@ -625,7 +711,18 @@ Protection:         `origin` = user's fork; `upstream` fetch-only / push-disable
 | 2026-10-15 | P0-R complete: HISTORICAL_REBUILD_SHARE_UNRECONCILED (record self-contradicts); poly 23.6 s rebuild = Nproc=1 (21.24 s measured); neeint 6.4x interaction-list gap discovered; V0-A/B UNPROVEN; first experiments recommended and gated | §5.4, benchmarks/p0_reconciliation/ | MEASURED |
 | 2026-10-15 | Concurrent agent session edited this clone during P0-R (branch deleted, domain.h temporarily broken) and an external MoFEM job contaminated timing reps; mitigations applied; session separation recommended | §5.4 environment incident | COORDINATION HAZARD — user action recommended |
 
-### Current bounded task (after V3-D design; supersedes older recommendations)
+### Current bounded task (after V3-I0 audit; supersedes older recommendations)
+
+1. Read §5.10 and `benchmarks/v3_i0/V3_I0_DECISION.md`; keep PARITY BLOCKED,
+   A/H PARTIAL and shared support BLOCKED. Original coupled VV guard stays.
+2. Await separate authorization for V3-I0-P1 cutoff/candidate coverage parity.
+   Do not bundle collision, reaction, occupancy arithmetic or Scheme A changes.
+3. Review the newly measured legacy proxy edge-group control-flow defect
+   separately; exact-volume occupancy is not an authorized replacement.
+4. Preserve raw strict failures, V2/V3-D findings and all prior clones. Coupled
+   restart NOT_VALIDATED; P2-B NOT_RUN. No automatic next milestone.
+
+The superseded post-V3-D proposal is retained as context:
 
 1. Read §5.9 and `benchmarks/v3_coupled_design/DESIGN_DECISION.md`. V3-D is a
    design deliverable, not coupled numerical acceptance. C2 remains BLOCKED,

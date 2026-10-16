@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "payload_files": 1265,
+  "payload_bytes": 1094818328,
+  "archive_sha256": "9a33398a9f88d1f0aa48acd6f2539784daf3b6d7b6940fc3913cb35345d19e2e",
+  "index_sha256": "3b12ef31cc8fa19e78a6051621c4dda6124020fb795f84816996601e6f2e86f0",
+  "method": "stream every tar member, exact size and SHA256; no extraction"
+}

@@ -1,0 +1,178 @@
+[
+  {
+    "backend": "cpu",
+    "case": "boundary",
+    "step": 0,
+    "cell": 545,
+    "particle": 0,
+    "mathematical_edge_proxy": "0.4214182991028730307819108254038314268667426723567009337828924284584942",
+    "observed_gamma": "0.3450602245098377540699630117160268127918243408203125",
+    "independent_legacy_controlflow": "0.345060224509837744694713074478198961998230944952877037504410321446614",
+    "status": "FAIL_MATHEMATICAL_PROXY; ATTRIBUTED continue skips remaining edges"
+  },
+  {
+    "backend": "cpu",
+    "case": "boundary",
+    "step": 0,
+    "cell": 566,
+    "particle": 0,
+    "mathematical_edge_proxy": "0.4104251039949210430595225055036696147714049524827230906944633777153588",
+    "observed_gamma": "0.341726891176504510294620331478654406964778900146484375",
+    "independent_legacy_controlflow": "0.3417268911765044824156533171548842157773243694320437041710769881132807",
+    "status": "FAIL_MATHEMATICAL_PROXY; ATTRIBUTED continue skips remaining edges"
+  },
+  {
+    "backend": "cpu",
+    "case": "boundary",
+    "step": 1,
+    "cell": 545,
+    "particle": 0,
+    "mathematical_edge_proxy": "0.4208035522055880149891886438727652285014250676958189005797710220477822",
+    "observed_gamma": "0.344982681768187748883036647384869866073131561279296875",
+    "independent_legacy_controlflow": "0.3449826817681877459418234005993252575610093707841924345958686382402208",
+    "status": "FAIL_MATHEMATICAL_PROXY; ATTRIBUTED continue skips remaining edges"
+  },
+  {
+    "backend": "cpu",
+    "case": "boundary",
+    "step": 1,
+    "cell": 566,
+    "particle": 0,
+    "mathematical_edge_proxy": "0.411114185506960422603445951477314212981793109663916538029347373886015",
+    "observed_gamma": "0.341809584555717360654369940675678662955760955810546875",
+    "independent_legacy_controlflow": "0.3418095845557173754464930512179584437091366352438948527837075858985048",
+    "status": "FAIL_MATHEMATICAL_PROXY; ATTRIBUTED continue skips remaining edges"
+  },
+  {
+    "backend": "cuda",
+    "case": "boundary",
+    "step": 0,
+    "cell": 554,
+    "particle": 0,
+    "mathematical_edge_proxy": "0.305432298372141144348791003702529859474046909615295585113928428047521",
+    "observed_gamma": "0.2290742237791059121576608959003351628780364990234375",
+    "independent_legacy_controlflow": "0.2290742237791058582615932527768973946055351822114716888354463210356408",
+    "status": "FAIL_MATHEMATICAL_PROXY; ATTRIBUTED continue skips remaining edges"
+  },
+  {
+    "backend": "cuda",
+    "case": "boundary",
+    "step": 0,
+    "cell": 545,
+    "particle": 0,
+    "mathematical_edge_proxy": "0.4214182991028730307819108254038314268667426723567009337828924284584942",
+    "observed_gamma": "0.3450602245098377540699630117160268127918243408203125",
+    "independent_legacy_controlflow": "0.345060224509837744694713074478198961998230944952877037504410321446614",
+    "status": "FAIL_MATHEMATICAL_PROXY; ATTRIBUTED continue skips remaining edges"
+  },
+  {
+    "backend": "cuda",
+    "case": "boundary",
+    "step": 0,
+    "cell": 566,
+    "particle": 0,
+    "mathematical_edge_proxy": "0.4104251039949210430595225055036696147714049524827230906944633777153588",
+    "observed_gamma": "0.341726891176504510294620331478654406964778900146484375",
+    "independent_legacy_controlflow": "0.3417268911765044824156533171548842157773243694320437041710769881132807",
+    "status": "FAIL_MATHEMATICAL_PROXY; ATTRIBUTED continue skips remaining edges"
+  },
+  {
+    "backend": "cuda",
+    "case": "boundary",
+    "step": 0,
+    "cell": 557,
+    "particle": 0,
+    "mathematical_edge_proxy": "0.2747928512736662425754767533951415959763223322027175460935455584083127",
+    "observed_gamma": "0.2060946384552496957187628368046716786921024322509765625",
+    "independent_legacy_controlflow": "0.2060946384552496819316075650463561969822417491520381595701591688062345",
+    "status": "FAIL_MATHEMATICAL_PROXY; ATTRIBUTED continue skips remaining edges"
+  },
+  {
+    "backend": "cuda",
+    "case": "boundary",
+    "step": 1,
+    "cell": 554,
+    "particle": 0,
+    "mathematical_edge_proxy": "0.3025596636703110002068389338585823501291831317224895090447914718452793",
+    "observed_gamma": "0.2271018667808417934583786745861289091408252716064453125",
+    "independent_legacy_controlflow": "0.2271018667808417560328385132756183231237953848481427111039633915629161",
+    "status": "FAIL_MATHEMATICAL_PROXY; ATTRIBUTED continue skips remaining edges"
+  },
+  {
+    "backend": "cuda",
+    "case": "boundary",
+    "step": 1,
+    "cell": 545,
+    "particle": 0,
+    "mathematical_edge_proxy": "0.4208045422556359412291815510280542681005293976086656517722012917044702",
+    "observed_gamma": "0.344982806724544122101150378512102179229259490966796875",
+    "independent_legacy_controlflow": "0.3449828067245440973675850628804628179489872935654975073683469334081261",
+    "status": "FAIL_MATHEMATICAL_PROXY; ATTRIBUTED continue skips remaining edges"
+  },
+  {
+    "backend": "cuda",
+    "case": "boundary",
+    "step": 1,
+    "cell": 566,
+    "particle": 0,
+    "mathematical_edge_proxy": "0.4111130881461758938036750807943988776260048363515455753761026878991558",
+    "observed_gamma": "0.341809452812674330335340755482320673763751983642578125",
+    "independent_legacy_controlflow": "0.3418094528126742870896317486829554096924575810328099346719436685082899",
+    "status": "FAIL_MATHEMATICAL_PROXY; ATTRIBUTED continue skips remaining edges"
+  },
+  {
+    "backend": "cuda",
+    "case": "boundary",
+    "step": 1,
+    "cell": 557,
+    "particle": 0,
+    "mathematical_edge_proxy": "0.2780074192435833174287510734332788542389571595703700592319441177916768",
+    "observed_gamma": "0.2083077037637234008027320442124619148671627044677734375",
+    "independent_legacy_controlflow": "0.2083077037637234775379642196180387653197809446790910930535798829537541",
+    "status": "FAIL_MATHEMATICAL_PROXY; ATTRIBUTED continue skips remaining edges"
+  },
+  {
+    "backend": "cuda",
+    "case": "partial",
+    "step": 0,
+    "cell": 545,
+    "particle": 0,
+    "mathematical_edge_proxy": "0.3300930284182957580761786560085031989871943674841696604377706284978438",
+    "observed_gamma": "0.293768870555457140003596805399865843355655670166015625",
+    "independent_legacy_controlflow": "0.2937688705554570766982722920273859803296086304722871997073025030734684",
+    "status": "FAIL_MATHEMATICAL_PROXY; ATTRIBUTED continue skips remaining edges"
+  },
+  {
+    "backend": "cuda",
+    "case": "partial",
+    "step": 0,
+    "cell": 567,
+    "particle": 0,
+    "mathematical_edge_proxy": "0.08830603488964169034616222830727426147474722690944603537778817605137017",
+    "observed_gamma": "0.01351489167686581449601135318516753613948822021484375",
+    "independent_legacy_controlflow": "0.01351489167686579805009346507529783184813392286497883948706897766128342",
+    "status": "FAIL_MATHEMATICAL_PROXY; ATTRIBUTED continue skips remaining edges"
+  },
+  {
+    "backend": "cuda",
+    "case": "partial",
+    "step": 1,
+    "cell": 545,
+    "particle": 0,
+    "mathematical_edge_proxy": "0.3291356740699770265917449263237788685389217997379654838957871740846848",
+    "observed_gamma": "0.293735783698117758344636740730493329465389251708984375",
+    "independent_legacy_controlflow": "0.2937357836981177973436578779033140313799739992918320406302363798906219",
+    "status": "FAIL_MATHEMATICAL_PROXY; ATTRIBUTED continue skips remaining edges"
+  },
+  {
+    "backend": "cuda",
+    "case": "partial",
+    "step": 1,
+    "cell": 567,
+    "particle": 0,
+    "mathematical_edge_proxy": "0.08908564199066470471698889234872028499394811095526386253117702172629525",
+    "observed_gamma": "0.01403812805357777283854492367254351847805082798004150390625",
+    "independent_legacy_controlflow": "0.01403812805357774891267193808991192986296247310652714308823055849888313",
+    "status": "FAIL_MATHEMATICAL_PROXY; ATTRIBUTED continue skips remaining edges"
+  }
+]

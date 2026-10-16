@@ -1,0 +1,225 @@
+{
+  "bounded_runs": 66,
+  "comparisons": [
+    {
+      "backend": "cpu",
+      "case": "zero",
+      "bitwise_serialized_states": {
+        "default-off": true,
+        "enabled": true
+      },
+      "state_count": 3,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "fixed",
+      "bitwise_serialized_states": {
+        "default-off": true,
+        "enabled": true
+      },
+      "state_count": 3,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "moving",
+      "bitwise_serialized_states": {
+        "default-off": true,
+        "enabled": true
+      },
+      "state_count": 3,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "rotating",
+      "bitwise_serialized_states": {
+        "default-off": true,
+        "enabled": true
+      },
+      "state_count": 3,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "partial",
+      "bitwise_serialized_states": {
+        "default-off": true,
+        "enabled": true
+      },
+      "state_count": 3,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "boundary",
+      "bitwise_serialized_states": {
+        "default-off": true,
+        "enabled": true
+      },
+      "state_count": 3,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "periodic",
+      "bitwise_serialized_states": {
+        "default-off": true,
+        "enabled": true
+      },
+      "state_count": 3,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "rebuild",
+      "bitwise_serialized_states": {
+        "default-off": true,
+        "enabled": true
+      },
+      "state_count": 3,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "fconv",
+      "bitwise_serialized_states": {
+        "default-off": true,
+        "enabled": true
+      },
+      "state_count": 3,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "shared",
+      "bitwise_serialized_states": {
+        "default-off": true,
+        "enabled": true
+      },
+      "state_count": 2,
+      "qualification": "shared enabled races are not a bitwise observational guarantee"
+    },
+    {
+      "backend": "cpu",
+      "case": "contact",
+      "bitwise_serialized_states": {
+        "default-off": true,
+        "enabled": true
+      },
+      "state_count": 4,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "zero",
+      "bitwise_serialized_states": {
+        "default-off": true,
+        "enabled": true
+      },
+      "state_count": 3,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "fixed",
+      "bitwise_serialized_states": {
+        "default-off": true,
+        "enabled": true
+      },
+      "state_count": 3,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "moving",
+      "bitwise_serialized_states": {
+        "default-off": true,
+        "enabled": true
+      },
+      "state_count": 3,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "rotating",
+      "bitwise_serialized_states": {
+        "default-off": true,
+        "enabled": true
+      },
+      "state_count": 3,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "partial",
+      "bitwise_serialized_states": {
+        "default-off": true,
+        "enabled": true
+      },
+      "state_count": 3,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "boundary",
+      "bitwise_serialized_states": {
+        "default-off": true,
+        "enabled": true
+      },
+      "state_count": 3,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "periodic",
+      "bitwise_serialized_states": {
+        "default-off": true,
+        "enabled": true
+      },
+      "state_count": 3,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "rebuild",
+      "bitwise_serialized_states": {
+        "default-off": true,
+        "enabled": true
+      },
+      "state_count": 3,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "fconv",
+      "bitwise_serialized_states": {
+        "default-off": true,
+        "enabled": true
+      },
+      "state_count": 3,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "shared",
+      "bitwise_serialized_states": {
+        "default-off": false,
+        "enabled": false
+      },
+      "state_count": 2,
+      "qualification": "shared enabled races are not a bitwise observational guarantee"
+    },
+    {
+      "backend": "cuda",
+      "case": "contact",
+      "bitwise_serialized_states": {
+        "default-off": true,
+        "enabled": true
+      },
+      "state_count": 4,
+      "qualification": ""
+    }
+  ]
+}
