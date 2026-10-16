@@ -1,5 +1,11 @@
 # P1-S candidate-completeness oracle - results (2026-10-15)
 
+**2026-10-16 correction:** [the evidence review](../p1_review/README.md) gives the
+raw check counts and demonstrates why these original host-map checks do not
+establish uploaded-feature completeness, duplicate-free force evaluation, z
+periodicity or VV post-drift coverage. The stronger implementation has passed
+the five registered cases; its adversarial VV test exposes a baseline defect.
+
 Implementation: MECHSYS_CANDIDATE_ORACLE=1 (default-off) in lib/dem/domain.h.
 At every step, immediately before the contact-force kernels (after any rebuild decision),
 the oracle copies current device positions (DynParticleCU.x) and device plane verts

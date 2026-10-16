@@ -1,13 +1,13 @@
 # MechSys GPU DEM optimization — PROJECT_STATUS.md
 
-**As-of:** 2026-10-15 (P0-R complete)
-**State:** `F0 PASS` / `P0 PASS` / `P0-L COMPLETE (LEGACY_EQUIVALENT x3; P geometry exact)` / `P0-R COMPLETE (gates R1 PARTIAL, R2-R9 per §5.4)` / `V0 PARTIAL (A/B UNPROVEN, variants absent)`
-**Next authorized work:** the two recommended first experiments (spheres: device-resident per-step control; polyhedra: remove per-step host/device round-trips) are specified in benchmarks/p0_reconciliation/optimization_decision.md but **must not start** until the sphere experiment passes the V0.1 candidate-completeness oracle; polyhedral P1 (neeint 6.4× interaction-list gap + kernel counters) is the parallel diagnostic priority. Do not begin a broad rewrite.
+**As-of:** 2026-10-16 (P1 evidence review and sphere-oracle hardening)
+**State:** `F0 PASS` / `P0/P0-L/P0-R historical evidence retained, P0-R1 PARTIAL` / `P1-S DEFAULT-OFF EXPERIMENT, ACCEPTANCE QUALIFIED` / `V0 sphere/plane registered oracle cases PASS; adversarial VV baseline list validity FAIL` / `P1-P analysis complete, feature-count discrepancy UNRESOLVED`
+**Next authorized work:** repair or enforce the pre-force displacement/list-validity contract for fast Velocity-Verlet motion in a separate bounded patch; pass the new negative control before delayed-control work. The persistent-reduction variant remains default-off. Polyhedral historical feature counts remain unresolved; the proposal to remove large per-step state transfers is superseded by the P1 transfer audit. See §5.5 and `benchmarks/p1_review/README.md` for the corrected handoff. Do not begin a broad rewrite.
 **Agent:** GLM-5.3 Flash (or successor); operational rules in `AGENTS.md`.
 **Original project:** https://github.com/Axtal/mechsys
 **Fork URL / owner:** https://github.com/marcoprevitali/mechsys / `marcoprevitali` (authenticated account and public fork metadata verified 2026-10-15)
 **Old local checkout:** `/home/msys/mechsys` at `e4ba163ec9f32c8bccb0fd8619ba79e000d3d6d8`; preserved dirty and not mutated during `F0`
-**New isolated clone:** `/home/msys/git/mechsys-gpu-opt`, branch `perf/gpu-baseline` at the matching old SHA
+**Current review clone:** `/home/msys/git/mechsys-p1-review`, branch `perf/p1-evidence-review`, based on sphere commit `9176b728a2c0397086d68e4cf8d46c10c2ee823b`. The other workstream clones and original checkout are preserved.
 **Precision of historical benchmarks:** GPU double precision (`-DUSE_GPU_DOUBLE`) on NVIDIA RTX A6000 (84 SMs); do not assume the current host/GPU is unchanged.
 
 > **Evidence levels:** `HISTORICAL_REPORTED` means results transcribed from the user-supplied DeepSeek work summary dated 2026-10-14; they have **not** yet been independently reproduced or verified against source. `SOURCE_VERIFIED` requires auditing the actual local code. `MEASURED` requires raw timing/logs + code SHA. `PASS` requires documented numerical acceptance checks. Keep these labels distinct.
@@ -313,6 +313,36 @@ Gate results:
 - **P0-R8 PASS**: recommended first experiments — spheres: device-resident per-step control (S_max ≈ 2.2–2.4; gated by the V0-A oracle); polyhedra: remove per-step host/device state round-trips (S ≈ 1.9–3.4). NOT implemented.
 - **P0-R9 PASS** on commit/push of this section.
 
+### 5.5 P1 review — 2026-10-16 / Codex (GPT-6)
+
+Canonical current report: `benchmarks/p1_review/README.md`; machine-readable
+reanalysis, build provenance, probe logs and scenario results are in
+`benchmarks/p1_review/results/`. It supersedes conflicting summaries above;
+earlier measurements, failed attempts and interpretations are retained.
+Oracle hardening and its tests are commit `05a1be9`; the following documentation
+commit records the reviewed handoff. No mechanical model or rebuild-order fix
+is included, and the optimization remains default-off.
+
+| Item | Current evidence and verdict |
+|---|---|
+| P1 branch provenance | User fork remote SHAs verified live: sphere `9176b72`, poly `eef594a`; both source clones clean |
+| Sphere performance arithmetic | Raw S-small means 23.668/22.434 s, ratio 1.055006; Solve timers 13.091485/12.714169 s, ratio 1.029677; 0.856683 s of process saving lies outside Solve timers; no new performance measurement |
+| Sphere numerical claim | All five small and five large benchmark pairs differ at printed energy precision; even baseline repetitions vary. Short printed-energy agreement is not bitwise FP64 force/history validation; numerical promotion remains incomplete |
+| Original oracle | Raw logs: 56,405 checks, 5,421,117 references, zero reported errors. Negative controls expose missing/duplicate GPU-record and z-periodic false acceptance; original VV hook runs before drift |
+| Hardened default-off oracle | Checks actual uploaded VV/VF/FV feature identities/counts and current device geometry at force time; finite planes, x/y/z periodicity, incorrect BothFree flags, fatal failure exit. Sphere/plane built-in laws only; unsupported paths rejected |
+| New positive tests | Five baseline scenarios PASS: 56,405 checks, 5,421,117 references, zero misses/duplicates/periodicity errors; persistent variant A-dense PASS: 11,001 checks / 830,774 references |
+| Negative controls / maximum reduction | Missing feature, duplicate feature and incorrect periodicity rejected; host-map independence, z contact and finite plane checks correct; failure exits 1; direct FP64 maximum checks 54/54 bitwise equal |
+| New baseline numerical blocker | VV R=0.1, separation=0.24, v=+300/-300, dt=1e-4, Alpha=0.001: drift creates overlap 0.02 before force evaluation with no candidate record. New hook detects missing=1; end-of-step-only rebuild is too late. No mechanical fix included here |
+| Polyhedral correction | ListPosPairs does not calibrate Alpha. Feature-count gap unresolved. No safely deferrable per-step state copy was found; retain output/rebuild implementation as a prospective target after appropriate gates |
+| Coverage still outstanding | FP64 force/history values, recontact/restart, full image-history semantics, polyhedral rotation/geometry oracles, coupled LBM-DEM runtime; V0-A/B and P0-R1 are not promoted |
+
+Re-entry: use this review clone and branch, read the current report, inspect Git
+state, and address the pre-force VV list-validity defect first. Build artifacts
+and full rerun logs are temporarily in `/tmp/mechsys-p1-review.2rptlG/evidence/`;
+compact results are committed. Raw P1 evidence remains under
+`/home/msys/SIMS/mechsys_p0_baseline/20261015-p1/`. Original F0 backup and hashes
+in §6 remain valid; original/parallel checkouts were read only in this session.
+
 ## 6. Git/repository topology and record
 
 
@@ -329,7 +359,9 @@ Upstream branch:    main (remote HEAD verified by `git ls-remote --symref`)
 Original SHA:       e4ba163ec9f32c8bccb0fd8619ba79e000d3d6d8
 Imported patch SHA: NOT IMPORTED; preserved artifact SHA256 e98dcc578695992948f3d804f572f6b212888ac2381832ae261be9c4e99132e9
 Baseline branch:    perf/gpu-baseline at c88dc99f415dbf7b7bc3b1764fdf5506f0d66c9e
-Active topic:       perf/p0-instrumentation (P0 measurements + P0-L registration; see `git log` for exact SHAs; branch pushed to origin)
+P0/P1 source clones: mechsys-gpu-opt, mechsys-p1-sphere, mechsys-p1-poly (preserved)
+Review clone:       /home/msys/git/mechsys-p1-review
+Active topic:       perf/p1-evidence-review, base 9176b72; exact review SHA via git rev-parse HEAD
 Protection:         `origin` = user's fork; `upstream` fetch-only / push-disabled
 ```
 
@@ -375,7 +407,21 @@ Protection:         `origin` = user's fork; `upstream` fetch-only / push-disable
 | 2026-10-15 | P0-R complete: HISTORICAL_REBUILD_SHARE_UNRECONCILED (record self-contradicts); poly 23.6 s rebuild = Nproc=1 (21.24 s measured); neeint 6.4x interaction-list gap discovered; V0-A/B UNPROVEN; first experiments recommended and gated | §5.4, benchmarks/p0_reconciliation/ | MEASURED |
 | 2026-10-15 | Concurrent agent session edited this clone during P0-R (branch deleted, domain.h temporarily broken) and an external MoFEM job contaminated timing reps; mitigations applied; session separation recommended | §5.4 environment incident | COORDINATION HAZARD — user action recommended |
 
-### Current bounded task (`P0-R` complete → next)
+### Current bounded task (2026-10-16 review supersedes the old P0-R recommendations)
+
+1. Repair or enforce pre-force VV list validity in a separate reversible patch;
+   require the `vv_force_time_drift` counterexample to pass with complete candidates,
+   preserve history/force semantics, and rerun the registered cases.
+2. Establish appropriate FP64 force/history equivalence for persistent reduction
+   before promotion. Keep its flag default-off; the large workload remains inconclusive.
+3. Preserve the unresolved polyhedral construction/counting discrepancy; do not
+   infer Alpha from ListPosPairs or full state from printed kinetic energy.
+4. Complete the missing numerical/coupled/restart coverage and remaining clean
+   P-large timing evidence as applicable before dependent optimization selection.
+
+Historical P0-R recommendations below are retained for provenance. The sphere
+oracle now exists but revealed the VV blocker; the proposed large per-step
+polyhedral transfers were not found by the subsequent audit:
 
 1. **Sphere first experiment (blocked on V0.1)**: implement device-resident per-step control (on-device rebuild decision, pipeDepth=1, persistent reduction buffer, no per-step thrust readback) behind a default-off flag; pass the V0.1 candidate-completeness oracle (zero missed pairs at every force-evaluation step, adversarial fast-particle/moving-wall/rotation cases) BEFORE benchmarking; then S-legacy-small/-large, 5 interleaved reps, ≥3% paired improvement.
 2. **Polyhedral P1 diagnostics (parallel, unblocked)**: resolve the neeint 6.4× interaction-list gap (kernel-side per-record feature counters; compare against the historical 743k CInteracton creations); extract per-step memcpyAsync contents/sizes from the saved nsys trace to size the buffer-resident stepping experiment.

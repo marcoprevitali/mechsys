@@ -1,0 +1,719 @@
+{
+  "artifact_root": "/home/msys/SIMS/mechsys_p0_baseline/20261015-p1",
+  "timings": {
+    "small": {
+      "baseline": [
+        {
+          "path": "/home/msys/SIMS/mechsys_p0_baseline/20261015-p1/bench/sbase_rep1.time",
+          "sha256": "078ca4eeae26f8ddf848996e6751d772be4ad15b82ae863842c207dd1ee5a21a",
+          "log_sha256": "25e359db92c37ac427ff5eecd601d777a1789c45bedd013a0b401a029b6b8e8c",
+          "wall_s": 23.97,
+          "cpu_percent": 157.0,
+          "exit_status": 0,
+          "solve_s": [
+            6.460612,
+            6.788388
+          ],
+          "kinetic_energy_printed": [
+            "0",
+            "2.3371",
+            "3.72356"
+          ],
+          "potential_energy_printed": [
+            "0",
+            "0.440445",
+            "0.4248"
+          ],
+          "iterations": [
+            10001,
+            20001
+          ],
+          "average_rebuild_interval_printed": [
+            830,
+            372
+          ]
+        },
+        {
+          "path": "/home/msys/SIMS/mechsys_p0_baseline/20261015-p1/bench/sbase_rep2.time",
+          "sha256": "266ebb384c99c2329ee6472efeba163c0fdbc948bd6aca85c2ef8b01af5d1f0e",
+          "log_sha256": "31794babdabbbea82879ce8b6e6b7e8f3c24f06335a7d3cc34aac3e4c9daaeee",
+          "wall_s": 23.56,
+          "cpu_percent": 155.0,
+          "exit_status": 0,
+          "solve_s": [
+            6.317582,
+            6.635582
+          ],
+          "kinetic_energy_printed": [
+            "0",
+            "2.3371",
+            "3.71879"
+          ],
+          "potential_energy_printed": [
+            "0",
+            "0.440445",
+            "0.426227"
+          ],
+          "iterations": [
+            10001,
+            20001
+          ],
+          "average_rebuild_interval_printed": [
+            830,
+            372
+          ]
+        },
+        {
+          "path": "/home/msys/SIMS/mechsys_p0_baseline/20261015-p1/bench/sbase_rep3.time",
+          "sha256": "9103d43b6cac5bb911a5c8afe88a77f0c3a73af5eff4aaa2a50ad671a542f067",
+          "log_sha256": "1d29dbb4b88fcb05038cc3fc60a1e88c5c520960861008dcd6e60271fa523e6e",
+          "wall_s": 23.53,
+          "cpu_percent": 156.0,
+          "exit_status": 0,
+          "solve_s": [
+            6.339164,
+            6.667467
+          ],
+          "kinetic_energy_printed": [
+            "0",
+            "2.3371",
+            "3.72383"
+          ],
+          "potential_energy_printed": [
+            "0",
+            "0.440445",
+            "0.424853"
+          ],
+          "iterations": [
+            10001,
+            20001
+          ],
+          "average_rebuild_interval_printed": [
+            830,
+            376
+          ]
+        },
+        {
+          "path": "/home/msys/SIMS/mechsys_p0_baseline/20261015-p1/bench/sbase_rep4.time",
+          "sha256": "244db4c49006883dd83c937494666a9aae6252ae9b6558cfb1d0eac289eec979",
+          "log_sha256": "2adad6b7d4b78c7310249f9815cb36ad88f4565f239e1b88c4ac04d582265044",
+          "wall_s": 23.65,
+          "cpu_percent": 157.0,
+          "exit_status": 0,
+          "solve_s": [
+            6.397484,
+            6.680256
+          ],
+          "kinetic_energy_printed": [
+            "0",
+            "2.3371",
+            "3.72179"
+          ],
+          "potential_energy_printed": [
+            "0",
+            "0.440445",
+            "0.427007"
+          ],
+          "iterations": [
+            10001,
+            20001
+          ],
+          "average_rebuild_interval_printed": [
+            830,
+            376
+          ]
+        },
+        {
+          "path": "/home/msys/SIMS/mechsys_p0_baseline/20261015-p1/bench/sbase_rep5.time",
+          "sha256": "ade538dfb2c0c60ec03956bd954d00b6995154ba059a20556475742aaf5b9588",
+          "log_sha256": "4d7e8df080efc541c967effd4bb088b1341eef556127585ad08a383cc90aeaaf",
+          "wall_s": 23.63,
+          "cpu_percent": 158.0,
+          "exit_status": 0,
+          "solve_s": [
+            6.452254,
+            6.718638
+          ],
+          "kinetic_energy_printed": [
+            "0",
+            "2.3371",
+            "3.72319"
+          ],
+          "potential_energy_printed": [
+            "0",
+            "0.440445",
+            "0.424495"
+          ],
+          "iterations": [
+            10001,
+            20001
+          ],
+          "average_rebuild_interval_printed": [
+            830,
+            376
+          ]
+        }
+      ],
+      "persistent": [
+        {
+          "path": "/home/msys/SIMS/mechsys_p0_baseline/20261015-p1/bench/spers_rep1.time",
+          "sha256": "ec146b7638ae2f91ba8ef10edfb394cda753d2e13c4d53c227803d5378438d37",
+          "log_sha256": "e15e388aa641071f0ba053f2e499e4a694b090f30dd88a6b9c85da14f12635c5",
+          "wall_s": 22.69,
+          "cpu_percent": 164.0,
+          "exit_status": 0,
+          "solve_s": [
+            6.232893,
+            6.645997
+          ],
+          "kinetic_energy_printed": [
+            "0",
+            "2.3371",
+            "3.72124"
+          ],
+          "potential_energy_printed": [
+            "0",
+            "0.440445",
+            "0.427233"
+          ],
+          "iterations": [
+            10001,
+            20001
+          ],
+          "average_rebuild_interval_printed": [
+            830,
+            376
+          ]
+        },
+        {
+          "path": "/home/msys/SIMS/mechsys_p0_baseline/20261015-p1/bench/spers_rep2.time",
+          "sha256": "47f9bdf4a80c84f6ab5e793f871bce955274fdb783657c9c8c0a809112281448",
+          "log_sha256": "bf417c63540913e0f1938993e104ae61fe38f012947d89fcc1cad3fe5ee3924f",
+          "wall_s": 22.32,
+          "cpu_percent": 164.0,
+          "exit_status": 0,
+          "solve_s": [
+            6.163087,
+            6.512513
+          ],
+          "kinetic_energy_printed": [
+            "0",
+            "2.3371",
+            "3.7247"
+          ],
+          "potential_energy_printed": [
+            "0",
+            "0.440445",
+            "0.426687"
+          ],
+          "iterations": [
+            10001,
+            20001
+          ],
+          "average_rebuild_interval_printed": [
+            830,
+            376
+          ]
+        },
+        {
+          "path": "/home/msys/SIMS/mechsys_p0_baseline/20261015-p1/bench/spers_rep3.time",
+          "sha256": "12c3a4219531c796b049875d7ab5b960221052c69437db83d27932eb1895a5c9",
+          "log_sha256": "820920c576eacffe08740a7ee7bebcdd12af16265757b34d6670e1f902521ac6",
+          "wall_s": 22.55,
+          "cpu_percent": 163.0,
+          "exit_status": 0,
+          "solve_s": [
+            6.173236,
+            6.559857
+          ],
+          "kinetic_energy_printed": [
+            "0",
+            "2.3371",
+            "3.72629"
+          ],
+          "potential_energy_printed": [
+            "0",
+            "0.440445",
+            "0.425921"
+          ],
+          "iterations": [
+            10001,
+            20001
+          ],
+          "average_rebuild_interval_printed": [
+            830,
+            372
+          ]
+        },
+        {
+          "path": "/home/msys/SIMS/mechsys_p0_baseline/20261015-p1/bench/spers_rep4.time",
+          "sha256": "f13041b864c4b18f4846d89e1395e0f7fa7b2f7729a40fe32d0c7bce7d7f9244",
+          "log_sha256": "bcc051fd273f8963c96a251835913a4d7e09dab5e10ceacae059f50a3af8d75d",
+          "wall_s": 22.2,
+          "cpu_percent": 164.0,
+          "exit_status": 0,
+          "solve_s": [
+            6.115475,
+            6.50532
+          ],
+          "kinetic_energy_printed": [
+            "0",
+            "2.3371",
+            "3.72504"
+          ],
+          "potential_energy_printed": [
+            "0",
+            "0.440445",
+            "0.428178"
+          ],
+          "iterations": [
+            10001,
+            20001
+          ],
+          "average_rebuild_interval_printed": [
+            830,
+            376
+          ]
+        },
+        {
+          "path": "/home/msys/SIMS/mechsys_p0_baseline/20261015-p1/bench/spers_rep5.time",
+          "sha256": "153c199eac2a6de3da9d7f2bad61ff4ae49d8770865c16fec4f72126083ddc53",
+          "log_sha256": "dfc6c4f83859313795a97647f6b644ba260e589fbb6427cc11005037a4ee1fa1",
+          "wall_s": 22.41,
+          "cpu_percent": 164.0,
+          "exit_status": 0,
+          "solve_s": [
+            6.128563,
+            6.533902
+          ],
+          "kinetic_energy_printed": [
+            "0",
+            "2.3371",
+            "3.72183"
+          ],
+          "potential_energy_printed": [
+            "0",
+            "0.440445",
+            "0.426226"
+          ],
+          "iterations": [
+            10001,
+            20001
+          ],
+          "average_rebuild_interval_printed": [
+            830,
+            373
+          ]
+        }
+      ],
+      "baseline_mean_s": 23.668,
+      "persistent_mean_s": 22.434,
+      "ratio_of_means": 1.0550057947757867,
+      "runtime_reduction_percent": 5.213790772350846,
+      "paired_delta_s": [
+        1.2799999999999976,
+        1.2399999999999984,
+        0.9800000000000004,
+        1.4499999999999993,
+        1.2199999999999989
+      ],
+      "paired_delta_mean_s": 1.2339999999999989,
+      "paired_delta_sd_s": 0.16846364592991514,
+      "all_paired_faster": true,
+      "printed_energies_equal_by_pair": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "solve_mean_baseline_s": 13.0914854,
+      "solve_mean_persistent_s": 12.7141686,
+      "caution": "Printed energy equality is not a bitwise FP64 state comparison; CPU percent alone cannot prove contention."
+    },
+    "large": {
+      "baseline": [
+        {
+          "path": "/home/msys/SIMS/mechsys_p0_baseline/20261015-p1/bench/lbase_rep1.time",
+          "sha256": "cbc38320d17461e60ccdf0cf806ed33544c1f700ffa0283e2bc41480dbb99a74",
+          "log_sha256": "65f790fd3ede144bfa907cb171deb8ae7cf16c1f79234db2651911b796482803",
+          "wall_s": 234.89,
+          "cpu_percent": 162.0,
+          "exit_status": 0,
+          "solve_s": [
+            0.006746,
+            45.241105
+          ],
+          "kinetic_energy_printed": [
+            "0",
+            "7.15904",
+            "59.3979"
+          ],
+          "potential_energy_printed": [
+            "0",
+            "13.6202",
+            "2.65088"
+          ],
+          "iterations": [
+            10001,
+            20001
+          ],
+          "average_rebuild_interval_printed": [
+            968,
+            159
+          ]
+        },
+        {
+          "path": "/home/msys/SIMS/mechsys_p0_baseline/20261015-p1/bench/lbase_rep2.time",
+          "sha256": "c3c9a13a2add33decdcdedc043e4545e1acf004fceda448b180ff46ad1e72bb1",
+          "log_sha256": "6c5812897d1667a78de4c4c46dd5961357ad0557ffa4fa5fcef8d48bd691f633",
+          "wall_s": 231.09,
+          "cpu_percent": 162.0,
+          "exit_status": 0,
+          "solve_s": [
+            0.00653,
+            45.591859
+          ],
+          "kinetic_energy_printed": [
+            "0",
+            "7.15904",
+            "59.4099"
+          ],
+          "potential_energy_printed": [
+            "0",
+            "13.6202",
+            "2.64924"
+          ],
+          "iterations": [
+            10001,
+            20001
+          ],
+          "average_rebuild_interval_printed": [
+            968,
+            159
+          ]
+        },
+        {
+          "path": "/home/msys/SIMS/mechsys_p0_baseline/20261015-p1/bench/lbase_rep3.time",
+          "sha256": "1064e392b7b49f1d2b4964e6544408df20b0bf46ef828fac89fc716f1964c667",
+          "log_sha256": "e25ad03aa62fd7f4fa28337cac622c0baf3ccfaf780cbebd628f708729e679a8",
+          "wall_s": 230.72,
+          "cpu_percent": 163.0,
+          "exit_status": 0,
+          "solve_s": [
+            0.00645,
+            44.692932
+          ],
+          "kinetic_energy_printed": [
+            "0",
+            "7.15904",
+            "59.3857"
+          ],
+          "potential_energy_printed": [
+            "0",
+            "13.6202",
+            "2.65937"
+          ],
+          "iterations": [
+            10001,
+            20001
+          ],
+          "average_rebuild_interval_printed": [
+            968,
+            159
+          ]
+        },
+        {
+          "path": "/home/msys/SIMS/mechsys_p0_baseline/20261015-p1/bench/lbase_rep4.time",
+          "sha256": "48e4cb760cc301b2637e479f698449c25e48093fd2d6a6872ca727919db0a37d",
+          "log_sha256": "2e597044cd630bd08777afe5d87ad7f492fad24e1ee483fe17115bb8033bfb26",
+          "wall_s": 230.07999999999998,
+          "cpu_percent": 165.0,
+          "exit_status": 0,
+          "solve_s": [
+            0.006342,
+            44.769935
+          ],
+          "kinetic_energy_printed": [
+            "0",
+            "7.15904",
+            "59.3164"
+          ],
+          "potential_energy_printed": [
+            "0",
+            "13.6202",
+            "2.63686"
+          ],
+          "iterations": [
+            10001,
+            20001
+          ],
+          "average_rebuild_interval_printed": [
+            968,
+            159
+          ]
+        },
+        {
+          "path": "/home/msys/SIMS/mechsys_p0_baseline/20261015-p1/bench/lbase_rep5.time",
+          "sha256": "c411f6b6294bb0c60830e95162930632423d1ed8d951ad0daa9da744ab5e5f55",
+          "log_sha256": "d86b6b37f7ab4b8110fb216978ae58dcdbd1a4a36435b4bff959cd59724cc6c2",
+          "wall_s": 233.51,
+          "cpu_percent": 166.0,
+          "exit_status": 0,
+          "solve_s": [
+            0.006662,
+            44.900405
+          ],
+          "kinetic_energy_printed": [
+            "0",
+            "7.15904",
+            "59.3528"
+          ],
+          "potential_energy_printed": [
+            "0",
+            "13.6202",
+            "2.65843"
+          ],
+          "iterations": [
+            10001,
+            20001
+          ],
+          "average_rebuild_interval_printed": [
+            968,
+            159
+          ]
+        }
+      ],
+      "persistent": [
+        {
+          "path": "/home/msys/SIMS/mechsys_p0_baseline/20261015-p1/bench/lpers_rep1.time",
+          "sha256": "b1fc8020f5a40db8312487dfd805b901e11a58fa019d921056a4aee12085d96d",
+          "log_sha256": "f9fbe8a265d9dc51c27337bb79127b2475db32fe978ae2bb22ac7afb48a86b23",
+          "wall_s": 228.38,
+          "cpu_percent": 161.0,
+          "exit_status": 0,
+          "solve_s": [
+            0.00797,
+            44.599207
+          ],
+          "kinetic_energy_printed": [
+            "0",
+            "7.15904",
+            "59.3778"
+          ],
+          "potential_energy_printed": [
+            "0",
+            "13.6202",
+            "2.65456"
+          ],
+          "iterations": [
+            10001,
+            20001
+          ],
+          "average_rebuild_interval_printed": [
+            968,
+            159
+          ]
+        },
+        {
+          "path": "/home/msys/SIMS/mechsys_p0_baseline/20261015-p1/bench/lpers_rep2.time",
+          "sha256": "845746d6cb1ed6526f84220018d119fef71d678f8ab81e740afdd11f200a5010",
+          "log_sha256": "39bf088705497f4a3e1010e49956fcd0f427b51d6f3c2ddee61cdf7cf65a7b02",
+          "wall_s": 232.23,
+          "cpu_percent": 162.0,
+          "exit_status": 0,
+          "solve_s": [
+            0.006701,
+            45.829181
+          ],
+          "kinetic_energy_printed": [
+            "0",
+            "7.15904",
+            "59.2858"
+          ],
+          "potential_energy_printed": [
+            "0",
+            "13.6202",
+            "2.6552"
+          ],
+          "iterations": [
+            10001,
+            20001
+          ],
+          "average_rebuild_interval_printed": [
+            968,
+            159
+          ]
+        },
+        {
+          "path": "/home/msys/SIMS/mechsys_p0_baseline/20261015-p1/bench/lpers_rep3.time",
+          "sha256": "5bab42f04bf2d2ed572f3198a62860d4c412f72578dc4a25872f6200e3e87248",
+          "log_sha256": "78ef8267741f14d2a8bc55959b1cd6d809ff46ca029c889c53c8b399ec42d2c2",
+          "wall_s": 232.04,
+          "cpu_percent": 166.0,
+          "exit_status": 0,
+          "solve_s": [
+            0.006452,
+            46.557965
+          ],
+          "kinetic_energy_printed": [
+            "0",
+            "7.15904",
+            "59.2645"
+          ],
+          "potential_energy_printed": [
+            "0",
+            "13.6202",
+            "2.63509"
+          ],
+          "iterations": [
+            10001,
+            20001
+          ],
+          "average_rebuild_interval_printed": [
+            968,
+            159
+          ]
+        },
+        {
+          "path": "/home/msys/SIMS/mechsys_p0_baseline/20261015-p1/bench/lpers_rep4.time",
+          "sha256": "4a0856196f94f4f9c1321f1d1dddc5fec416f3e67c6172758f164cb420d4d324",
+          "log_sha256": "ef46eb28c8e030ebe7accf2d4273d429bedb02afadef79e4356f00ebf010882d",
+          "wall_s": 231.89,
+          "cpu_percent": 162.0,
+          "exit_status": 0,
+          "solve_s": [
+            0.006929,
+            46.649716
+          ],
+          "kinetic_energy_printed": [
+            "0",
+            "7.15904",
+            "59.4135"
+          ],
+          "potential_energy_printed": [
+            "0",
+            "13.6202",
+            "2.64827"
+          ],
+          "iterations": [
+            10001,
+            20001
+          ],
+          "average_rebuild_interval_printed": [
+            968,
+            159
+          ]
+        },
+        {
+          "path": "/home/msys/SIMS/mechsys_p0_baseline/20261015-p1/bench/lpers_rep5.time",
+          "sha256": "d8610235702b3c5812032a612196fd0c3033307b8b95ba13f663bf0e45ffd226",
+          "log_sha256": "e45c4eb314f228e7e631bd49977b6d28d90fa0113d29cd39b29c3dda2812a494",
+          "wall_s": 229.97,
+          "cpu_percent": 163.0,
+          "exit_status": 0,
+          "solve_s": [
+            0.006702,
+            45.828182
+          ],
+          "kinetic_energy_printed": [
+            "0",
+            "7.15904",
+            "59.2995"
+          ],
+          "potential_energy_printed": [
+            "0",
+            "13.6202",
+            "2.65157"
+          ],
+          "iterations": [
+            10001,
+            20001
+          ],
+          "average_rebuild_interval_printed": [
+            968,
+            159
+          ]
+        }
+      ],
+      "baseline_mean_s": 232.058,
+      "persistent_mean_s": 230.902,
+      "ratio_of_means": 1.0050064529540672,
+      "runtime_reduction_percent": 0.4981513242379054,
+      "paired_delta_s": [
+        6.509999999999991,
+        -1.1399999999999864,
+        -1.3199999999999932,
+        -1.8100000000000023,
+        3.539999999999992
+      ],
+      "paired_delta_mean_s": 1.1560000000000001,
+      "paired_delta_sd_s": 3.692834954340628,
+      "all_paired_faster": false,
+      "printed_energies_equal_by_pair": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "solve_mean_baseline_s": 45.0457932,
+      "solve_mean_persistent_s": 45.899801,
+      "caution": "Printed energy equality is not a bitwise FP64 state comparison; CPU percent alone cannot prove contention."
+    }
+  },
+  "oracle": {
+    "logs_A_dense": {
+      "path": "/home/msys/SIMS/mechsys_p0_baseline/20261015-p1/oracle/logs_A_dense.log",
+      "sha256": "a622d6bd46161df31b4d9671fd843a87c928b933f2fb19905112fe953bbb26c3",
+      "checks": 11001,
+      "reference_contacts": 830774,
+      "matched_contacts": 830774,
+      "missing_contacts": 0,
+      "duplicates": 0
+    },
+    "logs_B_lowdens": {
+      "path": "/home/msys/SIMS/mechsys_p0_baseline/20261015-p1/oracle/logs_B_lowdens.log",
+      "sha256": "ca856954c41e3f23be6375aa55bb730051c642d3275a7f11ead97b76caf847b4",
+      "checks": 11001,
+      "reference_contacts": 21589,
+      "matched_contacts": 21589,
+      "missing_contacts": 0,
+      "duplicates": 0
+    },
+    "logs_C_highacc": {
+      "path": "/home/msys/SIMS/mechsys_p0_baseline/20261015-p1/oracle/logs_C_highacc.log",
+      "sha256": "c43f719a6b422af204a1e55f93aef60503caaaab2b6451a2edb0a49e3b777ca8",
+      "checks": 10401,
+      "reference_contacts": 367340,
+      "matched_contacts": 367340,
+      "missing_contacts": 0,
+      "duplicates": 0
+    },
+    "logs_D_shear": {
+      "path": "/home/msys/SIMS/mechsys_p0_baseline/20261015-p1/oracle/logs_D_shear.log",
+      "sha256": "810ad5b114102f2882a03583753098ec8cc15084c22f1a460097e5e4384e4bd8",
+      "checks": 12001,
+      "reference_contacts": 4197770,
+      "matched_contacts": 4197770,
+      "missing_contacts": 0,
+      "duplicates": 0
+    },
+    "logs_E_squeeze": {
+      "path": "/home/msys/SIMS/mechsys_p0_baseline/20261015-p1/oracle/logs_E_squeeze.log",
+      "sha256": "276a816e10d90503a454adf73bd2ff633dcd717821b1904f4fbfeecd7900e704",
+      "checks": 12001,
+      "reference_contacts": 3644,
+      "matched_contacts": 3644,
+      "missing_contacts": 0,
+      "duplicates": 0
+    }
+  },
+  "oracle_totals": {
+    "checks": 56405,
+    "reference_contacts": 5421117,
+    "matched_contacts": 5421117,
+    "missing_contacts": 0,
+    "duplicates": 0
+  }
+}

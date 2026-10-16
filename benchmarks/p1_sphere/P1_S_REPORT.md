@@ -1,5 +1,11 @@
 # P1-S milestone report - sphere workstream (2026-10-15)
 
+**2026-10-16 correction:** the evidence review in
+[p1_review/README.md](../p1_review/README.md) supersedes the check count, S-small
+mean/speedup and broad bitwise-equivalence claims below. It also reproduces and
+fixes blind spots in the original oracle and exposes a fast-motion VV baseline
+list-validity defect. The original report is retained for provenance.
+
 Branch: perf/p1-sphere-control (isolated clone /home/msys/git/mechsys-p1-sphere)
 Base: perf/p0-reconciliation @ 826f28d
 Commits: 5d1cdf9 (oracle), 3aea5e7 (persistent reduction), + docs

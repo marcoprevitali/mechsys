@@ -1,5 +1,10 @@
 # P1-S displacement-reduction audit + persistent-buffer experiment (2026-10-15)
 
+**2026-10-16 correction:** see [the evidence review](../p1_review/README.md).
+The raw S-small baseline mean is 23.668 s (not 23.468); the kernel uses a global
+atomic per thread (not a block reduction); benchmark energies are not bitwise
+equal. The original text and measurements below remain as the historical report.
+
 ## Dependency chain (source: lib/dem/domain.h Solve loop, GPU path)
 
 1. MaxD kernel (per-vertex displacement into bMaxDCU; persistent buffer, no allocation).
