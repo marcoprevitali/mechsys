@@ -23,6 +23,7 @@
 #include <iostream>
 #include <fstream>
 #include <limits>
+#include <cstdint>
 #ifdef USE_OMP
     #include <omp.h>
 #endif
@@ -127,6 +128,7 @@ void UpdateAngularVelocityFull(double dt); // w = w_half + (Torque_new/I)*dt/2
 
     int             Tag;             ///< Tag of the particle
     size_t          Index;           ///< index of the particle in the domain
+    uint64_t        PersistentId = 0;///< Lifetime identity for full-state checkpoints; never a storage index/tag
     int             Cluster;         ///< The number of the cohesive cluster the particle belongs to.
     bool            PropsReady;      ///< Are the properties calculated ready ?
     bool            Eroded;          ///< True if the particle has been eroded
@@ -255,6 +257,7 @@ std::ostream & operator<< (std::ostream & os, Particle const & P)
 inline void Particle::init_default_values(int tag, double r, double rho)
 {
     Tag        = tag;
+    PersistentId = 0; // Assigned once by the owning Domain, preserved across reconstruction.
     Cluster    = 0;
     PropsReady = false;
     Eroded     = false;
@@ -262,6 +265,7 @@ inline void Particle::init_default_values(int tag, double r, double rho)
     Closed     = true;
     v          = 0.0,0.0,0.0;
     w          = 0.0,0.0,0.0;
+    wa         = 0.0,0.0,0.0;
     A    = Vec3_t(0.0, 0.0, 0.0);
     Wdot = Vec3_t(0.0, 0.0, 0.0);
     v_half = 0.0,0.0,0.0;

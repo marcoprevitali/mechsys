@@ -142,6 +142,13 @@ public:
     // Methods
     void SetProps          (Dict & D);                                                                          ///< Set the properties of individual grains by dictionaries
     void Initialize        (double dt=0.0);                                                                     ///< Set the particles to a initial state and asign the possible insteractions
+    void SaveCheckpoint    (char const * Filename); ///< Explicit versioned full-step FP64 VV checkpoint (not legacy Save)
+    void LoadCheckpoint    (char const * Filename); ///< Load into a fresh Domain; no force/history/integration update
+    void AssignPersistentIds();
+    ptFun_t ForceTimeCheck = NULL;                  ///< Default-off read-only diagnostic at post-drift/pre-force geometry
+    bool CheckpointReady = false;                  ///< One-shot resumed Solve: skip initialization/bootstrap
+    bool VVStateReady = false;                     ///< Only completed VV integration boundaries may be saved
+    uint64_t NextPersistentId = 1;
     void Solve             (double tf, double dt, double dtOut, ptFun_t ptSetup=NULL, ptFun_t ptReport=NULL,
                             char const * FileKey=NULL, bool Render=true, size_t Nproc=1,double minEkin=0.0);       ///< Run simulation the simulation up to time tf, with dt and dtOut the time and report steps. The funstion Setup and Report are used to control the workflow form outside, filekey is used to name the report files. VOut has the options 0 no visualization, 1 povray, 2 xmdf and 3 both. minEkin is a minimun of kinetic energy before the simulation stops
 #ifdef USE_HDF5    
@@ -313,7 +320,11 @@ public:
     DynInteractonCU  * pDynInteractonsEE;
     DynInteractonCU  * pDynInteractonsVF;
     DynInteractonCU  * pDynInteractonsFV;
-    dem_aux          * pdemaux;
+    dem_aux          * pdemaux = NULL;
+#ifdef USE_CUDA
+    std::vector<DynInteractonCU> CheckpointVV, CheckpointEE, CheckpointVF, CheckpointFV;
+    void RestoreCheckpointDevice();
+#endif
     // Pointers to the main function calculating forces and dynamics
     ForceVV_ptr_t      pForceVV;                                            ///< pointer to the force calculation for vertex vertex
     ForceEE_ptr_t      pForceEE;                                            ///< pointer to the force calculation for edge edge
@@ -575,6 +586,10 @@ inline void Domain::Initialize (double dt)
 
 inline void Domain::Solve (double tf, double dt, double dtOut, ptFun_t ptSetup, ptFun_t ptReport, char const * TheFileKey, bool Render, size_t TheNproc, double minEkin)
 {
+    bool const resume_checkpoint = CheckpointReady;
+    if (resume_checkpoint && (!UseVelocityVerlet || dt!=Dt))
+        throw new Fatal("VV checkpoint continuation requires unchanged timestep and VV integration");
+    VVStateReady = false;
     // Assigning some domain particles especifically to the output
     FileKey.Printf("%s",TheFileKey);
     idx_out = 0;
@@ -584,7 +599,8 @@ inline void Domain::Solve (double tf, double dt, double dtOut, ptFun_t ptSetup, 
     Nproc = TheNproc;
 
     // initialize particles
-    Initialize (Dt);
+    if (!resume_checkpoint) Initialize (Dt);
+    AssignPersistentIds();
 
 
     // calc the total volume of particles (solids)
@@ -675,7 +691,7 @@ inline void Domain::Solve (double tf, double dt, double dtOut, ptFun_t ptSetup, 
         MTD[i].Dmx      = 0.0;
     }
     
-    UpdateContacts();
+    if (!resume_checkpoint) UpdateContacts();
     
 
     size_t iter_b = iter;
@@ -701,7 +717,9 @@ inline void Domain::Solve (double tf, double dt, double dtOut, ptFun_t ptSetup, 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // VELOCITY VERLET: allocate and compute initial accelerations
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  A.Resize(Particles.Size());
+  if (!resume_checkpoint)
+  {
+    A.Resize(Particles.Size());
     Wdot.Resize(Particles.Size());
 
     // Initial forces
@@ -747,6 +765,7 @@ inline void Domain::Solve (double tf, double dt, double dtOut, ptFun_t ptSetup, 
         Wdot[i](2) = (Tt(2) + (Ix - Iy) * w(0) * w(1)) / Iz;
     }
 
+  }
     bool px = (Xmax - Xmin) > Alpha;
     bool py = (Ymax - Ymin) > Alpha;
     bool pz = (Zmax - Zmin) > Alpha;
@@ -757,6 +776,7 @@ inline void Domain::Solve (double tf, double dt, double dtOut, ptFun_t ptSetup, 
     //if (iter==0) UpLoadDevice(Nproc,true);
     //else         UpLoadDevice(Nproc,false);
     UpLoadDevice(Nproc,true,true);
+    if (resume_checkpoint) RestoreCheckpointDevice();
     cudaDeviceProp prop;
     cudaGetDeviceProperties (&prop,0);
     std::cout 
@@ -768,6 +788,8 @@ inline void Domain::Solve (double tf, double dt, double dtOut, ptFun_t ptSetup, 
         << "  Number of faces                           =  " << demaux.nfaces/2 << TERM_RST << std::endl;
 #endif
 
+    CheckpointReady = false;
+    VVStateReady = UseVelocityVerlet;
     // run
 #ifdef USE_CUDA
     if (DiagKernelCounters)
@@ -807,6 +829,7 @@ inline void Domain::Solve (double tf, double dt, double dtOut, ptFun_t ptSetup, 
             idx_out++;
             tout += dtOut;
         }
+        VVStateReady = false;
 #ifdef USE_CUDA
 pReset<<<(demaux.nparts+demaux.ncoint)/Nthread+1, Nthread>>>(pParticlesCU, pDynParticlesCU, pInteractons, pComInteractons, pdemaux, pExtraParams);
 
@@ -851,6 +874,7 @@ MaxD<<<demaux.nverts/Nthread+1, Nthread>>>(pVertsCU, pVertsoCU, pMaxDCU, pdemaux
 #endif
 
 if (CandidateOracle) OracleCheck(iter, iter_b);
+if (ForceTimeCheck) (*ForceTimeCheck)(*this,UserData);
 
 if (demaux.nvvint > 0) pForceVV<<<(demaux.nvvint+Nthread-1)/Nthread, Nthread>>>(pInteractons, pComInteractons, pDynInteractonsVV, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
 if (demaux.neeint > 0) pForceEE<<<(demaux.neeint+Nthread-1)/Nthread, Nthread>>>(pEdgesCU, pVertsCU, pInteractons, pComInteractons, pDynInteractonsEE, pParticlesCU, pDynParticlesCU, pdemaux, pExtraParams);
@@ -985,6 +1009,7 @@ if (UseVelocityVerlet){
         for (size_t i = 0; i < Nproc; i++)
             if (maxdis_pre < MTD[i].Dmx) maxdis_pre = MTD[i].Dmx;
         if (maxdis_pre >= Alpha) UpdateContacts();
+        if (ForceTimeCheck) (*ForceTimeCheck)(*this,UserData);
 /*
         // 3. Check maximum displacement and rebuild contacts if needed
         #pragma omp parallel for schedule(static) num_threads(Nproc)
@@ -1145,6 +1170,7 @@ if (UseVelocityVerlet){
 #endif
         Time += Dt;
         iter++;
+        VVStateReady = UseVelocityVerlet;
     }
 
     // last output
@@ -3476,6 +3502,7 @@ inline void Domain::UpLoadDevice(size_t Nc, bool first,bool updateState)
     if (first)
     {
         demaux.Time = Time;
+        demaux.iter = iter;
         demaux.dt   = Dt;
         demaux.Per.x  = Per(0);
         demaux.Per.y  = Per(1);
@@ -3850,7 +3877,7 @@ inline void Domain::UpLoadDevice(size_t Nc, bool first,bool updateState)
     pDynInteractonsFV = thrust::raw_pointer_cast(bDynInteractonsFV.data());
 
     //if (!first) cudaFree  (pdemaux);
-    if (iter!=0) cudaFree  (pdemaux);
+    if (pdemaux!=NULL) cudaFree  (pdemaux);
     cudaMalloc(&pdemaux, sizeof(dem_aux));
     //gpuErrchk( cudaGetLastError() ); 
     cudaMemcpy(pdemaux, &demaux, sizeof(dem_aux), cudaMemcpyHostToDevice);
@@ -4268,5 +4295,7 @@ inline void Domain::UpdateContactsDevice()
 }
 #endif
 }; // namespace DEM
+
+#include <mechsys/dem/checkpoint.h>
 
 #endif // MECHSYS_DEM_DOMAIN_H
