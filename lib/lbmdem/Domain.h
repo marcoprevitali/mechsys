@@ -28,6 +28,7 @@
 #endif
 
 #include <chrono>
+#define MECHSYS_CELL_COVERAGE_FIX_AVAILABLE 1
 
 namespace LBMDEM
 {
@@ -78,6 +79,10 @@ public:
     void Reset();                    ///< Reset LBM grid
     void ImprintLattice();           ///< Imprint the DEM particles into the LBM grid
     void ResetParCell();             ///< Reset the information of particle cell contacts
+    void CheckSphereCellCoverage(bool device=false);
+    // V3-I0-P1: explicit opt-in, canonical spheres only; never changes collision.
+    bool ConservativeSphereCells = false;
+    std::vector<Vec3_t> SphereCellReference;
     void Solve(double Tf, double dtOut, ptDFun_t ptSetup=NULL, ptDFun_t ptReport=NULL,
     char const * FileKey=NULL, bool RenderVideo=true, size_t Nproc=1);            ///< Solve the Domain dynamics
     
@@ -335,6 +340,7 @@ inline Domain::Domain(LBMethod TheMethod, double Thenu, char const * DEMfile, do
 
 void Domain::ImprintLattice()
 {
+    if (ConservativeSphereCells) CheckSphereCellCoverage();
     #pragma omp parallel for schedule(static) num_threads(Nproc)
     for (size_t i = 0;i<ParCellPairs.Size();i++)
     {
@@ -347,7 +353,9 @@ void Domain::ImprintLattice()
         double len = 12.0*dx,minl = Pa->Dmax;
         Vec3_t  Pert = DEMDOM.Per;
         if (!Pa->IsFree()) Pert = OrthoSys::O;
-        if (DEM::Distance(C,Pa->x,Pert)>Pa->Dmax) continue;
+        double limit = ConservativeSphereCells ? Pa->Props.R+0.5*sqrt(3.0)*dx : Pa->Dmax;
+        if (ConservativeSphereCells) limit += 64.0*std::numeric_limits<double>::epsilon()*(1.0+norm(Pa->x)+limit);
+        if (DEM::Distance(C,Pa->x,Pert)>limit) continue;
         Vec3_t Nor = OrthoSys::O;
         if (ParCellPairs[i].IGeo.Size()>0) 
         {
@@ -476,6 +484,19 @@ void Domain::ImprintLattice()
 
 void Domain::ResetParCell()
 {
+    if (ConservativeSphereCells) {
+        if (!(Alpha>=0.0) || !std::isfinite(Alpha) || !(dx>0.0))
+            throw new Fatal("Conservative sphere cells: invalid dx/Alpha");
+        SphereCellReference.resize(DEMDOM.Particles.Size());
+        for (size_t ip=0;ip<DEMDOM.Particles.Size();ip++) {
+            auto *p=DEMDOM.Particles[ip];
+            if (p->Verts.Size()!=1 || p->Edges.Size()!=0 || p->Faces.Size()!=0 ||
+                p->Tori.Size()!=0 || p->Cylinders.Size()!=0 || p->Bdry ||
+                p->Dmax!=p->Props.R || norm(*p->Verts[0]-p->x)!=0.0)
+                throw new Fatal("Conservative sphere cells: canonical centered spheres required; polyhedra use legacy mode");
+            SphereCellReference[ip]=p->x;
+        }
+    }
     #pragma omp parallel for schedule(static) num_threads(Nproc)
     for (size_t i=0;i<Nproc;i++)
     {
@@ -489,6 +510,22 @@ void Domain::ResetParCell()
         DEM::Particle * Pa = DEMDOM.Particles[ip];
         if (Pa->Bdry) continue;
         bool free = Pa->IsFree();
+        if (ConservativeSphereCells) {
+            // Each wrapped cell exactly once, including wide skins/large spheres.
+            // Deliberately simple full-grid experimental enumeration, not a speed claim.
+            double limit=Pa->Props.R+0.5*sqrt(3.0)*dx+Alpha;
+            limit+=64.0*std::numeric_limits<double>::epsilon()*(1.0+norm(Pa->x)+limit);
+            Vec3_t per=free ? DEMDOM.Per : OrthoSys::O;
+            for (size_t n=0;n<LBMDOM.Ndim(0);n++)
+            for (size_t m=0;m<LBMDOM.Ndim(1);m++)
+            for (size_t l=0;l<LBMDOM.Ndim(2);l++) {
+                Vec3_t c(dx*n,dx*m,dx*l);
+                if (LBMDOM.IsSolid[0][n][m][l] || DEM::Distance(c,Pa->x,per)>limit) continue;
+                ParticleCellPair pair;pair.IPar=ip;pair.ICell=iVec3_t(n,m,l);pair.IGeo.Push(0);
+                MTD[omp_get_thread_num()].LPC.Push(pair);
+            }
+            continue;
+        }
         int nbmin = floor(free&&PeriodicX ? (Pa->MinX()-2.0*Alpha-dx)/dx : std::max(0.0,double(Pa->MinX()-2.0*Alpha-dx)/dx));
         int mbmin = floor(free&&PeriodicY ? (Pa->MinY()-2.0*Alpha-dx)/dx : std::max(0.0,double(Pa->MinY()-2.0*Alpha-dx)/dx));
         int lbmin = floor(free&&PeriodicZ ? (Pa->MinZ()-2.0*Alpha-dx)/dx : std::max(0.0,double(Pa->MinZ()-2.0*Alpha-dx)/dx));
@@ -575,6 +612,39 @@ void Domain::ResetParCell()
         for (size_t j=0;j<MTD[i].LPC.Size();j++)
         {
             ParCellPairs.Push(MTD[i].LPC[j]);
+        }
+    }
+}
+
+// Fail closed before imprint: no owner selection/mixture/force normalization.
+// Geometric overlap is a conservative guard (possibly stricter than positive proxy).
+void Domain::CheckSphereCellCoverage(bool device)
+{
+    std::vector<Vec3_t> positions(DEMDOM.Particles.Size());
+#ifdef USE_CUDA
+    if (device) {
+        thrust::host_vector<DEM::DynParticleCU> data=DEMDOM.bDynParticlesCU;
+        for(size_t i=0;i<positions.size();i++) positions[i]=Vec3_t(data[i].x.x,data[i].x.y,data[i].x.z);
+    } else
+#endif
+    for(size_t i=0;i<positions.size();i++) positions[i]=DEMDOM.Particles[i]->x;
+    if (SphereCellReference.size()!=positions.size()) throw new Fatal("Conservative sphere cells: map generation missing");
+    std::vector<size_t> owner(LBMDOM.Ncells,size_t(-1));
+    for(size_t ip=0;ip<positions.size();ip++) {
+        auto *p=DEMDOM.Particles[ip];Vec3_t per=p->IsFree()?DEMDOM.Per:OrthoSys::O;
+        double pad=64.0*std::numeric_limits<double>::epsilon()*(1.0+norm(positions[ip])+p->Props.R+Alpha+dx);
+        if (DEM::Distance(positions[ip],SphereCellReference[ip],per)>Alpha+pad)
+            throw new Fatal("Conservative sphere cells: stale map exceeds Alpha motion allowance");
+        for(size_t ic=0;ic<LBMDOM.Ncells;ic++) {
+            size_t n=ic%LBMDOM.Ndim(0),m=(ic/LBMDOM.Ndim(0))%LBMDOM.Ndim(1),l=ic/(LBMDOM.Ndim(0)*LBMDOM.Ndim(1));
+            if(LBMDOM.IsSolid[0][n][m][l]) continue;
+            Vec3_t c(dx*n,dx*m,dx*l),r;DEM::BranchVec(positions[ip],c,r,per);
+            double dist2=0.0;
+            for(size_t j=0;j<3;j++){double d=std::max(0.0,fabs(r(j))-0.5*dx);dist2+=d*d;}
+            if(dist2>(p->Props.R+pad)*(p->Props.R+pad)) continue;
+            if(owner[ic]!=size_t(-1) && owner[ic]!=ip)
+                throw new Fatal("Conservative sphere cells: shared geometric/positive-occupancy cell blocked (cell=%zd, particles=%zd,%zd)",ic,owner[ic],ip);
+            owner[ic]=ip;
         }
     }
 }
@@ -840,6 +910,7 @@ inline void Domain::Solve(double Tf, double dtOut, ptDFun_t ptSetup, ptDFun_t pt
 #ifdef MECHSYS_EXCHANGE_AUDIT
         MechSysExchangeAudit::notify(this,"before_imprint");
 #endif
+        if (ConservativeSphereCells) CheckSphereCellCoverage(true);
         cudaImprintLatticeVC<<<lbmdemaux.nvc/Nthread+1,Nthread>>>(pfBn,pPaCeV,DEMDOM.pParticlesCU,DEMDOM.pDynParticlesCU,LBMDOM.pRho,pGamma,pOmeis,LBMDOM.pF,DEMDOM.pdemaux,LBMDOM.plbmaux,plbmdemaux);
         cudaImprintLatticeFC<<<lbmdemaux.nfc/Nthread+1,Nthread>>>(pPaCe,pPaCeF,DEMDOM.pFacesCU,DEMDOM.pFacidCU,DEMDOM.pVertsCU,DEMDOM.pParticlesCU,DEMDOM.pDynParticlesCU,LBMDOM.pRho,pGamma,pOmeis,LBMDOM.pF,DEMDOM.pdemaux,LBMDOM.plbmaux,plbmdemaux);
 #ifdef MECHSYS_EXCHANGE_AUDIT
