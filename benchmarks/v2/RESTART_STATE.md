@@ -67,3 +67,52 @@ Checkpoint support must fail closed for a constitutive/custom mode not yet
 implemented. This audit documents required bond/shortcut/coupled state, not
 evidence that those modes are checkpoint-safe. Acceptance must distinguish
 implemented scopes and tested scopes.
+
+## Implemented v1 contract (V2-R3)
+
+`lib/dem/checkpoint.h` implements `SaveCheckpoint(path)` / `LoadCheckpoint(path)`.
+Call Save only at a completed full-step VV boundary, normally after Solve returns
+or in its full-step report. Load into a fresh empty Domain, then call Solve with
+the **same timestep**. Restore/rebind external prescribed-loading callbacks from
+the application; their state is not serialized. Loading itself performs no force
+evaluation, integration update, history increment or neighbor reconstruction.
+The first resumed Solve skips its normal bootstrap and restores the saved list
+references, active lists, accelerations and device histories. The previous
+full-step F/T remains the source of the first half-step kick.
+
+GPU checkpoints additionally retain exact raw force-valued Ft/Fr buffers and
+previous overlap/activation flags. Displacement-to-force-to-displacement round
+trips would otherwise change a bit despite an equivalent physical state. GPU
+cache references are validated against physical endpoint IDs and local feature
+IDs before the loaded domain is committed. No raw address is serialized.
+
+The JSON format is version 1, Linux/POSIX publication, FP64 only and
+**same-backend continuation only**. CPU-to-GPU/GPU-to-CPU loading is rejected,
+not established as interchangeable. Serialized particle order is preserved;
+arbitrary sorting, changed topology or different periodic-image conventions are
+not introduced. Local feature identifiers assume unchanged connectivity.
+Repeated user tags are supported and tested because lifetime IDs are separate.
+
+Support is deliberately bounded to built-in linear/Hertz sphere contacts and
+linear convex feature contacts. Bonded/cohesive BInteractons, MostlySpheres,
+torus/cylinder geometry, UserData-owned state, custom CUDA kernels/parameters,
+custom wrapping and coupled fluid state are explicitly rejected. A loaded GPU
+checkpoint must be resumed before another SaveCheckpoint is allowed. Empty
+particle domains are not supported; zero-contact/zero-candidate domains are.
+Validated Coulomb configuration is the compatibility mode 0; serialization of
+other switches is not additional constitutive-law validation.
+
+The writer uses exclusive temporary creation, fsync and atomic no-replace link
+publication. Existing target and temporary evidence are never overwritten.
+Metadata, precision/backend/phase, counts, ID uniqueness, endpoint references,
+connectivity, feature bounds, finite numbers, positive mass/inertia and unit
+quaternion checks precede commit of a loaded domain. The format is not a
+cryptographic integrity/security container; archive hashes separately.
+
+CPU generic feature maps lazily create entries at positive overlap. CUDA creates
+zero slots for all candidate records during upload and download materializes
+those zero entries. Absent and **exactly zero** feature displacement are the same
+physical state for this baseline law. V2 records both strict storage comparisons
+(which differ at contact creation/separation) and physical comparisons with only
+exact zero slots omitted. Every nonzero component remains checked at the original
+FP64 tolerances. Uninterrupted/restarted checks do **not** normalize anything.

@@ -18,7 +18,9 @@ root=Path(__file__).resolve().parents[2]
 flags=a.reference_build/"tdem/CMakeFiles/test_cu_04.dir"
 definitions=shlex.split(next(x.split("=",1)[1] for x in (flags/"flags.make").read_text().splitlines() if x.startswith("CUDA_DEFINES =")))
 a.output.mkdir(parents=True,exist_ok=True)
-manifest={"source_commit":subprocess.check_output(["git","rev-parse","HEAD"],cwd=root,text=True).strip(),"source":str(a.source.resolve()),"source_sha256":hashlib.sha256(a.source.read_bytes()).hexdigest(),"targets":{}}
+manifest={"source_commit":subprocess.check_output(["git","rev-parse","HEAD"],cwd=root,text=True).strip(),"source":str(a.source.resolve()),"source_sha256":hashlib.sha256(a.source.read_bytes()).hexdigest(),
+          "headers":{str(p):hashlib.sha256((root/p).read_bytes()).hexdigest() for p in [Path("lib/dem/domain.h"),Path("lib/dem/checkpoint.h"),Path("lib/dem/particle.h"),Path("lib/dem/interacton.h"),Path("lib/dem/dem.cuh"),Path("lib/lbmdem/Domain.h")]},"targets":{}}
+manifest["auxiliary_sources"]={str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [a.source.resolve().with_name("feature_oracle.h")] if p.exists() and root in p.parents}
 for backend in a.backends:
     binary=a.output/backend
     obj=a.output/(backend+".o")
