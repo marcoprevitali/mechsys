@@ -5,6 +5,41 @@ record. This file is a concise re-entry point, not a replacement for that record
 
 ## Current objective and boundary
 
+**V3-I0-P2 FAIL — hard stop at independent CPU/CUDA edge gate.** Default-off
+CorrectTwelveEdgeProxy is an unaccepted, unmerged experiment, not coupled
+validation. Read PROJECT_STATUS.md §5.12 and
+[P2 decision](benchmarks/v3_i0_p2/V3_I0_P2_DECISION.md). Branch
+fix/v3-i0-p2-edge-proxy, exact base e0d6c2fcc581b4caf9d020ebbf05f15c2f5a102f;
+preregistration88eb5a2 preceded production edits; failed candidate c8a8f28.
+Source/test/final remote SHA
+and clean state are in the external P2 DELIVERY.json at handoff.
+
+1,254 reference geometries/backend,30,096 edge comparisons:49 failures on each
+backend. Exact rational witness sphere(.3,.2,.1),R1, unit cube at origin,
+lower edge7 has covered length6.664001874625056e-9; both candidates return0,
+exceeding frozen per-edge budget. Offset rounding changes the sign of a tiny
+positive squared-intersection term. Decimal quadratic agrees with exact Fraction
+algebra. All failing fixtures are this geometry plus48 cube symmetries.
+Sixteen original control-flow failures reproduced bitwise and corrected within
+~8.48e-17, but selected success does not close the registered gate.
+
+P2 coupled parity, coverage, momentum/torque ledgers and force-change study
+NOT_RUN after the required stop. New configuration/limiter guards compile only,
+not accepted. Existing P1/default-off controls all rerun with P2=false:
+140 processes +2 shared rejections,46 non-shared off/reference bitwise checks,
+zero P1 independent failures. Standalone VV/checkpoint cases0/1/9 CPU/CUDA
+pass bounded regression (six bitwise restarts); coupled VV guard remains active.
+
+Next: review/authorize a robust FP64 near-tangency edge evaluation experiment
+with unchanged fixtures/budgets before resuming dependent P2 gates. Do not
+weaken tolerances, replace proxy with exact volume, implement Scheme A/restart
+or run P2-B performance. Partial artifacts: benchmarks/v3_i0_p2/;
+raw archive/verification namespace
+/home/msys/SIMS/mechsys_v3_i0_p2_validation/20261016-edge-proxy-stopped/.
+Persistent delivery target /home/msys/git/mechsys-v3-i0-p2-edge-proxy.
+
+## Preserved accepted P1 state (not superseded by failed P2 candidate)
+
 **V3-I0-P1 PASS within the registered opt-in canonical single-geometric-owner
 sphere subset.** Detailed authoritative result: PROJECT_STATUS.md §5.11 and
 [P1 decision](benchmarks/v3_i0_p1/V3_I0_P1_DECISION.md). Branch
@@ -22,7 +57,7 @@ controls bitwise; prior CUDA shared strict failure is retained, corrected shared
 fixture explicitly rejected. Historical V3-I0 failures below are superseded only
 for this new opt-in eligibility subset, not rewritten as historical PASS.
 
-Next bounded proposal requires separate authorization: review/correct the
+Historical next proposal, now attempted and stopped in P2 above: review/correct the
 SphereCube/cudaSphereCube edge-group early-continue defect. Mathematical
 twelve-edge occupancy correctness is still OPEN; shared geometry and production
 limiting remain unsupported/unvalidated. Do not automatically start Scheme A,

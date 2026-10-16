@@ -1,0 +1,48 @@
+{
+  "milestone": "V3-I0-P2",
+  "status": "FAIL; hard stop, not accepted",
+  "default": "CorrectTwelveEdgeProxy=false; unmerged experimental branch",
+  "reference_fixtures_per_backend": 1254,
+  "edge_comparisons": 30096,
+  "CPU_failed_fixtures": 49,
+  "CUDA_failed_fixtures": 49,
+  "CPU_GPU_accepted_helper_mismatches": 0,
+  "original_16_corrected_gamma_max_error": "8.47136645918501543065958649132558424503761026878991557E-17",
+  "direct_helper_affected_geometry_rows": 130,
+  "direct_helper_max_delta_gamma": "0.252483940080959701202090172955649904906749725341796875",
+  "direct_helper_mean_abs_delta_gamma_affected": "0.05743777852997008498201139467745144009733429321875939002403846153846154",
+  "direct_helper_legacy_zero_positive_rows": 2,
+  "coupled_affected_cells": "NOT_RUN",
+  "corrected_conservation": "NOT_RUN",
+  "corrected_CPU_GPU_B_Omega_parity": "NOT_RUN",
+  "unchanged_P1_scope": {
+    "completed_processes": 140,
+    "shared_rejections": 2,
+    "independent_failures": 0,
+    "nonshared_bitwise_off_controls": 46
+  },
+  "standalone_VV_restart": "3 fixtures x CPU/CUDA; all six restart comparisons bitwise, CPU/GPU within original budgets",
+  "gates": {
+    "P2-A": "PASS",
+    "P2-B": "PASS",
+    "P2-C": "FAIL",
+    "P2-D": "FAIL",
+    "P2-E": "NOT_RUN",
+    "P2-F": "NOT_RUN",
+    "P2-G": "NOT_RUN",
+    "P2-H": "PASS",
+    "P2-I": "PARTIAL",
+    "P2-J": "PARTIAL",
+    "P2-K": "PARTIAL",
+    "P2-L": "Pending exact remote/clean delivery receipt"
+  },
+  "no_work_on": [
+    "Scheme A",
+    "coupled restart",
+    "coupled VV",
+    "P2-B performance",
+    "collision arithmetic",
+    "contact laws"
+  ],
+  "next": "Review robust FP64 near-tangency edge evaluation with this exact counterexample and frozen budgets before resuming P2 gates"
+}

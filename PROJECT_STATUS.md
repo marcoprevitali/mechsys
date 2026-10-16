@@ -1,14 +1,14 @@
 # MechSys GPU DEM optimization — PROJECT_STATUS.md
 
-**As-of:** 2026-10-16 (V3-I0-P1 opt-in sphere-cell eligibility validation)
-**State:** `V3-I0-P1 PASS within registered canonical single-owner subset` / `ConservativeSphereCells default false, no promotion` / `legacy V3-I0 historical parity/shared failures retained` / `edge-proxy control-flow defect OPEN` / `Scheme A NOT_STARTED` / `C2 BLOCKED` / `coupled restart NOT_VALIDATED` / `P2-B NOT_RUN`
+**As-of:** 2026-10-16 (V3-I0-P2 independent edge correction, HARD STOP)
+**State:** `V3-I0-P2 FAIL: near-tangent CPU/CUDA edge gate` / `CorrectTwelveEdgeProxy default false, unaccepted/unmerged` / `V3-I0-P1 PASS preserved for its registered subset` / `historical V3-I0/shared failures retained` / `Scheme A NOT_STARTED` / `C2 BLOCKED` / `coupled restart NOT_VALIDATED` / `P2-B NOT_RUN`
 **Reference decision (user, 2026-10-16):** explicitly select `UseVelocityVerlet=true` for all new validation, profiling, benchmarks and optimization decisions. Legacy position-Verlet/leapfrog data are separately labeled controls, not VV reference evidence. `AGENTS.md` records this policy; the compatibility constructor default remains false. `test_cu_04 <input> <Nproc> <dthoot> <qin> 1` must print `DEM_BENCHMARK_INTEGRATOR velocity_verlet=1`; use `--vv` in the registered runner.
-**Next bounded proposal (requires separate authorization):** review/correct SphereCube/cudaSphereCube edge-group early-continue defect with independent twelve-edge references and legacy regression. Eligibility now passes for the opt-in registered sphere subset; this does not establish correct mathematical occupancy arithmetic. No automatic Scheme A/P2-B. Start at `benchmarks/v3_i0_p1/V3_I0_P1_DECISION.md`. Shared geometry remains blocked; noncanonical/polyhedral corrected mode is unsupported.
+**Next bounded proposal (requires review/authorization after hard stop):** robust FP64 near-tangency edge evaluation against the frozen P2 fixtures/budgets. Start at `benchmarks/v3_i0_p2/V3_I0_P2_DECISION.md` and MINIMAL_COUNTEREXAMPLE.json. Sixteen original control-flow failures reproduced; candidate handles those but fails49 geometries/backend. Do not resume P2 coupled validation until the edge gate passes. No automatic Scheme A/P2-B; shared/limiter/coupled VV remain blocked/unvalidated.
 **Agent:** GLM-5.3 Flash (or successor); operational rules in `AGENTS.md`.
 **Original project:** https://github.com/Axtal/mechsys
 **Fork URL / owner:** https://github.com/marcoprevitali/mechsys / `marcoprevitali` (authenticated account and public fork metadata verified 2026-10-15)
 **Old local checkout:** `/home/msys/mechsys` at `e4ba163ec9f32c8bccb0fd8619ba79e000d3d6d8`; preserved dirty and not mutated during `F0`
-**Current work:** `fix/v3-i0-p1-cell-coverage`, base `38da1b918281883fdc5fb46ea8171082993a1136`; implementation `2b2cc38ea705881af360da216ee06cd858c5a436`. Prepared in `/tmp/mechsys-v3-i0-p1.WEgVFC/work`; persistent delivery target `/home/msys/git/mechsys-v3-i0-p1-cell-coverage` and exact final origin SHA/clean state are checked at handoff and recorded in the new P1 external DELIVERY.json. Origin verified user fork; upstream push disabled. V3-I0/V3-D/V2 clones and original checkout remain preserved READ ONLY. Scientific authority is PROJECT_STATUS.md; PROJECT_STATE.md is its concise re-entry pointer.
+**Current work:** `fix/v3-i0-p2-edge-proxy`, exact base `e0d6c2fcc581b4caf9d020ebbf05f15c2f5a102f`; preregistration `88eb5a213a9fe14ae85efc63b9a33020e1f4ebdc`. Prepared in independent full clone `/tmp/mechsys-v3-i0-p2.d7OPg0/work`; persistent delivery target `/home/msys/git/mechsys-v3-i0-p2-edge-proxy`. Exact final commit/origin SHA/clean status and archive verification are recorded externally in P2 DELIVERY.json. Origin remains user fork; upstream push disabled. P1/V3-I0/V3-D/V2 clones and original checkout preserved READ ONLY. Scientific authority remains PROJECT_STATUS.md; PROJECT_STATE.md is its concise pointer.
 **Precision of historical benchmarks:** GPU double precision (`-DUSE_GPU_DOUBLE`) on NVIDIA RTX A6000 (84 SMs); do not assume the current host/GPU is unchanged.
 
 > **Evidence levels:** `HISTORICAL_REPORTED` means results transcribed from the user-supplied DeepSeek work summary dated 2026-10-14; they have **not** yet been independently reproduced or verified against source. `SOURCE_VERIFIED` requires auditing the actual local code. `MEASURED` requires raw timing/logs + code SHA. `PASS` requires documented numerical acceptance checks. Keep these labels distinct.
@@ -707,6 +707,72 @@ preserved. Failed shared controls are retained rather than normalized away.
 **Next, separately authorized:** edge-proxy control-flow review/correction only.
 Do not implement Scheme A, coupled restart or P2-B automatically.
 
+### 5.12 V3-I0-P2 — independent twelve-edge correction (2026-10-16 / Codex)
+
+**FAIL / required hard stop. No coupled acceptance, merge or default promotion.**
+Sixteen exact archived V3-I0 failures recovered and reproduced with compiled
+legacy helpers; gamma bitwise equals archived observations, maximum error
+.0763580745930353. Reference preregistration 88eb5a2 preceded all production
+changes. Independent Python 70-digit general quadratic, exact binary64 inputs,
+1,254 geometries/backend, all48 cube symmetries, xyz translations, continuity,
+radius monotonicity, limiting cases, random seed20261016; frozen I0 budgets.
+
+Failed candidate commit c8a8f28 (full hash in P2 PROVENANCE.json) adds independent
+axis-projected clipped edges, keeps legacy helpers
+untouched, default false CorrectTwelveEdgeProxy requiring P1 mode. Only
+lib/dem/special_functions.h, lib/lbmdem/lbmdem.cuh and lib/lbmdem/Domain.h changed
+in production. Intended restrictive configuration and limiter-risk preflight
+guards compile, but their P2-on runtime behavior is NOT_RUN. Collision,
+gamma-to-B/Omega/reaction expressions, DEM/contact/checkpoint code unchanged.
+
+30,096 per-edge comparisons:98 FAIL (49 fixtures/backend). Sphere(.3,.2,.1),
+R=1, unit cube at origin, lower edge7: exact rational R²-d_perp² positive
+1.110223024625156525e-17; true covered length6.664001874625056e-9, candidate
+CPU/CUDA both0. FP64 offset/squared-distance rounding changes the sign.
+Independent exact Fraction witness agrees with Decimal quadratic; all49 failed
+fixtures are this geometry plus48 cube symmetries. Existing abs edge budget
+1e-10*dx (plus fixed relative term) is exceeded. No tolerance relaxation or
+post-failure repair. Full failed batch preserved. Original16 candidate errors
+<=8.48e-17 do NOT override these failures. CPU/GPU direct accepted statuses
+match; max edge/total length difference4.774e-15 does not prove correctness.
+
+Stopped dependent P2 coupled parity/coverage/conservation per work order§13.
+P2-A/B PASS, C/D FAIL, E/F/G NOT_RUN, H PASS in existing non-shared scope,
+I/J/K PARTIAL; L exact origin/clean/archive receipt external at handoff.
+Geometric-only changes:130 affected backend/geometry rows above1e-10,
+max |delta_gamma| .252483940080960, affected mean .0574377785299701;
+two rows legacy0/candidatepositive. Locations/deltas and theoretical tau=.8
+B changes recorded; corrected Omega/impulse/reaction/torque changes NOT_RUN.
+
+Unaffected controls use P2=false throughout: existing P1 suite140 processes,
+two shared rejections,46 non-shared off/reference bitwise state comparisons;
+144 coverage rows,88,000 cells/1,320,000 directions, zero independent failures.
+Max legacy occupancy reaction residual1.07450629222e-16 and population-write
+error1.96114685060e-16 are NOT corrected-P2 conservation evidence. Known CUDA
+shared strict FAIL retained. Standalone explicit VV cases0/1/9 law0/damping1:
+six bitwise checkpoint comparisons, three CPU/GPU comparisons pass original
+budgets; bounded regression, not full V2 recertification. Original coupled
+VV guard rejects both backends. No new performance evidence.
+
+Separate analysis-only21-case mathematical-edge/volume diagnostic: all satisfy
+recorded empirical refinement criterion (not rigorous volume error bounds).
+Centered R=.5 has gamma_edge0 despite exact volume pi/6; near R=sqrt(.5),
+sampled absolute model error~.96508. This illustrates model approximation,
+not an excuse for numerical failure or authorization to replace the proxy.
+
+Commands/hashes/failure witness and reports: benchmarks/v3_i0_p2/README.md,
+PROVENANCE.json, REFERENCE_TESTS.json, EDGE_SUMMARY.json, decision/CSV files.
+New raw archive namespace:
+/home/msys/SIMS/mechsys_v3_i0_p2_validation/20261016-edge-proxy-stopped/.
+P2_RAW.tgz, artifact index, verification and DELIVERY.json preserve source,
+binaries, failed evidence and compatibility traces. Prior artifacts/clones
+untouched; original tracked diff hash remains e98dcc...132e9 (full F0 hash above).
+
+**Next bounded proposal:** robust FP64 edge evaluation for the exact witness,
+retaining every frozen geometry and budget. Requires review/authorization after
+this hard stop. Only resume P2 dependent gates after CPU/CUDA reference passes.
+Do not implement Scheme A, coupled restart, mixed precision or performance work.
+
 ## 6. Git/repository topology and record
 
 
@@ -781,7 +847,16 @@ Protection:         `origin` = user's fork; `upstream` fetch-only / push-disable
 | 2026-10-15 | P0-R complete: HISTORICAL_REBUILD_SHARE_UNRECONCILED (record self-contradicts); poly 23.6 s rebuild = Nproc=1 (21.24 s measured); neeint 6.4x interaction-list gap discovered; V0-A/B UNPROVEN; first experiments recommended and gated | §5.4, benchmarks/p0_reconciliation/ | MEASURED |
 | 2026-10-15 | Concurrent agent session edited this clone during P0-R (branch deleted, domain.h temporarily broken) and an external MoFEM job contaminated timing reps; mitigations applied; session separation recommended | §5.4 environment incident | COORDINATION HAZARD — user action recommended |
 
-### Current bounded task (after V3-I0-P1; supersedes older recommendations)
+### Current bounded task (after V3-I0-P2 hard stop)
+
+1. Read §5.12 and benchmarks/v3_i0_p2/V3_I0_P2_DECISION.md. P2 FAIL, default-off,
+   unmerged; independent near-tangent edge counterexample and full batch retained.
+2. Review/authorize a robust FP64 edge-evaluation experiment against unchanged
+   fixtures and budgets. Do not weaken gates or treat selected16 fixes as PASS.
+3. P2 coupled parity/ledgers NOT_RUN; P1-only controls still PASS. Shared support,
+   production limiter, coupled VV/restart and P2-B retain prior blockers.
+
+### Superseded bounded task (after V3-I0-P1; retained for provenance)
 
 1. Read §5.11 and benchmarks/v3_i0_p1/V3_I0_P1_DECISION.md. Keep the corrected
    eligibility mode default false and retain its explicit canonical/single-

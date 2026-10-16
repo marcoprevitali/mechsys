@@ -1,0 +1,21 @@
+{
+  "coverage_rows": 144,
+  "parity_cases": 22,
+  "failures": [],
+  "failures_count": 0,
+  "old_centered": [
+    {
+      "backend": "cpu",
+      "case": "moving",
+      "initial_candidates": 27,
+      "initial_accepted": 7
+    },
+    {
+      "backend": "cuda",
+      "case": "moving",
+      "initial_candidates": 27,
+      "initial_accepted": 27
+    }
+  ],
+  "legacy_shared": "retained; explicit corrected rejection; not accepted as a physical case"
+}

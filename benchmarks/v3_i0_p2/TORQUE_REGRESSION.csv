@@ -1,0 +1,2 @@
+scope,status,reason
+P2 enabled coupled path,NOT_RUN,P2-C/P2-D failed independent edge reference; hard stop

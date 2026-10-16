@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "archive": "/home/msys/SIMS/mechsys_v3_i0_p2_validation/20261016-edge-proxy-stopped/P2_RAW.tgz",
+  "archive_sha256": "3c42c2032c8444d94cd4d8896d67e01f775263022d379c10e1292306276a796b",
+  "payload_files": 2397,
+  "payload_bytes": 1805410415,
+  "index_sha256": "14e904b403e7b87ca6ed9699e6e0f1d94f74ea732c5d8e33e98d03b53c3cedbb",
+  "verification": "every tar member streamed and checked against SHA256/size, no extraction or prior archive overwrite"
+}

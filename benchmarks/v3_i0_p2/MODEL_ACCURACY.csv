@@ -1,0 +1,22 @@
+case,R_over_dx,sphere_center,gamma_edge_mathematical,gamma_volume_reference_estimate,absolute_difference,relative_difference,method,successive_refinement_converged,volume_refinement_trace
+center,0.05,"[0, 0, 0]",0.0,0.0005235987755982989,0.0005235987755982989,1.0,analytical contained sphere,True,[]
+offset,0.05,"[0.45, 0.2, 0.1]",0.0,0.0005235987755982989,0.0005235987755982989,1.0,analytical contained sphere,True,[]
+corner,0.05,"[0.5, 0.5, 0.5]",0.0125,6.54495023565369e-05,0.012434550497643464,189.98693725593373,"z-analytic/xy composite midpoint, successive refinement",True,"[[128, 6.485693858921377e-05], [256, 6.55058372519771e-05], [512, 6.542044654732564e-05], [1024, 6.54495023565369e-05]]"
+center,0.2,"[0, 0, 0]",0.0,0.03351032163829113,0.03351032163829113,1.0,analytical contained sphere,True,[]
+offset,0.2,"[0.45, 0.2, 0.1]",0.0,0.02290781770121042,0.02290781770121042,1.0,"z-analytic/xy composite midpoint, successive refinement",True,"[[128, 0.022910119780680742], [256, 0.02290781770121042]]"
+corner,0.2,"[0.5, 0.5, 0.5]",0.05,0.004188768150818361,0.04581123184918164,10.936683578495861,"z-analytic/xy composite midpoint, successive refinement",True,"[[128, 0.004186908579028841], [256, 0.004188768150818361]]"
+center,0.5,"[0, 0, 0]",0.0,0.5235987755982988,0.5235987755982988,1.0,analytical contained sphere,True,[]
+offset,0.5,"[0.45, 0.2, 0.1]",0.11544444819111173,0.2588134008871015,0.14336895269598976,0.5539471766322084,"z-analytic/xy composite midpoint, successive refinement",True,"[[128, 0.25879686357898424], [256, 0.2588134008871015]]"
+corner,0.5,"[0.5, 0.5, 0.5]",0.125,0.06544995874201609,0.05955004125798391,0.9098560549550861,"z-analytic/xy composite midpoint, successive refinement",True,"[[128, 0.06545997504970028], [256, 0.06544995874201609]]"
+center,0.7071067811865476,"[0, 0, 0]",1.6535789860374886e-08,0.9650765530113585,0.9650765364755687,0.9999999828658257,"z-analytic/xy composite midpoint, successive refinement",True,"[[128, 0.9650979421454847], [256, 0.9650765530113585]]"
+offset,0.7071067811865476,"[0.45, 0.2, 0.1]",0.2957141087327303,0.5480593082819525,0.2523451995492222,0.4604341094767095,"z-analytic/xy composite midpoint, successive refinement",True,"[[128, 0.5480602707166202], [256, 0.5480593082819525]]"
+corner,0.7071067811865476,"[0.5, 0.5, 0.5]",0.1767766952966369,0.18512080760271105,0.008344112306074153,0.04507387588747725,"z-analytic/xy composite midpoint, successive refinement",True,"[[128, 0.18509981011346827], [256, 0.18512080760271105]]"
+center,1.0,"[0, 0, 0]",1.0,1.0,0.0,0.0,analytical contained cube,True,[]
+offset,1.0,"[0.45, 0.2, 0.1]",0.579979720515133,0.9215531502806009,0.3415734297654679,0.37064973372557325,"z-analytic/xy composite midpoint, successive refinement",True,"[[128, 0.9215611797415069], [256, 0.9215531502806009]]"
+corner,1.0,"[0.5, 0.5, 0.5]",0.25,0.5235992129259376,0.2735992129259376,0.5225355695189668,"z-analytic/xy composite midpoint, successive refinement",True,"[[128, 0.5235996699361287], [256, 0.5235992129259376]]"
+center,1.2,"[0, 0, 0]",1.0,1.0,0.0,0.0,analytical contained cube,True,[]
+offset,1.2,"[0.45, 0.2, 0.1]",0.9023784738252941,0.9977568131633934,0.09537833933809925,0.09559277178544309,"z-analytic/xy composite midpoint, successive refinement",True,"[[128, 0.9977594140673152], [256, 0.9977568131633934]]"
+corner,1.2,"[0.5, 0.5, 0.5]",0.5816624790355399,0.7979680122986694,0.2163055332631295,0.27107043130717506,"z-analytic/xy composite midpoint, successive refinement",True,"[[128, 0.7979731591391366], [256, 0.7979680122986694]]"
+center,2.2,"[0, 0, 0]",1.0,1.0,0.0,0.0,analytical contained cube,True,[]
+offset,2.2,"[0.45, 0.2, 0.1]",1.0,1.0,0.0,0.0,analytical contained cube,True,[]
+corner,2.2,"[0.5, 0.5, 0.5]",1.0,1.0,0.0,0.0,analytical contained cube,True,[]
