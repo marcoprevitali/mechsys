@@ -1,0 +1,342 @@
+{
+  "comparisons": [
+    {
+      "backend": "cpu",
+      "case": "zero",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "fixed",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "moving",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "rotating",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "partial",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "boundary",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "periodic",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "rebuild",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "fconv",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "contact",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "shared",
+      "default_off_bitwise": true,
+      "qualification": "shared unsupported; no strict equivalence claim"
+    },
+    {
+      "backend": "cpu",
+      "case": "cross_x",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "translate_x",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "cross_y",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "translate_y",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "cross_z",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "translate_z",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "offset1",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "offset2",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "small",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "large",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "near_inside",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "near_outside",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cpu",
+      "case": "empty",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "zero",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "fixed",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "moving",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "rotating",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "partial",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "boundary",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "periodic",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "rebuild",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "fconv",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "contact",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "shared",
+      "default_off_bitwise": false,
+      "qualification": "shared unsupported; no strict equivalence claim"
+    },
+    {
+      "backend": "cuda",
+      "case": "cross_x",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "translate_x",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "cross_y",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "translate_y",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "cross_z",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "translate_z",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "offset1",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "offset2",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "small",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "large",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "near_inside",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "near_outside",
+      "default_off_bitwise": true,
+      "qualification": ""
+    },
+    {
+      "backend": "cuda",
+      "case": "empty",
+      "default_off_bitwise": true,
+      "qualification": ""
+    }
+  ],
+  "unchanged_eligibility_physical": [
+    {
+      "backend": "cpu",
+      "case": "zero",
+      "physical_state_bitwise": true,
+      "qualification": "candidate-list metadata alone may differ"
+    },
+    {
+      "backend": "cpu",
+      "case": "empty",
+      "physical_state_bitwise": true,
+      "qualification": "candidate-list metadata alone may differ"
+    },
+    {
+      "backend": "cuda",
+      "case": "zero",
+      "physical_state_bitwise": true,
+      "qualification": "candidate-list metadata alone may differ"
+    },
+    {
+      "backend": "cuda",
+      "case": "empty",
+      "physical_state_bitwise": true,
+      "qualification": "candidate-list metadata alone may differ"
+    }
+  ],
+  "identical_initial_parity_inputs": [
+    "boundary",
+    "cross_x",
+    "cross_y",
+    "cross_z",
+    "empty",
+    "fixed",
+    "large",
+    "moving",
+    "near_inside",
+    "near_outside",
+    "offset1",
+    "offset2",
+    "partial",
+    "periodic",
+    "rebuild",
+    "rotating",
+    "small",
+    "translate_x",
+    "translate_y",
+    "translate_z",
+    "wide_skin",
+    "zero"
+  ]
+}

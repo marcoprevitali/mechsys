@@ -1,14 +1,14 @@
 # MechSys GPU DEM optimization — PROJECT_STATUS.md
 
-**As-of:** 2026-10-16 (V3-I0 observational exchange/cell-parity audit)
-**State:** `V3-I0 PARITY BLOCKED, observational audit delivered` / `A/H PARTIAL: shared-cell strict regression failure retained` / `single-owner increment/torque audit PASS within registered alpha=1 scope` / `Scheme A NOT_STARTED` / `V2 OVERALL PARTIAL, standalone gates retained` / `C2 BLOCKED` / `coupled restart NOT_VALIDATED` / `P2-B NOT_RUN`
+**As-of:** 2026-10-16 (V3-I0-P1 opt-in sphere-cell eligibility validation)
+**State:** `V3-I0-P1 PASS within registered canonical single-owner subset` / `ConservativeSphereCells default false, no promotion` / `legacy V3-I0 historical parity/shared failures retained` / `edge-proxy control-flow defect OPEN` / `Scheme A NOT_STARTED` / `C2 BLOCKED` / `coupled restart NOT_VALIDATED` / `P2-B NOT_RUN`
 **Reference decision (user, 2026-10-16):** explicitly select `UseVelocityVerlet=true` for all new validation, profiling, benchmarks and optimization decisions. Legacy position-Verlet/leapfrog data are separately labeled controls, not VV reference evidence. `AGENTS.md` records this policy; the compatibility constructor default remains false. `test_cu_04 <input> <Nproc> <dthoot> <qin> 1` must print `DEM_BENCHMARK_INTEGRATOR velocity_verlet=1`; use `--vv` in the registered runner.
-**Next bounded proposal (requires separate authorization):** V3-I0-P1 conservative sphere–cell candidate/imprint coverage parity correction. ResetParCell's sphere-center eligibility and the CPU imprint cutoff both omit positive-proxy cells; changing only CPU imprint is insufficient. Preserve the actual legacy proxy arithmetic for this bounded parity patch; its newly measured early-continue defect needs a separate reviewed decision. No automatic Scheme A/P2-B. Start at `benchmarks/v3_i0/V3_I0_DECISION.md`; guard intact, shared positive cells unsupported. V3-D's explicit first-order Scheme A recommendation remains conditional, not implemented.
+**Next bounded proposal (requires separate authorization):** review/correct SphereCube/cudaSphereCube edge-group early-continue defect with independent twelve-edge references and legacy regression. Eligibility now passes for the opt-in registered sphere subset; this does not establish correct mathematical occupancy arithmetic. No automatic Scheme A/P2-B. Start at `benchmarks/v3_i0_p1/V3_I0_P1_DECISION.md`. Shared geometry remains blocked; noncanonical/polyhedral corrected mode is unsupported.
 **Agent:** GLM-5.3 Flash (or successor); operational rules in `AGENTS.md`.
 **Original project:** https://github.com/Axtal/mechsys
 **Fork URL / owner:** https://github.com/marcoprevitali/mechsys / `marcoprevitali` (authenticated account and public fork metadata verified 2026-10-15)
 **Old local checkout:** `/home/msys/mechsys` at `e4ba163ec9f32c8bccb0fd8619ba79e000d3d6d8`; preserved dirty and not mutated during `F0`
-**Current work:** `validation/v3-i0-exchange-audit`, separate full user-fork clone based on exact V3-D `d801c80cce15691b2a886a31d7e0bd864de35c10`, prepared in `/tmp/mechsys-v3-i0.30PYI0/work`. Preregistered tests `9f6a5e98e2618092b639286011facacb63fa9c6c`; observer `28e292f2f421a7254a18889dfb2b50d7590ba42f`; probe/oracles `30a65e16260d47875584055f8b0c26a5a62f5502`, with shared-negative collection qualification in handoff. Persistent delivery target `/home/msys/git/mechsys-v3-i0-exchange-audit` is created/verified in the final delivery step; external `DELIVERY.json` records exact final/remote SHA and clean state, avoiding a self-referential commit claim. Origin verified marcoprevitali/mechsys, upstream Axtal push `PUSH_DISABLED`. V2/V3-D prior clones remain clean at 2b8d8c3/d801c80 and READ ONLY; original dirty checkout is preserved.
+**Current work:** `fix/v3-i0-p1-cell-coverage`, base `38da1b918281883fdc5fb46ea8171082993a1136`; implementation `2b2cc38ea705881af360da216ee06cd858c5a436`. Prepared in `/tmp/mechsys-v3-i0-p1.WEgVFC/work`; persistent delivery target `/home/msys/git/mechsys-v3-i0-p1-cell-coverage` and exact final origin SHA/clean state are checked at handoff and recorded in the new P1 external DELIVERY.json. Origin verified user fork; upstream push disabled. V3-I0/V3-D/V2 clones and original checkout remain preserved READ ONLY. Scientific authority is PROJECT_STATUS.md; PROJECT_STATE.md is its concise re-entry pointer.
 **Precision of historical benchmarks:** GPU double precision (`-DUSE_GPU_DOUBLE`) on NVIDIA RTX A6000 (84 SMs); do not assume the current host/GPU is unchanged.
 
 > **Evidence levels:** `HISTORICAL_REPORTED` means results transcribed from the user-supplied DeepSeek work summary dated 2026-10-14; they have **not** yet been independently reproduced or verified against source. `SOURCE_VERIFIED` requires auditing the actual local code. `MEASURED` requires raw timing/logs + code SHA. `PASS` requires documented numerical acceptance checks. Keep these labels distinct.
@@ -639,6 +639,74 @@ production limiting and broader models remain blocked/unvalidated. Scheme A
 harness is not ready for common positive CPU/GPU acceptance. Do not start next
 work or P2-B automatically.
 
+### 5.11 V3-I0-P1 — conservative sphere-cell coverage (2026-10-16 / Codex)
+
+**PASS, bounded default-off experiment, not coupled VV acceptance.** This is the
+authoritative detailed state; PROJECT_STATE.md remains its concise pointer.
+Base 38da1b918281883fdc5fb46ea8171082993a1136; isolated full fork clone prepared
+at /tmp/mechsys-v3-i0-p1.WEgVFC/work, branch fix/v3-i0-p1-cell-coverage.
+Implementation 2b2cc38ea705881af360da216ee06cd858c5a436; final published tip,
+clean persistent clone (/home/msys/git/mechsys-v3-i0-p1-cell-coverage) and origin
+verification are recorded in external P1 DELIVERY.json at final handoff.
+Prior Current-work/topology entries describe preserved historical clones, not
+the active P1 branch. No merges, previous-clone writes or default promotion.
+
+Changed production file only lib/lbmdem/Domain.h: public configuration
+ConservativeSphereCells defaults false; canonical sphere validation, unique-cell
+candidate bound R+sqrt(3)dx/2+Alpha, CPU imprint R+sqrt(3)dx/2, independent map
+references and opt-in preflight rejection for stale motion/shared geometric
+cells. Full-grid scan and synchronous device-pose validation are deliberately
+simple, NOT a speed claim. Guard is stricter than shared positive proxy: even
+zero-proxy shared geometric cells can be rejected. Corrected polyhedral mode
+rejects explicitly; legacy non-sphere path remains unchanged. No collision,
+force/torque, integration, occupancy arithmetic or VV guard edits.
+
+P1-A..J PASS within documented support; P1-K final remote/clean proof is in
+DELIVERY.json. Original centered CPU 7/GPU 27 reproduced; corrected both 27
+against legacy-positive reference 27. Small Alpha old seven candidates omit
+20 positive cells; corrected 33 candidates cover all 27 before/after actual
+rebuild. Boundary corrected accepts 24 legacy-positive cells, mathematical
+reference 28; those four remain proxy-zero, not coverage failures.
+
+25 geometries; 22 corrected single-owner configurations/backend. 140 completed
+runs plus two explicit shared rejections, 46 non-shared reference/off comparisons
+bitwise; CUDA shared strict FAIL retained. Four zero-edge/empty-map corrected
+physical-state controls also bitwise (candidate metadata alone may differ).
+Initial CPU/GPU pose/Q/v/w/radius/identity verified identical, not assumed;
+evolved states independently enumerated, not relabeled identical inputs.
+144 coverage rows, 88,000 cells/1,320,000 collision directions: zero geometric,
+mathematical-positive or legacy-positive entry candidate omissions; zero
+legacy-positive imprint omissions, accepted-set mismatches, duplicates or wrong
+observed image levers. Registered pre/post rebuild candidate omissions also zero.
+Includes x/y/z translation/crossings, offsets, Q/spin, small/large spheres,
+Alpha .0001/.4/6, near threshold +/-1e-7, zero-edge and empty candidates.
+
+Max CPU/GPU gamma/B/Omega/solid-increment differences: 2.22044604925e-16 /
+2.15357303247e-16 / 1.23361878439e-17 / 6.07153216592e-18. Independent impulse
+error <=8.23993651089e-17, decomposition <=4.086933970502e-20; unit-Fconv
+particle/solid residual <=1.07450629222e-16. Actual body torque mismatch
+<=9.62171177362e-18; high-precision fixed-pose angular identity <=9e-72.
+Original V3-D budgets/tolerances unchanged; no unexplained independent failure.
+Production limiter still NOT_VALIDATED. No physical added-mass/full-step angular
+conservation or general multi-particle support inferred.
+
+Canonical sphere Dmax=Props.R=radius, vertex=center is checked; for general
+geometry Dmax=max vertex distance+Props.R and must not be substituted blindly.
+Post-drift maxdis>Alpha triggers rebuild before the next imprint, deriving the
+entry allowance Alpha; a separate map-reference check fails on stale entry
+motion. Radius/geometry/periodicity must remain immutable during Solve.
+
+Commands/scripts/hashes and required reports in benchmarks/v3_i0_p1/README.md,
+PROVENANCE.json and associated CSV/JSON. Existing build.py and independent
+V3-I0 Decimal oracle are reused without editing those artifacts. Immutable new
+raw archive/verification: /home/msys/SIMS/mechsys_v3_i0_p1_validation/20261016-coverage/.
+V3-I0 archive/tree and all lib/dem, lib/flbm, lbmdem.cuh, V2/V3-D/AGENTS content
+are unchanged. Original tracked diff still e98dcc...132e9; all previous clones
+preserved. Failed shared controls are retained rather than normalized away.
+
+**Next, separately authorized:** edge-proxy control-flow review/correction only.
+Do not implement Scheme A, coupled restart or P2-B automatically.
+
 ## 6. Git/repository topology and record
 
 
@@ -660,12 +728,14 @@ V1 source clone:    /home/msys/git/mechsys-v1-vv (preserved)
 V1 reference clone: /home/msys/git/mechsys-v1-reference (clean 7346699, preserved)
 V2 reference clone: /home/msys/git/mechsys-v2-restart (clean 2b8d8c3, preserved)
 V3-D reference:    /home/msys/git/mechsys-v3-coupled-design (clean d801c80, preserved)
-Delivery target:   /home/msys/git/mechsys-v3-i0-exchange-audit (final DELIVERY.json verification)
+V3-I0 reference:   /home/msys/git/mechsys-v3-i0-exchange-audit (clean 38da1b9, preserved)
+Delivery target:   /home/msys/git/mechsys-v3-i0-p1-cell-coverage (final P1 DELIVERY.json)
 Previous topic:     fix/vv-reference-reset at 517da81 (preserved)
 V1 topic:           validation/vv-reference-history at 7346699 (preserved)
 V2 topic:           validation/v2-restart-coupled at 2b8d8c3 (preserved)
 V3-D topic:         design/v3-coupled-vv at d801c80 (preserved)
-Active topic:       validation/v3-i0-exchange-audit, base d801c80; prereg 9f6a5e9, observer 28e292f, probes 30a65e1
+V3-I0 topic:        validation/v3-i0-exchange-audit at 38da1b9 (preserved)
+Active topic:       fix/v3-i0-p1-cell-coverage, base 38da1b9; implementation 2b2cc38
 Protection:         `origin` = user's fork; `upstream` fetch-only / push-disabled
 ```
 
@@ -711,7 +781,17 @@ Protection:         `origin` = user's fork; `upstream` fetch-only / push-disable
 | 2026-10-15 | P0-R complete: HISTORICAL_REBUILD_SHARE_UNRECONCILED (record self-contradicts); poly 23.6 s rebuild = Nproc=1 (21.24 s measured); neeint 6.4x interaction-list gap discovered; V0-A/B UNPROVEN; first experiments recommended and gated | §5.4, benchmarks/p0_reconciliation/ | MEASURED |
 | 2026-10-15 | Concurrent agent session edited this clone during P0-R (branch deleted, domain.h temporarily broken) and an external MoFEM job contaminated timing reps; mitigations applied; session separation recommended | §5.4 environment incident | COORDINATION HAZARD — user action recommended |
 
-### Current bounded task (after V3-I0 audit; supersedes older recommendations)
+### Current bounded task (after V3-I0-P1; supersedes older recommendations)
+
+1. Read §5.11 and benchmarks/v3_i0_p1/V3_I0_P1_DECISION.md. Keep the corrected
+   eligibility mode default false and retain its explicit canonical/single-
+   geometric-owner support contract and costs. No production promotion.
+2. Await separate authorization to review/correct the edge-group continue bug.
+   Do not call mathematical twelve-edge occupancy correct before its own gates.
+3. Preserve original V3-I0 failures, shared CUDA strict FAIL and prior archives.
+   Scheme A NOT_STARTED, coupled restart NOT_VALIDATED, P2-B NOT_RUN.
+
+The superseded post-V3-I0 task is retained as context:
 
 1. Read §5.10 and `benchmarks/v3_i0/V3_I0_DECISION.md`; keep PARITY BLOCKED,
    A/H PARTIAL and shared support BLOCKED. Original coupled VV guard stays.

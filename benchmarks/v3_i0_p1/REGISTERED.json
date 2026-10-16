@@ -1,0 +1,78 @@
+{
+  "cases": {
+    "zero": {},
+    "fixed": {},
+    "moving": {},
+    "rotating": {},
+    "partial": {},
+    "boundary": {},
+    "periodic": {},
+    "rebuild": {},
+    "fconv": {},
+    "contact": {},
+    "shared": {},
+    "cross_x": {
+      "P1_POSITION": "9.999 5.1 5.3",
+      "P1_VELOCITY": "0.002 0 0",
+      "P1_ALPHA": ".0001"
+    },
+    "translate_x": {
+      "P1_POSITION": "5.11 5.23 5.37",
+      "P1_VELOCITY": "0.001 0 0",
+      "P1_ALPHA": ".0001"
+    },
+    "cross_y": {
+      "P1_POSITION": "5.2 9.999 5.3",
+      "P1_VELOCITY": "0 0.002 0",
+      "P1_ALPHA": ".0001"
+    },
+    "translate_y": {
+      "P1_POSITION": "5.11 5.23 5.37",
+      "P1_VELOCITY": "0 0.001 0",
+      "P1_ALPHA": ".0001"
+    },
+    "cross_z": {
+      "P1_POSITION": "5.2 5.1 9.999",
+      "P1_VELOCITY": "0 0 0.002",
+      "P1_ALPHA": ".0001"
+    },
+    "translate_z": {
+      "P1_POSITION": "5.11 5.23 5.37",
+      "P1_VELOCITY": "0 0 0.001",
+      "P1_ALPHA": ".0001"
+    },
+    "offset1": {
+      "P1_POSITION": "5.49 5.49 5.49"
+    },
+    "offset2": {
+      "P1_POSITION": "5.9 5.01 5.8"
+    },
+    "small": {
+      "P1_RADIUS": ".2",
+      "P1_POSITION": "5.5 5.5 5"
+    },
+    "large": {
+      "P1_RADIUS": "2.2"
+    },
+    "wide_skin": {
+      "P1_ALPHA": "6"
+    },
+    "near_inside": {
+      "P1_RADIUS": "0.7071068811865475"
+    },
+    "near_outside": {
+      "P1_RADIUS": "0.7071066811865476"
+    },
+    "empty": {
+      "P1_POSITION": "-100 -100 -100"
+    }
+  },
+  "precision": "FP64",
+  "budgets": "unchanged V3-I0/ V3-D",
+  "corrected_excluded": [
+    "shared",
+    "contact",
+    "fconv"
+  ],
+  "shared": "explicit rejection; conservative geometric conflict guard may reject zero-proxy shared cells too"
+}

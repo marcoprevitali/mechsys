@@ -5,6 +5,33 @@ record. This file is a concise re-entry point, not a replacement for that record
 
 ## Current objective and boundary
 
+**V3-I0-P1 PASS within the registered opt-in canonical single-geometric-owner
+sphere subset.** Detailed authoritative result: PROJECT_STATUS.md §5.11 and
+[P1 decision](benchmarks/v3_i0_p1/V3_I0_P1_DECISION.md). Branch
+fix/v3-i0-p1-cell-coverage, base 38da1b918281883fdc5fb46ea8171082993a1136;
+implementation 2b2cc38ea705881af360da216ee06cd858c5a436. ConservativeSphereCells
+defaults false: R+sqrt(3)dx/2+Alpha candidates, conservative CPU imprint and
+map-reference/shared-geometry guards. No occupancy arithmetic or collision edits.
+Canonical centered spheres only; corrected noncanonical/polyhedral mode rejects.
+Full-grid scan/synchronous opt-in guards have no performance acceptance.
+
+22 identical initial configurations/backend: zero candidate/imprint misses,
+accepted-set mismatches, duplicates or wrong image levers. Independent 88,000
+cells/1,320,000 directions pass original budgets. All 46 non-shared legacy-off
+controls bitwise; prior CUDA shared strict failure is retained, corrected shared
+fixture explicitly rejected. Historical V3-I0 failures below are superseded only
+for this new opt-in eligibility subset, not rewritten as historical PASS.
+
+Next bounded proposal requires separate authorization: review/correct the
+SphereCube/cudaSphereCube edge-group early-continue defect. Mathematical
+twelve-edge occupancy correctness is still OPEN; shared geometry and production
+limiting remain unsupported/unvalidated. Do not automatically start Scheme A,
+coupled restart or P2-B. New evidence: benchmarks/v3_i0_p1/; raw archive and final
+delivery receipt: /home/msys/SIMS/mechsys_v3_i0_p1_validation/20261016-coverage/.
+Persistent delivery target /home/msys/git/mechsys-v3-i0-p1-cell-coverage.
+
+## Preserved V3-I0 state and evidence (superseded eligibility blocker above)
+
 V3-I0 observational legacy fluid-exchange/cell-parity audit is delivered with
 **PARITY BLOCKED**, not coupled numerical acceptance. The latest detailed
 decision is [benchmarks/v3_i0/V3_I0_DECISION.md](benchmarks/v3_i0/V3_I0_DECISION.md).
@@ -77,7 +104,7 @@ the final exact tip/remote/clean status is recorded by delivery verification.
 Original `/home/msys/mechsys` and all earlier clones are READ ONLY and preserved;
 original tracked-diff SHA256 remains e98dcc...132e9 (full hash in PROJECT_STATUS).
 
-**Next requires separate authorization:** V3-I0-P1 conservative sphere-cell
+**Historical next proposal, now completed within the bounded P1 subset above:** V3-I0-P1 conservative sphere-cell
 candidate/imprint cutoff parity correction, independently checked before/after
 rebuild and periodic crossings. Keep collision, reaction, integration and actual
 legacy proxy arithmetic unchanged in that bounded patch; separately review the
