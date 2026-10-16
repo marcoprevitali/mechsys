@@ -469,6 +469,38 @@ inline double SphereCube (Vec3_t & Xs, Vec3_t & Xc, double R, double dx) // Calc
     return len;
 }
 
+// V3-I0-P2: covered length of twelve INDEPENDENT cube edges, not volume.
+// Optional per-edge output: upper 0..3, lower 4..7, vertical 8..11.
+// Zero-sized edges have zero length. Legacy SphereCube remains untouched.
+#define MECHSYS_TWELVE_EDGE_PROXY_AVAILABLE 1
+inline double SphereCube12EdgeCorrected(Vec3_t const & Xs, Vec3_t const & Xc,
+                                        double R, double dx, double *edges=nullptr)
+{
+    const int signs[8][3]={{-1,-1,1},{1,-1,1},{1,1,1},{-1,1,1},
+                           {-1,-1,-1},{1,-1,-1},{1,1,-1},{-1,1,-1}};
+    double total=0.0;
+    for(size_t e=0;e<12;e++) {
+        size_t j=e%4, vertex=e<4?j:(e<8?j+4:j), axis=e<8?j%2:2;
+        double length=0.0;
+        if(dx>0.0 && R>=0.0) {
+            // Project each axis-parallel edge onto its line. Computing the
+            // perpendicular distance directly avoids quadratic cancellation.
+            double r2=R*R;
+            for(size_t k=0;k<3;k++) if(k!=axis) {
+                double q=(Xc(k)-Xs(k))+0.5*dx*signs[vertex][k];r2-=q*q;
+            }
+            if(r2>0.0) {
+                double root=sqrt(r2), q=Xc(axis)-Xs(axis);
+                double lo=std::max(q-0.5*dx,-root), hi=std::min(q+0.5*dx,root);
+                length=std::min(dx,std::max(0.0,hi-lo));
+            }
+        }
+        if(edges) edges[e]=length;
+        total+=length;
+    }
+    return total;
+}
+
 inline double DiskSquare (Vec3_t & Xs, Vec3_t & Xc, double R, double dx) // Calculates the area of intersection between a Square an a Disk
 {
     Array<Vec3_t> P(4);

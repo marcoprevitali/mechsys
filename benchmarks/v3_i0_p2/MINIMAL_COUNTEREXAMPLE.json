@@ -1,0 +1,40 @@
+{
+  "fixture": "multiple",
+  "X": [
+    0.3,
+    0.2,
+    0.1
+  ],
+  "C": [
+    0,
+    0,
+    0
+  ],
+  "R": 1,
+  "dx": 1,
+  "edge_index": 7,
+  "A": [
+    -0.5,
+    0.5,
+    -0.5
+  ],
+  "B": [
+    -0.5,
+    -0.5,
+    -0.5
+  ],
+  "q1_exact": "14411518807585587/18014398509481984",
+  "q2_exact": "21617278211378381/36028797018963968",
+  "r2_exact": "14411518807585587/1298074214633706907132624082305024",
+  "r2_exact_decimal": "1.1102230246251565250161921129929334880521764593205814516951868142768944380804896E-17",
+  "FP64_r2": -1.1102230246251565e-16,
+  "independent_length": "6.6640018746250560310284352628464101251253498715501700127043856896167966507918118E-9",
+  "actual_CPU_length": 0,
+  "actual_CUDA_length": 0,
+  "registered_edge_absolute_budget": "1e-10*dx",
+  "classification": "FAIL P2-C/P2-D, geometry rounding near tangency",
+  "cause": "binary64 offsets .5+.3 and .5+.1 round before subtraction of squared distances; genuine small positive r2 changes sign",
+  "reference_crosscheck": "exact Fraction binary64-input algebra agrees with 70-digit independent quadratic",
+  "stopped": "No P2-enabled coupled/parity/conservation runs; no relaxed tolerance, no broadened algorithm",
+  "possible_next_task": "Separately authorize a narrowly scoped robust FP64 edge predicate/length experiment; preserve this witness and frozen budgets"
+}

@@ -82,6 +82,10 @@ public:
     void CheckSphereCellCoverage(bool device=false);
     // V3-I0-P1: explicit opt-in, canonical spheres only; never changes collision.
     bool ConservativeSphereCells = false;
+    // V3-I0-P2: restricted experimental occupancy correction; never implicit.
+    bool CorrectTwelveEdgeProxy = false;
+    void CheckTwelveEdgeConfiguration();
+    void CheckTwelveEdgeCollision(bool device=false);
     std::vector<Vec3_t> SphereCellReference;
     void Solve(double Tf, double dtOut, ptDFun_t ptSetup=NULL, ptDFun_t ptReport=NULL,
     char const * FileKey=NULL, bool RenderVideo=true, size_t Nproc=1);            ///< Solve the Domain dynamics
@@ -340,6 +344,7 @@ inline Domain::Domain(LBMethod TheMethod, double Thenu, char const * DEMfile, do
 
 void Domain::ImprintLattice()
 {
+    if(CorrectTwelveEdgeProxy) CheckTwelveEdgeConfiguration();
     if (ConservativeSphereCells) CheckSphereCellCoverage();
     #pragma omp parallel for schedule(static) num_threads(Nproc)
     for (size_t i = 0;i<ParCellPairs.Size();i++)
@@ -410,7 +415,8 @@ void Domain::ImprintLattice()
             if (dotpro>0.0||fabs(dotpro)<0.95*minl||Pa->Faces.Size()<4||!Pa->Closed) 
             {
                 Vec3_t Xst = S + C;
-                len = DEM::SphereCube(Xst,C,Pa->Props.R,dx);
+                len = CorrectTwelveEdgeProxy ? DEM::SphereCube12EdgeCorrected(Xst,C,Pa->Props.R,dx)
+                                            : DEM::SphereCube(Xst,C,Pa->Props.R,dx);
             }
         }
         if (fabs(len)<1.0e-12) continue;
@@ -484,6 +490,7 @@ void Domain::ImprintLattice()
 
 void Domain::ResetParCell()
 {
+    if(CorrectTwelveEdgeProxy) CheckTwelveEdgeConfiguration();
     if (ConservativeSphereCells) {
         if (!(Alpha>=0.0) || !std::isfinite(Alpha) || !(dx>0.0))
             throw new Fatal("Conservative sphere cells: invalid dx/Alpha");
@@ -618,8 +625,83 @@ void Domain::ResetParCell()
 
 // Fail closed before imprint: no owner selection/mixture/force normalization.
 // Geometric overlap is a conservative guard (possibly stricter than positive proxy).
+void Domain::CheckTwelveEdgeConfiguration()
+{
+    if(!ConservativeSphereCells)
+        throw new Fatal("Correct twelve-edge proxy requires ConservativeSphereCells=true");
+    if(DEMDOM.UseVelocityVerlet || DEMDOM.CheckpointReady)
+        throw new Fatal("Correct twelve-edge proxy: coupled VV/restart unsupported");
+    // Deliberately restricted to the independently registered exchange subset.
+    if(Fconv!=1.0 || LBMDOM.Nl!=1 || LBMDOM.Nneigh!=15 || LBMDOM.Sc!=0.0 ||
+       dx!=1.0 || dt!=1.0 || LBMDOM.G[0]!=0.0 || LBMDOM.Gmix!=0.0 ||
+       !std::isfinite(LBMDOM.Tau[0]) || LBMDOM.Tau[0]<=0.5)
+        throw new Fatal("Correct twelve-edge proxy: requires unit dx/dt, D3Q15 single fluid, Sc=0, G=Gmix=0, Fconv=1, tau>0.5");
+#ifdef USE_CUDA
+    if(sizeof(real)!=8) throw new Fatal("Correct twelve-edge proxy requires FP64");
+    FuncBn_ptr expected;
+    if(cudaMemcpyFromSymbol(&expected,d_fBnSmooth,sizeof(expected))!=cudaSuccess || pfBn!=expected)
+        throw new Fatal("Correct twelve-edge proxy: custom gamma-to-B function unsupported");
+#endif
+    for(auto *p:DEMDOM.Particles) {
+        if(p->Verts.Size()!=1 || p->Edges.Size()!=0 || p->Faces.Size()!=0 ||
+           p->Tori.Size()!=0 || p->Cylinders.Size()!=0 || p->Bdry ||
+           !std::isfinite(p->Props.R) || p->Props.R<=0.0 || p->Dmax!=p->Props.R ||
+           norm(*p->Verts[0]-p->x)!=0.0)
+            throw new Fatal("Correct twelve-edge proxy: canonical centered spheres only");
+    }
+}
+
+void Domain::CheckTwelveEdgeCollision(bool device)
+{
+    CheckTwelveEdgeConfiguration();
+    // Fail CLOSED before production collision. This deliberately conservative
+    // triangle bound can reject safe states; it never rescales the collision.
+    // Unit dx/dt, Sc=0, single fluid, zero body force, default B only.
+#ifdef USE_CUDA
+    std::vector<real> pop,om,gamma,rho;
+    std::vector<real3> vel,bforce;
+    if(device) {
+        auto read=[](auto *ptr,auto &v,size_t n) {
+            v.resize(n);
+            if(cudaMemcpy(v.data(),ptr,n*sizeof(v[0]),cudaMemcpyDeviceToHost)!=cudaSuccess)
+                throw new Fatal("Correct twelve-edge proxy: collision preflight read failed");
+        };
+        read(LBMDOM.pF,pop,LBMDOM.Ncells*15);read(pOmeis,om,LBMDOM.Ncells*15);
+        read(pGamma,gamma,LBMDOM.Ncells);read(LBMDOM.pRho,rho,LBMDOM.Ncells);
+        read(LBMDOM.pVel,vel,LBMDOM.Ncells);read(LBMDOM.pBForce,bforce,LBMDOM.Ncells);
+    }
+#endif
+    for(size_t ic=0;ic<LBMDOM.Ncells;ic++) {
+        size_t x=ic%LBMDOM.Ndim(0),y=(ic/LBMDOM.Ndim(0))%LBMDOM.Ndim(1),z=ic/(LBMDOM.Ndim(0)*LBMDOM.Ndim(1));
+        if(LBMDOM.IsSolid[0][x][y][z]) continue;
+        double g,r;Vec3_t v,bf;
+#ifdef USE_CUDA
+        if(device) {
+            g=gamma[ic];r=rho[ic];v=Vec3_t(vel[ic].x,vel[ic].y,vel[ic].z);
+            bf=Vec3_t(bforce[ic].x,bforce[ic].y,bforce[ic].z);
+        } else
+#endif
+        {g=LBMDOM.Gamma[x][y][z];r=LBMDOM.Rho[0][x][y][z];v=LBMDOM.Vel[0][x][y][z];bf=LBMDOM.BForce[0][x][y][z];}
+        if(norm(bf)!=0.0 || !std::isfinite(r) || r<=0.0 || !std::isfinite(g) || g<0.0 || g>1.0)
+            throw new Fatal("Correct twelve-edge proxy: invalid or forced fluid state unsupported");
+        double tau=LBMDOM.Tau[0],B=g*(tau-0.5)/(1.0-g+tau-0.5);
+        for(size_t k=0;k<15;k++) {
+            double f,o;
+#ifdef USE_CUDA
+            if(device) {f=pop[ic*15+k];o=om[ic*15+k];} else
+#endif
+            {f=LBMDOM.F[0][x][y][z][k];o=LBMDOM.Omeis[x][y][z][k];}
+            double a=fabs((1.0-B)*(f-LBMDOM.Feq(k,r,v))/tau),b=fabs(B*o);
+            double pad=64.0*std::numeric_limits<double>::epsilon()*(1.0+fabs(f)+a+b);
+            if(!std::isfinite(f) || !std::isfinite(a) || !std::isfinite(b) || f<=a+b+pad)
+                throw new Fatal("Correct twelve-edge proxy: production limiter risk blocked before collision (cell=%zd,k=%zd)",ic,k);
+        }
+    }
+}
+
 void Domain::CheckSphereCellCoverage(bool device)
 {
+    if(CorrectTwelveEdgeProxy) CheckTwelveEdgeConfiguration();
     std::vector<Vec3_t> positions(DEMDOM.Particles.Size());
 #ifdef USE_CUDA
     if (device) {
@@ -689,6 +771,7 @@ inline void Domain::Solve(double Tf, double dtOut, ptDFun_t ptSetup, ptDFun_t pt
     // Silently ignoring the standalone VV flag is not a valid VV reference.
     if(DEMDOM.UseVelocityVerlet || DEMDOM.CheckpointReady)
         throw new Fatal("LBM-DEM: coupled Velocity-Verlet/full-state restart is not implemented; V2 coupled gate NOT PASSED. Select legacy integration explicitly or use a separately validated coupled VV scheme");
+    if(CorrectTwelveEdgeProxy) CheckTwelveEdgeConfiguration();
     FileKey.Printf("%s",TheFileKey);
     idx_out = 0;
     Finished = false;
@@ -963,6 +1046,7 @@ inline void Domain::Solve(double Tf, double dtOut, ptDFun_t ptSetup, ptDFun_t pt
 #ifdef MECHSYS_EXCHANGE_AUDIT
         MechSysExchangeAudit::notify(this,"before_collision");
 #endif
+        if(CorrectTwelveEdgeProxy) CheckTwelveEdgeCollision(true);
         if (LBMDOM.Nl==1)
         {
             if (fabs(LBMDOM.G[0])>1.0e-12)
@@ -1078,6 +1162,7 @@ inline void Domain::Solve(double Tf, double dtOut, ptDFun_t ptSetup, ptDFun_t pt
 #ifdef MECHSYS_EXCHANGE_AUDIT
         MechSysExchangeAudit::notify(this,"before_collision");
 #endif
+        if(CorrectTwelveEdgeProxy) CheckTwelveEdgeCollision();
         LBMDOM.CollideSCDEM();
 #ifdef MECHSYS_EXCHANGE_AUDIT
         MechSysExchangeAudit::notify(this,"after_collision");
@@ -1109,6 +1194,7 @@ inline void Domain::Solve(double Tf, double dtOut, ptDFun_t ptSetup, ptDFun_t pt
 inline void Domain::UpLoadDevice(size_t Nc, bool first)
 {
     lbmdemaux.Fconv = Fconv;
+    lbmdemaux.CorrectTwelveEdgeProxy = CorrectTwelveEdgeProxy;
     if (first)
     {
         

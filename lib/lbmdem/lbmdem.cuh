@@ -34,6 +34,7 @@ struct lbmdem_aux
     size_t nvc;  ///< number of vertex cell pairs
     size_t nfc;  ///< number of face cell pairs
     real  Fconv; ///< Force conversion factor
+    bool CorrectTwelveEdgeProxy = false; ///< Default-off V3-I0-P2 occupancy only
 };
 
 struct ParCellPairCU
@@ -122,6 +123,33 @@ __device__ real cudaSphereCube(real3 & Xs, real3 & Xc, real R, real dx)
         }
     }
     return len;
+}
+
+// Same independent-edge projection as the host helper, FP64 in supported mode.
+// Optional edges are upper 0..3, lower 4..7, vertical 8..11; NOT volume.
+__device__ real cudaSphereCube12EdgeCorrected(real3 const & Xs, real3 const & Xc,
+                                             real R, real dx, real *edges=nullptr)
+{
+    const int signs[8][3]={{-1,-1,1},{1,-1,1},{1,1,1},{-1,1,1},
+                           {-1,-1,-1},{1,-1,-1},{1,1,-1},{-1,1,-1}};
+    real r[3]={Xc.x-Xs.x,Xc.y-Xs.y,Xc.z-Xs.z},total=0.0;
+    for(size_t e=0;e<12;e++) {
+        size_t j=e%4,vertex=e<4?j:(e<8?j+4:j),axis=e<8?j%2:2;
+        real length=0.0;
+        if(dx>0.0 && R>=0.0) {
+            real r2=R*R;
+            for(size_t k=0;k<3;k++) if(k!=axis) {
+                real q=r[k]+0.5*dx*signs[vertex][k];r2-=q*q;
+            }
+            if(r2>0.0) {
+                real root=sqrt(r2),lo=fmax(r[axis]-0.5*dx,-root),hi=fmin(r[axis]+0.5*dx,root);
+                length=fmin(dx,fmax(0.0,hi-lo));
+            }
+        }
+        if(edges) edges[e]=length;
+        total+=length;
+    }
+    return total;
 }
 
 __global__ void cudaReset(bool const * IsSolid, real * Gammaf, real * Gamma, real * Omeis,FLBM::lbm_aux * lbmaux)
@@ -577,7 +605,9 @@ __global__ void cudaImprintLatticeVC(FuncBn fBn, size_t const * PaCeV, DEM::Part
     DEM::BranchVec(DPar[ip].x,C,B,Pert);
     if (norm(B)>Par[ip].Dmax+1.74*lbmaux[0].dx) return;
     Xs  = C-B;
-    len = cudaSphereCube(Xs,C,Par[ip].Dmax,lbmaux[0].dx);
+    len = lbmdemaux[0].CorrectTwelveEdgeProxy
+        ? cudaSphereCube12EdgeCorrected(Xs,C,Par[ip].Dmax,lbmaux[0].dx)
+        : cudaSphereCube(Xs,C,Par[ip].Dmax,lbmaux[0].dx);
     if (fabs(len)<1.0e-12) return;
     real gamma  = len/(12.0*lbmaux[0].dx);
 #ifdef MECHSYS_EXCHANGE_AUDIT
