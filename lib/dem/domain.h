@@ -3739,7 +3739,9 @@ inline void Domain::UpLoadDevice(size_t Nc, bool first,bool updateState)
                 if (ContactLaw==1) tangentialStiffness *= sqrt(std::max(0.0,Cis->PrevDelta));
                 Vec3_t Ft = Cis->Fdvv*tangentialStiffness;
                 DIcu.Ft = make_real3(Ft(0),Ft(1),Ft(2));
-                Ft = ContactLaw==1 ? Cis->Fdr : Cis->Fdr*Cis->Kt*Cis->beta;
+                // Fdr stores rolling FORCE in both CPU sphere laws, just like
+                // DynInteractonCU::Fr. Only Fdvv above is a displacement history.
+                Ft = Cis->Fdr;
                 DIcu.Fr = make_real3(Ft(0),Ft(1),Ft(2));
                 DIcu.PrevDelta = Cis->PrevDelta;
                 DIcu.InContact = Cis->InContact;
@@ -3918,17 +3920,9 @@ inline void Domain::DnLoadDevice(size_t Nc, bool force)
                 Cis->Fdvv(2) = hDynInteractonsVV[ivv].Ft.z/tangentialStiffness;
             }
             else Cis->Fdvv = OrthoSys::O;
-            if (ContactLaw==1)
-                Cis->Fdr = Vec3_t(hDynInteractonsVV[ivv].Fr.x,
-                                  hDynInteractonsVV[ivv].Fr.y,
-                                  hDynInteractonsVV[ivv].Fr.z);
-            else
-            {
-                Cis->Fdr(0) = hDynInteractonsVV[ivv].Fr.x/Cis->Kt;
-                Cis->Fdr(1) = hDynInteractonsVV[ivv].Fr.y/Cis->Kt;
-                Cis->Fdr(2) = hDynInteractonsVV[ivv].Fr.z/Cis->Kt;
-                if (fabs(Cis->beta)>0.0) Cis->Fdr/=Cis->beta;
-            }
+            Cis->Fdr = Vec3_t(hDynInteractonsVV[ivv].Fr.x,
+                              hDynInteractonsVV[ivv].Fr.y,
+                              hDynInteractonsVV[ivv].Fr.z);
             Cis->PrevDelta = hDynInteractonsVV[ivv].PrevDelta;
             Cis->InContact = hDynInteractonsVV[ivv].InContact;
         }

@@ -131,7 +131,7 @@ public:
     //FrictionMap_t  Fdvv;      ///< Static friction displacement for pair of edges
     Vec3_t         Fdvv;                           ///< Static Friction displacement for the vertex vertex pair
     Vec3_t         vt_prev;                       // ^ previous increment
-    Vec3_t         Fdr;                            ///< Rolling displacement 
+    Vec3_t         Fdr;                            ///< Rolling force history (not displacement)
     double         beta;                           ///< Rolling stiffness coefficient
     double         eta;                            ///< Plastic moment coefficient
     double         Bn;                             ///< Elastic normal constant for the cohesion
