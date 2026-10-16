@@ -588,6 +588,10 @@ void Domain::WriteXDMF(char const * FileKey)
 inline void Domain::Solve(double Tf, double dtOut, ptDFun_t ptSetup, ptDFun_t ptReport,
                           char const * TheFileKey, bool RenderVideo, size_t TheNproc)
 {
+    // V2: this coupled algorithm is position-Verlet/leapfrog on BOTH backends.
+    // Silently ignoring the standalone VV flag is not a valid VV reference.
+    if(DEMDOM.UseVelocityVerlet || DEMDOM.CheckpointReady)
+        throw new Fatal("LBM-DEM: coupled Velocity-Verlet/full-state restart is not implemented; V2 coupled gate NOT PASSED. Select legacy integration explicitly or use a separately validated coupled VV scheme");
     FileKey.Printf("%s",TheFileKey);
     idx_out = 0;
     Finished = false;
@@ -636,6 +640,14 @@ inline void Domain::Solve(double Tf, double dtOut, ptDFun_t ptSetup, ptDFun_t pt
         }
         else DEMDOM.NoFreePar.Push(i);
         DEMDOM.Particles[i]->Index = i;
+    }
+    DEMDOM.AssignPersistentIds();
+    // Shared DEM uploads include acceleration arrays even for the legacy path.
+    // They were empty here, causing a host out-of-bounds read before GPU startup.
+    DEMDOM.A.Resize(DEMDOM.Particles.Size());
+    DEMDOM.Wdot.Resize(DEMDOM.Particles.Size());
+    for(size_t i=0;i<DEMDOM.Particles.Size();i++) {
+        DEMDOM.A[i]=OrthoSys::O;DEMDOM.Wdot[i]=OrthoSys::O;
     }
     for (size_t i=0; i<DEMDOM.BInteractons.Size(); i++)
     {
@@ -944,6 +956,11 @@ inline void Domain::Solve(double Tf, double dtOut, ptDFun_t ptSetup, ptDFun_t pt
         iter++;
     }
     Finished = true;
+#ifdef USE_CUDA
+    DEMDOM.DnLoadDevice(Nproc,true);
+    LBMDOM.DnLoadDevice(Nproc);
+    DnLoadDevice(Nproc);
+#endif
     if (ptReport!=NULL) (*ptReport) ((*this), UserData);
 
     printf("%s  Total number of iterations                                = %zd%s\n",TERM_CLR4,iter, TERM_RST);
