@@ -1,0 +1,42 @@
+{
+  "source_commit": "73466999e0601a083fb9718281d88d161c75231d",
+  "source": "/tmp/mechsys-v2.g2YtyY/work/benchmarks/v2/legacy_restart.cu",
+  "source_sha256": "cd421876e4b3b875fc8fa9d21353b2cd7b73e94681dac51969c8bf7c30a249bc",
+  "targets": {
+    "cpu": {
+      "compile": [
+        "g++",
+        "-fopenmp",
+        "-x",
+        "c++",
+        "-std=c++17",
+        "-O3",
+        "-DH5Gcreate_vers=2",
+        "-DH5Gopen_vers=2",
+        "-DH5_NO_DEPRECATED_SYMBOLS",
+        "-DHAS_IGRAPH",
+        "-DUSE_CHECK_OVERLAP",
+        "-DUSE_GPU_DOUBLE",
+        "-DUSE_HDF5",
+        "-DUSE_OMP",
+        "-DUSE_STDVECTOR",
+        "-I/tmp/mechsys-v2.g2YtyY/work",
+        "@/tmp/mechsys_v1_build/tdem/CMakeFiles/test_cu_04.dir/includes_CUDA.rsp",
+        "-c",
+        "/tmp/mechsys-v2.g2YtyY/work/benchmarks/v2/legacy_restart.cu",
+        "-o",
+        "/tmp/mechsys-v2.g2YtyY/r1-build/cpu.o"
+      ],
+      "link": [
+        "g++",
+        "-fopenmp",
+        "/tmp/mechsys-v2.g2YtyY/r1-build/cpu.o",
+        "-o",
+        "/tmp/mechsys-v2.g2YtyY/r1-build/cpu",
+        "@/tmp/mechsys_v1_build/tdem/CMakeFiles/test_cu_04.dir/linkLibs.rsp",
+        "-L/usr/local/cuda-12.6/targets/x86_64-linux/lib"
+      ],
+      "binary_sha256": "fad531aab48ba8a4d7ac3ea6c2f26a8b99246b2794696e6b7ca46f2add91e570"
+    }
+  }
+}

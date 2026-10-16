@@ -1,9 +1,9 @@
 # MechSys GPU DEM optimization — PROJECT_STATUS.md
 
-**As-of:** 2026-10-16 (VV reference decision and evolving-history gate)
+**As-of:** 2026-10-16 (V2 restart work in progress; R1 counterexample recorded)
 **State:** `VV is the reference mode` / `V1 pre-force/reference fixes retained` / `linear sphere rolling-force transfer defect FIXED` / `stepwise CPU/GPU sphere history 6/6 PASS` / `actual VV candidate oracle 5/5 PASS` / `restart/coupled runtime and full V0 PARTIAL` / `P1-S DEFAULT-OFF, speed promotion unaccepted` / `P0-R1 and polyhedral count gap remain PARTIAL/UNRESOLVED`
 **Reference decision (user, 2026-10-16):** explicitly select `UseVelocityVerlet=true` for all new validation, profiling, benchmarks and optimization decisions. Legacy position-Verlet/leapfrog data are separately labeled controls, not VV reference evidence. `AGENTS.md` records this policy; the compatibility constructor default remains false. `test_cu_04 <input> <Nproc> <dthoot> <qin> 1` must print `DEM_BENCHMARK_INTEGRATOR velocity_verlet=1`; use `--vv` in the registered runner.
-**Next authorized work:** characterize the VV restart contract with a minimal save/load history counterexample, then design a versioned history-preserving checkpoint; close the relevant coupled runtime gate. Current Save/Load is not a history-safe checkpoint (interaction serialization is disabled). Obtain explicitly selected VV complete-solve timing windows before performance promotion. Delayed control/adaptive skins still require a displacement-validity proof. See §5.7 and `benchmarks/v1_reference/HISTORY_REPORT.md`.
+**Next authorized work:** user V2 work order: explicit versioned VV checkpoint and uninterrupted/restarted comparisons, damped/Hertz cases, bounded coupled runtime and polyhedral validation. R1 legacy-history-loss counterexample is recorded before correction; R2 state audit is in `benchmarks/v2/RESTART_STATE.md`. No new GPU optimization. P2-B timings only after relevant correctness gates pass. Original checkout and every pre-V2 clone are READ ONLY for this milestone.
 **Agent:** GLM-5.3 Flash (or successor); operational rules in `AGENTS.md`.
 **Original project:** https://github.com/Axtal/mechsys
 **Fork URL / owner:** https://github.com/marcoprevitali/mechsys / `marcoprevitali` (authenticated account and public fork metadata verified 2026-10-15)

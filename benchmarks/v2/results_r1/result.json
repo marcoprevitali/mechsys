@@ -1,0 +1,6 @@
+{
+  "exit_code": 1,
+  "source_commit": "73466999e0601a083fb9718281d88d161c75231d",
+  "log_sha256": "316e911aa933e26ee7adeba749bf29ca3162fec29725a3e75e4e7dddf5e2ee39",
+  "negative_control_expected_failure": true
+}
