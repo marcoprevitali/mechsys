@@ -5,6 +5,38 @@ record. This file is a concise re-entry point, not a replacement for that record
 
 ## Current objective and boundary
 
+**V3-I0-P2R-C PARTIAL design — not complete. Historical P2R-K FAIL preserved;
+new P2R-KN is PROPOSED / NOT YET APPROVED / NOT IMPLEMENTED / NOT RUN.**
+Read PROJECT_STATUS.md §5.15 and
+[contract decision](benchmarks/v3_i0_p2r_contract/CONTRACT_DECISION.md).
+Independent full clone/branch design/v3-i0-p2r-compatibility from exact
+587dfbff889495b4a7ade6b5c2c107ae4febdfde. Persistent target
+/home/msys/git/mechsys-v3-i0-p2r-compatibility-design;final originSHA/clean/
+protection proof in external contract DELIVERY.json. Documentation ONLY:
+ten requested design files+source/evidence hashes,no source/test/tolerance
+change,no new builds/simulations/acceptance/performance runs.
+
+Exact structural/multiset/owner/model/phase rules and gamma93 rounded-term sum
+bounds derived;independent collision/exchange budgets unchanged,not B_old+E.
+Actual translation/gyro/ordered quaternion/normalization and fluid maps audited.
+Reported v lags x;xb=x-h*v andwb=w startup is not an acceleration-corrected
+staggered bootstrap. Operational phases are known,physical initial-time
+interpretation stillneedsreview. One/two-step propagation recurrences are
+conditional;actual parameter/primitive/norm/density and geometric/limiter/
+rebuild branch enclosures are not fully certified. No complete trajectory
+tolerance or long-time theorem. C-D/E/F PARTIAL;all new history/event tests NOT RUN.
+
+**Next recommendation OPTION D (requires authorization):** targeted phase/
+bootstrap and certified one/two-step primitive/feedback/branch derivation on
+the frozen no-contact case. Do not implement B1 harness with missing budgets,
+deterministic A1,KN acceptance or higher tolerances automatically. All old
+P2/P2R/P2R-R evidence/defaults/guards retained. Coupled VV BLOCKED,SchemeA
+NOT IMPLEMENTED,coupled restart NOT VALIDATED,P2-B NOT RUN;VV policy unchanged.
+New receipt namespace:
+/home/msys/SIMS/mechsys_v3_i0_p2r_contract/20261017-phase-aware-design/.
+
+## Preserved P2R-R observational checkpoint
+
 **V3-I0-P2R-R observational audit complete within bounded scope; P2R remains
 PARTIAL / strict K FAIL.** Read PROJECT_STATUS.md §5.14 and
 [reproducibility decision](benchmarks/v3_i0_p2r_repro/REPRODUCIBILITY_DECISION.md).
