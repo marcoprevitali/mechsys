@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Read-only Git/preservation verification; write external delivery receipt."""
-import argparse,hashlib,json,subprocess
+import argparse,hashlib,json,os,subprocess
 from pathlib import Path
 from prepare import BASE,save,sha
 from evidence import git,preservation
@@ -19,7 +19,9 @@ def main():
         if not rawpath:continue
         name=rawpath.decode()
         if name in ['PROJECT_STATUS.md','PROJECT_STATE.md']:continue
-        assert (a.work/name).read_bytes()==git(a.work,'show',BASE+':'+name),name
+        path=a.work/name
+        content=os.readlink(path).encode() if path.is_symlink() else path.read_bytes()
+        assert content==git(a.work,'show',BASE+':'+name),name
     assert not (a.work/'.git').is_file(), 'Require full clone, not worktree'
     assert not (a.persistent/'.git').is_file()
     assert git(a.persistent,'rev-parse','HEAD').decode().strip()==head
