@@ -1,0 +1,4 @@
+snapshot,quantity,max_pairwise_difference,inertia_convention
+state-0.json,sphere rotational kinetic energy,0.0,"exact 2mR^2/5 of serialized m,R; diagnostic only"
+state-1.json,sphere rotational kinetic energy,1.695835111391049e-27,"exact 2mR^2/5 of serialized m,R; diagnostic only"
+state-2.json,sphere rotational kinetic energy,9.039701079966678e-27,"exact 2mR^2/5 of serialized m,R; diagnostic only"

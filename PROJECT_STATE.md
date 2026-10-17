@@ -5,6 +5,39 @@ record. This file is a concise re-entry point, not a replacement for that record
 
 ## Current objective and boundary
 
+**V3-I0-P2R-R observational audit complete within bounded scope; P2R remains
+PARTIAL / strict K FAIL.** Read PROJECT_STATUS.md §5.14 and
+[reproducibility decision](benchmarks/v3_i0_p2r_repro/REPRODUCIBILITY_DECISION.md).
+New isolated branch validation/v3-i0-p2r-reproducibility from exact26bf84a;
+production and all old evidence unchanged. Final origin SHA/clean/full-clone/
+archive proof in new external reproducibility DELIVERY.json. Persistent target
+/home/msys/git/mechsys-v3-i0-p2r-reproducibility.
+
+Four prior archives/9,944 payloads plus3,980 live P2R files verified BEFORE new
+runs. Exact archived binaries reused.10 baseline+10 candidate-off runs,
+serial/interleaved,user-approved desktop-services exception,no other simulations.
+190 all pairs x11 snapshots. Baseline1/2/3 and candidate1/2/4 initial/step1/final
+state hashes:both self-repeatability FAIL.93 identical first particle/cell
+contributions,variable native FP64 RN atomic sums. Every first sum (180 normal+
+72 sanitizer diagnostic scalars) satisfies exact-rational gamma93 bounds and
+has a valid offline-order witness.8 sanitizer runs zero reports. CASE A within
+tested scope;actual GPU order untraced,global race freedom not universally proved.
+
+Final F<=4.337e-18,T<=4.066e-18,w<=5.242e-22,Q<=3.752e-22 pairwise differences.
+x/v/fluid/93 pair IDs+order/empty histories/energy bookkeeping exact over2steps.
+Phase-aware momentum/work residuals and unaligned diagnostic caveats retained.
+No long-time equivalence,nonzero-history/rebuild,coupled physical/VV or performance
+acceptance. Explicit legacy compatibility control;VV reference policy unchanged.
+
+Next requires review:design-only NEW compatibility-contract decision with
+derived propagation/balance budgets,or separately authorize deterministic
+reference-only gather for BOTH new controls. No tolerance waiver,production
+reduction,SchemeA,restart,P2-B,merge or occupancy promotion. Old P2R-K FAIL and
+old P2 FAIL stay immutable. New raw archive namespace:
+/home/msys/SIMS/mechsys_v3_i0_p2r_repro_validation/20261017-default-off-audit/.
+
+## Preserved P2R arithmetic milestone (not accepted by the audit)
+
 **V3-I0-P2R PARTIAL — arithmetic/coupled exchange pass, strict default-off K
 FAIL.** Read PROJECT_STATUS.md §5.13 and
 [P2R decision](benchmarks/v3_i0_p2r/V3_I0_P2R_DECISION.md). Independent branch
@@ -35,8 +68,9 @@ reportoverallPASS. Six standaloneVV checkpoint restartsbitwise;18 explicit
 unsupported/limiter/shared/VV negativesrejectbeforecollision. Representative
 operation sampleNOT_RUN afterstop. No SchemeA/restart/performance work.
 
-Next requires user direction: default-off reproducibility/gate study or separate
-deterministic-accumulation scope. No implicit tolerance relaxation. Evidence
+Historical next decision,now investigated observationally above: default-off
+reproducibility/gate study or separate deterministic-accumulation scope. No
+implicit tolerance relaxation. Evidence
 benchmarks/v3_i0_p2r/;newrawarchive/verification namespace
 /home/msys/SIMS/mechsys_v3_i0_p2r_validation/20261016-robust-tangency-partial/.
 Persistent delivery target: /home/msys/git/mechsys-v3-i0-p2r-robust-tangency.

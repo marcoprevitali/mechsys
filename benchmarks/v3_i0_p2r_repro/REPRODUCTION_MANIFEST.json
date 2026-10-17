@@ -1,0 +1,1368 @@
+{
+  "analysis": "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/analysis-v1",
+  "branch": "validation/v3-i0-p2r-reproducibility",
+  "builds": {
+    "baseline": {
+      "build": {
+        "checkout_commit": "immutable git archive; see reference_commit in TEST_MANIFEST.json",
+        "headers": {
+          "lib/dem/basic_functions.h": "7a4936c3ede61c902adafd6ad6703f3dedd28cdd8f7f78df75b990e7836f869e",
+          "lib/dem/checkpoint.h": "df5f6b4f1fb07454e5eee79df61a1aca52b17a98f8ea720b057985d309176d92",
+          "lib/dem/cylinder.h": "183c4e45668d68afcd9b20db88e7bc62ffc716acf596c8e27210b3292923b554",
+          "lib/dem/dem.cuh": "eec7b7c28ceb788ce075248071094e1f6431289fcbbc30c70bdf25ad8fbc311f",
+          "lib/dem/distance.h": "e68a2901385ae430980a08b334036d9a2f8fc76ca4abfbc51cf99d1bca16e3d7",
+          "lib/dem/domain.h": "b68d631763a77c99531d7b9cca174653dcce50211465d30510d24bff56b6ba24",
+          "lib/dem/dompargen.h": "b6efbdf2bdfb9dee6a42e35a2237f1690021f6710485ee3a50ce6c115b4ca558",
+          "lib/dem/edge.h": "79bcb68dadede3a8b4d8b895cca9f9ef98efc85674ad29b19b1be06d785da5e6",
+          "lib/dem/face.h": "b2dffa7cb1746d6dd6eb1799bc50d0e31a2037544954f369089b91f3f5905783",
+          "lib/dem/graph.h": "3c2ee252bb68b604b0becad5ef915a0bd8ec12dec41b6a9691c779e62f146645",
+          "lib/dem/gsd.h": "bc9b51bb4095b5028d15da772e39207058359710bf046f751b8bd23f23c87742",
+          "lib/dem/interacton.h": "94f473e545bdf809c584e164aca8003595b2738c29907c87032fe6da16592aa0",
+          "lib/dem/particle.h": "0f1af5dc124ab18561409985c72068116d095d4b40937e81a6ca5bd8fe6653cb",
+          "lib/dem/special_functions.h": "d6a761705772c98bbb8fd00ba501d34665da5e29d3b3abaa80d6526bce1143c0",
+          "lib/dem/torus.h": "67e0faddc03aeeef3131cb0d9d471599c987858e198aa0a0834717aeea0c1ac6",
+          "lib/dem/visualise.h": "f24ad4c3b92139a9feb0b48c39804575d73c282902f89bcfc79b5d34a7a97062",
+          "lib/flbm/Domain.h": "962f31955fd031bd240f7b52251b2c2b06544e1a244853ec0042bc05e247ca08",
+          "lib/flbm/exchange_audit.h": "3e6ac6adf8ada23d4bc53fe69524fcdd3a1644817cb186ead665146341e5a0d5",
+          "lib/flbm/lbm.cuh": "a638cdc19d87f07fb00eccce71b866dfc20ed4087ea58ebe1401e3747f8b8ab4",
+          "lib/lbmdem/Domain.h": "88450a99a7437bbf17a57ccd60bd6c81dd87001a3ff4b74a1dce6dfc8fd3a815",
+          "lib/lbmdem/lbmdem.cuh": "0b1732e7719ffa387f6320587ab53b91340bd7f4f22292f0a5381e63f1425382"
+        },
+        "observe_compiled": true,
+        "root": "/tmp/mechsys-v3-i0-p2r.do4dZe/reference",
+        "source": "benchmarks/v3_i0_p2r/probe.cu",
+        "source_sha256": "c49435ccc2306cbddfdbf31852adfa9bdd1a3b5859c15d0717c03578a2001739",
+        "targets": {
+          "cpu": {
+            "compile": [
+              "g++",
+              "-fopenmp",
+              "-x",
+              "c++",
+              "-std=c++17",
+              "-O3",
+              "-DH5Gcreate_vers=2",
+              "-DH5Gopen_vers=2",
+              "-DH5_NO_DEPRECATED_SYMBOLS",
+              "-DHAS_IGRAPH",
+              "-DUSE_CHECK_OVERLAP",
+              "-DUSE_GPU_DOUBLE",
+              "-DUSE_HDF5",
+              "-DUSE_OMP",
+              "-DUSE_STDVECTOR",
+              "-I/tmp/mechsys-v3-i0-p2r.do4dZe/reference",
+              "@/home/msys/SIMS/mechsys_v2_validation/20261016-v2-standalone/toolchain/tdem/CMakeFiles/test_cu_04.dir/includes_CUDA.rsp",
+              "-DMECHSYS_EXCHANGE_AUDIT",
+              "-c",
+              "/tmp/mechsys-v3-i0-p2r.do4dZe/work/benchmarks/v3_i0_p2r/probe.cu",
+              "-o",
+              "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/reference-build/cpu.o"
+            ],
+            "executable_sha256": "ca4d4a63ba61f7749809e8294e82de00995d73c3e8805b291fda464d8ed132e2",
+            "link": [
+              "g++",
+              "-fopenmp",
+              "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/reference-build/cpu.o",
+              "-o",
+              "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/reference-build/cpu",
+              "@/home/msys/SIMS/mechsys_v2_validation/20261016-v2-standalone/toolchain/tdem/CMakeFiles/test_cu_04.dir/linkLibs.rsp",
+              "-L/usr/local/cuda-12.6/targets/x86_64-linux/lib"
+            ]
+          },
+          "cuda": {
+            "compile": [
+              "/usr/local/cuda-12.6/bin/nvcc",
+              "-arch=sm_86",
+              "-Xcompiler=-fopenmp",
+              "-DUSE_CUDA",
+              "-std=c++17",
+              "-O3",
+              "-DH5Gcreate_vers=2",
+              "-DH5Gopen_vers=2",
+              "-DH5_NO_DEPRECATED_SYMBOLS",
+              "-DHAS_IGRAPH",
+              "-DUSE_CHECK_OVERLAP",
+              "-DUSE_GPU_DOUBLE",
+              "-DUSE_HDF5",
+              "-DUSE_OMP",
+              "-DUSE_STDVECTOR",
+              "-I/tmp/mechsys-v3-i0-p2r.do4dZe/reference",
+              "--options-file",
+              "/home/msys/SIMS/mechsys_v2_validation/20261016-v2-standalone/toolchain/tdem/CMakeFiles/test_cu_04.dir/includes_CUDA.rsp",
+              "-DMECHSYS_EXCHANGE_AUDIT",
+              "-c",
+              "/tmp/mechsys-v3-i0-p2r.do4dZe/work/benchmarks/v3_i0_p2r/probe.cu",
+              "-o",
+              "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/reference-build/cuda.o"
+            ],
+            "executable_sha256": "3ca0d0c65992015065c5907f451430b049d94b22bdd6f94e21e6f302129144f7",
+            "link": [
+              "g++",
+              "-fopenmp",
+              "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/reference-build/cuda.o",
+              "-o",
+              "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/reference-build/cuda",
+              "@/home/msys/SIMS/mechsys_v2_validation/20261016-v2-standalone/toolchain/tdem/CMakeFiles/test_cu_04.dir/linkLibs.rsp",
+              "-L/usr/local/cuda-12.6/targets/x86_64-linux/lib"
+            ]
+          }
+        }
+      },
+      "executable": "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/baseline",
+      "sha256": "3ca0d0c65992015065c5907f451430b049d94b22bdd6f94e21e6f302129144f7",
+      "source_commit": "bf6616973be1335da1caa7d75f8a34aa0f6c1c22"
+    },
+    "candidate": {
+      "build": {
+        "checkout_commit": "fb6405ba334a457606903dd34efd1d606804983a",
+        "headers": {
+          "lib/dem/basic_functions.h": "7a4936c3ede61c902adafd6ad6703f3dedd28cdd8f7f78df75b990e7836f869e",
+          "lib/dem/checkpoint.h": "df5f6b4f1fb07454e5eee79df61a1aca52b17a98f8ea720b057985d309176d92",
+          "lib/dem/cylinder.h": "183c4e45668d68afcd9b20db88e7bc62ffc716acf596c8e27210b3292923b554",
+          "lib/dem/dem.cuh": "eec7b7c28ceb788ce075248071094e1f6431289fcbbc30c70bdf25ad8fbc311f",
+          "lib/dem/distance.h": "e68a2901385ae430980a08b334036d9a2f8fc76ca4abfbc51cf99d1bca16e3d7",
+          "lib/dem/domain.h": "b68d631763a77c99531d7b9cca174653dcce50211465d30510d24bff56b6ba24",
+          "lib/dem/dompargen.h": "b6efbdf2bdfb9dee6a42e35a2237f1690021f6710485ee3a50ce6c115b4ca558",
+          "lib/dem/edge.h": "79bcb68dadede3a8b4d8b895cca9f9ef98efc85674ad29b19b1be06d785da5e6",
+          "lib/dem/face.h": "b2dffa7cb1746d6dd6eb1799bc50d0e31a2037544954f369089b91f3f5905783",
+          "lib/dem/graph.h": "3c2ee252bb68b604b0becad5ef915a0bd8ec12dec41b6a9691c779e62f146645",
+          "lib/dem/gsd.h": "bc9b51bb4095b5028d15da772e39207058359710bf046f751b8bd23f23c87742",
+          "lib/dem/interacton.h": "94f473e545bdf809c584e164aca8003595b2738c29907c87032fe6da16592aa0",
+          "lib/dem/particle.h": "0f1af5dc124ab18561409985c72068116d095d4b40937e81a6ca5bd8fe6653cb",
+          "lib/dem/special_functions.h": "35c257aadfd7cc9a4eabb8db9cf2c7b7a944c837b25a2e0b51c84e4156320ee4",
+          "lib/dem/sphere_cube_robust.h": "3c02288d6e698fef0d057a31fa27869a393e78e165530505f305aa0b94f36337",
+          "lib/dem/torus.h": "67e0faddc03aeeef3131cb0d9d471599c987858e198aa0a0834717aeea0c1ac6",
+          "lib/dem/visualise.h": "f24ad4c3b92139a9feb0b48c39804575d73c282902f89bcfc79b5d34a7a97062",
+          "lib/flbm/Domain.h": "962f31955fd031bd240f7b52251b2c2b06544e1a244853ec0042bc05e247ca08",
+          "lib/flbm/exchange_audit.h": "3e6ac6adf8ada23d4bc53fe69524fcdd3a1644817cb186ead665146341e5a0d5",
+          "lib/flbm/lbm.cuh": "a638cdc19d87f07fb00eccce71b866dfc20ed4087ea58ebe1401e3747f8b8ab4",
+          "lib/lbmdem/Domain.h": "d0bf752d8f06c621591ff485aa2913a5455430ac055fe8fd3374267ad140b892",
+          "lib/lbmdem/lbmdem.cuh": "514a17fa570fc6af704801d0ed95ccc3711db3dc453f71cc2ee661b6b988c522"
+        },
+        "observe_compiled": true,
+        "root": "/tmp/mechsys-v3-i0-p2r.do4dZe/work",
+        "source": "benchmarks/v3_i0_p2r/probe.cu",
+        "source_sha256": "c49435ccc2306cbddfdbf31852adfa9bdd1a3b5859c15d0717c03578a2001739",
+        "targets": {
+          "cpu": {
+            "compile": [
+              "g++",
+              "-fopenmp",
+              "-x",
+              "c++",
+              "-std=c++17",
+              "-O3",
+              "-DH5Gcreate_vers=2",
+              "-DH5Gopen_vers=2",
+              "-DH5_NO_DEPRECATED_SYMBOLS",
+              "-DHAS_IGRAPH",
+              "-DUSE_CHECK_OVERLAP",
+              "-DUSE_GPU_DOUBLE",
+              "-DUSE_HDF5",
+              "-DUSE_OMP",
+              "-DUSE_STDVECTOR",
+              "-I/tmp/mechsys-v3-i0-p2r.do4dZe/work",
+              "@/home/msys/SIMS/mechsys_v2_validation/20261016-v2-standalone/toolchain/tdem/CMakeFiles/test_cu_04.dir/includes_CUDA.rsp",
+              "-DMECHSYS_EXCHANGE_AUDIT",
+              "-c",
+              "/tmp/mechsys-v3-i0-p2r.do4dZe/work/benchmarks/v3_i0_p2r/probe.cu",
+              "-o",
+              "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/coupled-build/cpu.o"
+            ],
+            "executable_sha256": "d0ea556333ab64c8929a590ebba7e125320fcec48a270993691d040ed638fca3",
+            "link": [
+              "g++",
+              "-fopenmp",
+              "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/coupled-build/cpu.o",
+              "-o",
+              "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/coupled-build/cpu",
+              "@/home/msys/SIMS/mechsys_v2_validation/20261016-v2-standalone/toolchain/tdem/CMakeFiles/test_cu_04.dir/linkLibs.rsp",
+              "-L/usr/local/cuda-12.6/targets/x86_64-linux/lib"
+            ]
+          },
+          "cuda": {
+            "compile": [
+              "/usr/local/cuda-12.6/bin/nvcc",
+              "-arch=sm_86",
+              "-Xcompiler=-fopenmp",
+              "-DUSE_CUDA",
+              "-std=c++17",
+              "-O3",
+              "-DH5Gcreate_vers=2",
+              "-DH5Gopen_vers=2",
+              "-DH5_NO_DEPRECATED_SYMBOLS",
+              "-DHAS_IGRAPH",
+              "-DUSE_CHECK_OVERLAP",
+              "-DUSE_GPU_DOUBLE",
+              "-DUSE_HDF5",
+              "-DUSE_OMP",
+              "-DUSE_STDVECTOR",
+              "-I/tmp/mechsys-v3-i0-p2r.do4dZe/work",
+              "--options-file",
+              "/home/msys/SIMS/mechsys_v2_validation/20261016-v2-standalone/toolchain/tdem/CMakeFiles/test_cu_04.dir/includes_CUDA.rsp",
+              "-DMECHSYS_EXCHANGE_AUDIT",
+              "-c",
+              "/tmp/mechsys-v3-i0-p2r.do4dZe/work/benchmarks/v3_i0_p2r/probe.cu",
+              "-o",
+              "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/coupled-build/cuda.o"
+            ],
+            "executable_sha256": "12b44d4de0e70fc1be203180a3bb369308688c9dab1e653165093689cc3565ca",
+            "link": [
+              "g++",
+              "-fopenmp",
+              "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/coupled-build/cuda.o",
+              "-o",
+              "/tmp/mechsys-v3-i0-p2r.do4dZe/raw/coupled-build/cuda",
+              "@/home/msys/SIMS/mechsys_v2_validation/20261016-v2-standalone/toolchain/tdem/CMakeFiles/test_cu_04.dir/linkLibs.rsp",
+              "-L/usr/local/cuda-12.6/targets/x86_64-linux/lib"
+            ]
+          }
+        }
+      },
+      "executable": "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/candidate",
+      "sha256": "12b44d4de0e70fc1be203180a3bb369308688c9dab1e653165093689cc3565ca",
+      "source_commit": "1bde930295a9852e64a810e02e22b2bba21f98fc"
+    }
+  },
+  "execution_configuration": {
+    "Nproc": 1,
+    "cuda_compiler": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2024 NVIDIA Corporation\nBuilt on Tue_Oct_29_23:50:19_PDT_2024\nCuda compilation tools, release 12.6, V12.6.85\nBuild cuda_12.6.r12.6/compiler.35059454_0\n",
+    "cuda_environment": {
+      "LD_LIBRARY_PATH": "/home/msys/git/kratos/bin/Release/libs:/home/msys/git/kratos/bin/Release/lib:"
+    },
+    "desktop_exception": true,
+    "environment": {
+      "MECHSYS_EXCHANGE_AUDIT": "1",
+      "P1_MODE": "0",
+      "P1_RADIUS": "2.2",
+      "P2R_MODE": "0",
+      "P2_MODE": "0"
+    },
+    "exclusive_simulation_process": true,
+    "host_compiler": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+    "input_sha256": "cce9fe7b636ebcb7968fc9f216b0f342c906daf1298855bee05c33563dc6dee8",
+    "sanitizer": "NVIDIA (R) Compute Sanitizer\nCopyright (c) 2020-2024 NVIDIA Corporation\nVersion 2024.3.0.0 (build 34841621) (public-release)\n"
+  },
+  "input": {
+    "Alpha": 0.4,
+    "Beta": 0.1,
+    "Eta": 0.1,
+    "Fconv": 1,
+    "Gm": 0,
+    "Gn": 0,
+    "Gt": 0,
+    "Gv": 0,
+    "Kn": 1,
+    "Kt": 0.2,
+    "Mu": 0.5,
+    "Nl": 1,
+    "Nproc": 1,
+    "R": 2.2,
+    "Sc": 0,
+    "argv": [
+      "large",
+      "OUTPUT"
+    ],
+    "case": "large",
+    "cells": [
+      10,
+      10,
+      10
+    ],
+    "density": 100,
+    "driver_sha256": "c49435ccc2306cbddfdbf31852adfa9bdd1a3b5859c15d0717c03578a2001739",
+    "dt": 1,
+    "dx": 1,
+    "environment": {
+      "MECHSYS_EXCHANGE_AUDIT": "1",
+      "P1_MODE": "0",
+      "P1_RADIUS": "2.2",
+      "P2R_MODE": "0",
+      "P2_MODE": "0"
+    },
+    "initial_fluid_rho": 1,
+    "initial_fluid_velocity": [
+      0,
+      0,
+      0
+    ],
+    "integrator": "legacy coupled compatibility; NOT VV reference",
+    "lattice": "D3Q15",
+    "nu": 0.1,
+    "omega": [
+      0,
+      0,
+      0
+    ],
+    "periodic": [
+      true,
+      true,
+      true
+    ],
+    "position": [
+      5,
+      5,
+      5
+    ],
+    "quaternion": [
+      "sqrt(.5)",
+      "sqrt(.5)",
+      0,
+      0
+    ],
+    "steps": 2,
+    "tau": 0.8,
+    "velocity": [
+      0.002,
+      -0.001,
+      0.0005
+    ]
+  },
+  "input_sha256": "cce9fe7b636ebcb7968fc9f216b0f342c906daf1298855bee05c33563dc6dee8",
+  "milestone": "V3-I0-P2R-R",
+  "original_fixture_file_sha256": "e117269f1f006c504ea6e4818c5d9354149b0c5a1aea4089a7e3d1fadc4408da",
+  "original_gate": "P2R-K FAIL preserved; historical P2 FAIL preserved",
+  "prior_evidence_verification": {
+    "archives": [
+      {
+        "index_sha256": "28b85a887df547beb980f85d5e1c5850413af178a0a8b50c8bdc01870db05341",
+        "path": "/home/msys/SIMS/mechsys_v3_i0_p2r_validation/20261016-robust-tangency-partial/P2R_RAW.tgz",
+        "payload_bytes": 3045791680,
+        "payload_files": 3980,
+        "sha256": "cd31c91956d94a25d0014c01f03b888c65bb06e92107dc00428b6b319d070b38",
+        "status": "PASS"
+      },
+      {
+        "index_sha256": "14e904b403e7b87ca6ed9699e6e0f1d94f74ea732c5d8e33e98d03b53c3cedbb",
+        "path": "/home/msys/SIMS/mechsys_v3_i0_p2_validation/20261016-edge-proxy-stopped/P2_RAW.tgz",
+        "payload_bytes": 1805410415,
+        "payload_files": 2397,
+        "sha256": "3c42c2032c8444d94cd4d8896d67e01f775263022d379c10e1292306276a796b",
+        "status": "PASS"
+      },
+      {
+        "index_sha256": "cc15aab44ed4f8699a45f965c39095c87d35238e3a274734ef294d43db796dc4",
+        "path": "/home/msys/SIMS/mechsys_v3_i0_p1_validation/20261016-coverage/P1_RAW.tgz",
+        "payload_bytes": 1780915240,
+        "payload_files": 2302,
+        "sha256": "770a9639e551ed4a7142780cb50ec074265d82dae624f01d27ae7d22917dd2d2",
+        "status": "PASS"
+      },
+      {
+        "index_sha256": "3b12ef31cc8fa19e78a6051621c4dda6124020fb795f84816996601e6f2e86f0",
+        "path": "/home/msys/SIMS/mechsys_v3_i0_validation/20261016-v3-i0-exchange-audit/V3_I0_RAW.tgz",
+        "payload_bytes": 1094818328,
+        "payload_files": 1265,
+        "sha256": "9a33398a9f88d1f0aa48acd6f2539784daf3b6d7b6940fc3913cb35345d19e2e",
+        "status": "PASS"
+      }
+    ],
+    "live_p2r_files": 3980,
+    "status": "PASS"
+  },
+  "production_unchanged": true,
+  "raw": "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified",
+  "runs": [
+    {
+      "argv": [
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/baseline",
+        "large",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/repeats/baseline-00"
+      ],
+      "binary_sha256": "3ca0d0c65992015065c5907f451430b049d94b22bdd6f94e21e6f302129144f7",
+      "elapsed_s": 0.9668105090968311,
+      "files": {
+        "fixture.json": "e117269f1f006c504ea6e4818c5d9354149b0c5a1aea4089a7e3d1fadc4408da",
+        "run.log": "410253495196209252ccd6e3425990f70640db3c0309e35572b6470cca669093",
+        "state-0.json": "42d40d99feaf6904b9cb710d15e9f21a335a72fb7473fd8d162b4c27f32368b8",
+        "state-1.json": "d79fd6717bb4fd0f4a751e0cfb0d84efeac77bff9a0bd95604b09bf23d6a32a3",
+        "state-2.json": "5e40c3228cf06be488b5e741bd1e772b3b22044ae0f094ab95480bb448c09a85",
+        "step-0-after_collision.json": "772e75362761f283a33864eaf2e2aa2a053be6b68f035c1d0509aa9175af6eaa",
+        "step-0-after_imprint.json": "95c27df72e1879588a9b904f9d52f0ec3fd2ef014b08e47e5a060844786a2451",
+        "step-0-before_collision.json": "bdb1031da5f35955fa8080f270de28630c1357488e9280bfc770784935edf89d",
+        "step-0-before_imprint.json": "66ba98d05eb8562adc7b724ab82dab481ea61e47e457d74fac2d72cda58d162e",
+        "step-0-collision.csv": "005fe2cdbb0f47eb229690e0e86aac8f866ba85a577766cb9ff807629dbf885a",
+        "step-1-after_collision.json": "1cf68b50f25f118796a07d247f4bed31ed7e334b1f6bb5048c43165195fd71d4",
+        "step-1-after_imprint.json": "a8793373a4d8e2e9d00927f386693ffd111c4fe5af750e017424d8dd37b9e4c1",
+        "step-1-before_collision.json": "c6ecdd567b870920bc4dbd903f64ac583457ad82e91574971fcb04224a9907d9",
+        "step-1-before_imprint.json": "4ae974da1babeedb9ea3dc5ce430c14f10c227d859812b09ac384a6bd29ef4af",
+        "step-1-collision.csv": "10361eceb6db02cb1ddc32e439abed96a02bc2eabb783ce49498cb8b322ce0b3"
+      },
+      "input_sha256": "cce9fe7b636ebcb7968fc9f216b0f342c906daf1298855bee05c33563dc6dee8",
+      "inventory_after": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 0 %, 51\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      1      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      3      1      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "inventory_before": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 78 %, 49\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G     29     12      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      3      2      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "label": "baseline",
+      "order": 0,
+      "repetition": 0,
+      "returncode": 0,
+      "start_utc": "2026-10-17T07:56:53.228497+00:00",
+      "tool": null
+    },
+    {
+      "argv": [
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/candidate",
+        "large",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/repeats/candidate-00"
+      ],
+      "binary_sha256": "12b44d4de0e70fc1be203180a3bb369308688c9dab1e653165093689cc3565ca",
+      "elapsed_s": 0.8662828947417438,
+      "files": {
+        "fixture.json": "e117269f1f006c504ea6e4818c5d9354149b0c5a1aea4089a7e3d1fadc4408da",
+        "run.log": "25889514ae9638bdfc6581e1721119d2d4092b2516f9a6e65a3f658c2f42b585",
+        "state-0.json": "42d40d99feaf6904b9cb710d15e9f21a335a72fb7473fd8d162b4c27f32368b8",
+        "state-1.json": "d79fd6717bb4fd0f4a751e0cfb0d84efeac77bff9a0bd95604b09bf23d6a32a3",
+        "state-2.json": "1da3a8c5be161472b8ab6c50f7d83e42582423860658d2f81291e04dd51a482d",
+        "step-0-after_collision.json": "772e75362761f283a33864eaf2e2aa2a053be6b68f035c1d0509aa9175af6eaa",
+        "step-0-after_imprint.json": "95c27df72e1879588a9b904f9d52f0ec3fd2ef014b08e47e5a060844786a2451",
+        "step-0-before_collision.json": "bdb1031da5f35955fa8080f270de28630c1357488e9280bfc770784935edf89d",
+        "step-0-before_imprint.json": "66ba98d05eb8562adc7b724ab82dab481ea61e47e457d74fac2d72cda58d162e",
+        "step-0-collision.csv": "005fe2cdbb0f47eb229690e0e86aac8f866ba85a577766cb9ff807629dbf885a",
+        "step-1-after_collision.json": "6d43cc37eb34418328a124415cb553631ef3bfcfe32c036b2e56c397741426e0",
+        "step-1-after_imprint.json": "db153596b219bb56fa582ccbffacdc1aa866f0444228348fbb55df60981faab7",
+        "step-1-before_collision.json": "4b95951608d55f0f95a3217c860e5236c84b1e7200b8a9c9b236394dd4660440",
+        "step-1-before_imprint.json": "4ae974da1babeedb9ea3dc5ce430c14f10c227d859812b09ac384a6bd29ef4af",
+        "step-1-collision.csv": "10361eceb6db02cb1ddc32e439abed96a02bc2eabb783ce49498cb8b322ce0b3"
+      },
+      "input_sha256": "cce9fe7b636ebcb7968fc9f216b0f342c906daf1298855bee05c33563dc6dee8",
+      "inventory_after": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 0 %, 51\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      1      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      -      -      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "inventory_before": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 0 %, 51\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      1      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      3      1      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "label": "candidate",
+      "order": 1,
+      "repetition": 0,
+      "returncode": 0,
+      "start_utc": "2026-10-17T07:56:54.529039+00:00",
+      "tool": null
+    },
+    {
+      "argv": [
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/baseline",
+        "large",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/repeats/baseline-01"
+      ],
+      "binary_sha256": "3ca0d0c65992015065c5907f451430b049d94b22bdd6f94e21e6f302129144f7",
+      "elapsed_s": 0.86611935403198,
+      "files": {
+        "fixture.json": "e117269f1f006c504ea6e4818c5d9354149b0c5a1aea4089a7e3d1fadc4408da",
+        "run.log": "778c5c9bcdcb7f8acc041e7d0d6557faee5af0ddff27b38589901019ada0d210",
+        "state-0.json": "42d40d99feaf6904b9cb710d15e9f21a335a72fb7473fd8d162b4c27f32368b8",
+        "state-1.json": "d79fd6717bb4fd0f4a751e0cfb0d84efeac77bff9a0bd95604b09bf23d6a32a3",
+        "state-2.json": "5e40c3228cf06be488b5e741bd1e772b3b22044ae0f094ab95480bb448c09a85",
+        "step-0-after_collision.json": "772e75362761f283a33864eaf2e2aa2a053be6b68f035c1d0509aa9175af6eaa",
+        "step-0-after_imprint.json": "95c27df72e1879588a9b904f9d52f0ec3fd2ef014b08e47e5a060844786a2451",
+        "step-0-before_collision.json": "bdb1031da5f35955fa8080f270de28630c1357488e9280bfc770784935edf89d",
+        "step-0-before_imprint.json": "66ba98d05eb8562adc7b724ab82dab481ea61e47e457d74fac2d72cda58d162e",
+        "step-0-collision.csv": "005fe2cdbb0f47eb229690e0e86aac8f866ba85a577766cb9ff807629dbf885a",
+        "step-1-after_collision.json": "1cf68b50f25f118796a07d247f4bed31ed7e334b1f6bb5048c43165195fd71d4",
+        "step-1-after_imprint.json": "a8793373a4d8e2e9d00927f386693ffd111c4fe5af750e017424d8dd37b9e4c1",
+        "step-1-before_collision.json": "c6ecdd567b870920bc4dbd903f64ac583457ad82e91574971fcb04224a9907d9",
+        "step-1-before_imprint.json": "4ae974da1babeedb9ea3dc5ce430c14f10c227d859812b09ac384a6bd29ef4af",
+        "step-1-collision.csv": "10361eceb6db02cb1ddc32e439abed96a02bc2eabb783ce49498cb8b322ce0b3"
+      },
+      "input_sha256": "cce9fe7b636ebcb7968fc9f216b0f342c906daf1298855bee05c33563dc6dee8",
+      "inventory_after": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 0 %, 51\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      1      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      -      -      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "inventory_before": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 0 %, 51\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      2      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      -      -      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "label": "baseline",
+      "order": 2,
+      "repetition": 1,
+      "returncode": 0,
+      "start_utc": "2026-10-17T07:56:55.726926+00:00",
+      "tool": null
+    },
+    {
+      "argv": [
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/candidate",
+        "large",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/repeats/candidate-01"
+      ],
+      "binary_sha256": "12b44d4de0e70fc1be203180a3bb369308688c9dab1e653165093689cc3565ca",
+      "elapsed_s": 0.8661221470683813,
+      "files": {
+        "fixture.json": "e117269f1f006c504ea6e4818c5d9354149b0c5a1aea4089a7e3d1fadc4408da",
+        "run.log": "b1100f494cf5b064bf8fc50c922f9fa3d7b02920f05d29a77ea97f1302d8d85b",
+        "state-0.json": "42d40d99feaf6904b9cb710d15e9f21a335a72fb7473fd8d162b4c27f32368b8",
+        "state-1.json": "d79fd6717bb4fd0f4a751e0cfb0d84efeac77bff9a0bd95604b09bf23d6a32a3",
+        "state-2.json": "5e40c3228cf06be488b5e741bd1e772b3b22044ae0f094ab95480bb448c09a85",
+        "step-0-after_collision.json": "772e75362761f283a33864eaf2e2aa2a053be6b68f035c1d0509aa9175af6eaa",
+        "step-0-after_imprint.json": "95c27df72e1879588a9b904f9d52f0ec3fd2ef014b08e47e5a060844786a2451",
+        "step-0-before_collision.json": "bdb1031da5f35955fa8080f270de28630c1357488e9280bfc770784935edf89d",
+        "step-0-before_imprint.json": "66ba98d05eb8562adc7b724ab82dab481ea61e47e457d74fac2d72cda58d162e",
+        "step-0-collision.csv": "005fe2cdbb0f47eb229690e0e86aac8f866ba85a577766cb9ff807629dbf885a",
+        "step-1-after_collision.json": "1cf68b50f25f118796a07d247f4bed31ed7e334b1f6bb5048c43165195fd71d4",
+        "step-1-after_imprint.json": "a8793373a4d8e2e9d00927f386693ffd111c4fe5af750e017424d8dd37b9e4c1",
+        "step-1-before_collision.json": "c6ecdd567b870920bc4dbd903f64ac583457ad82e91574971fcb04224a9907d9",
+        "step-1-before_imprint.json": "4ae974da1babeedb9ea3dc5ce430c14f10c227d859812b09ac384a6bd29ef4af",
+        "step-1-collision.csv": "10361eceb6db02cb1ddc32e439abed96a02bc2eabb783ce49498cb8b322ce0b3"
+      },
+      "input_sha256": "cce9fe7b636ebcb7968fc9f216b0f342c906daf1298855bee05c33563dc6dee8",
+      "inventory_after": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 0 %, 51\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      1      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      -      -      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "inventory_before": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 0 %, 51\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      1      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      -      -      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "label": "candidate",
+      "order": 3,
+      "repetition": 1,
+      "returncode": 0,
+      "start_utc": "2026-10-17T07:56:56.920828+00:00",
+      "tool": null
+    },
+    {
+      "argv": [
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/baseline",
+        "large",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/repeats/baseline-02"
+      ],
+      "binary_sha256": "3ca0d0c65992015065c5907f451430b049d94b22bdd6f94e21e6f302129144f7",
+      "elapsed_s": 0.9165236558765173,
+      "files": {
+        "fixture.json": "e117269f1f006c504ea6e4818c5d9354149b0c5a1aea4089a7e3d1fadc4408da",
+        "run.log": "460448528963f286428a2d3aecc1af9b0daa2968a96b87d98c7fe147e5dd75e3",
+        "state-0.json": "42d40d99feaf6904b9cb710d15e9f21a335a72fb7473fd8d162b4c27f32368b8",
+        "state-1.json": "764a97ca9ed8cd4aee3d61c96ddcbf66eec2c02491753c1427797a0f055e4376",
+        "state-2.json": "e10bb0c2e571d4c5d68b366bf6c7b5339b852e89cbf062c009c56384535f94fc",
+        "step-0-after_collision.json": "bf00b0600a727f326cb297bcb8bc726225804631800216bb819910e914863048",
+        "step-0-after_imprint.json": "02396c0abec6bc723fb74ab3fdef28c5b04253dae4af2df9b1bdb28fcad7425d",
+        "step-0-before_collision.json": "4e2ce80c4d9b2caf42d9c86a675cc0ea0a5aeedcd506a2fd7fe2f4a49c83a30f",
+        "step-0-before_imprint.json": "66ba98d05eb8562adc7b724ab82dab481ea61e47e457d74fac2d72cda58d162e",
+        "step-0-collision.csv": "005fe2cdbb0f47eb229690e0e86aac8f866ba85a577766cb9ff807629dbf885a",
+        "step-1-after_collision.json": "17f9a6f43b6d98f3e0ab01b4278407c275399e7a29e678374d9156ad41190c32",
+        "step-1-after_imprint.json": "52edbbe702f7c6c49eed101aea811efb5bf4cc093e4848aa88e1e12114b793de",
+        "step-1-before_collision.json": "8f2a91ac0f9edeab5bd1e64fb43ceeb8c9cd211b944fcce95d7ffe262d4ab3ed",
+        "step-1-before_imprint.json": "0cc67d6ea5c468fb9ddfc0851f0ca0b5946b0c3f4c87015161329057d53a09c8",
+        "step-1-collision.csv": "10361eceb6db02cb1ddc32e439abed96a02bc2eabb783ce49498cb8b322ce0b3"
+      },
+      "input_sha256": "cce9fe7b636ebcb7968fc9f216b0f342c906daf1298855bee05c33563dc6dee8",
+      "inventory_after": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 1 %, 52\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      1      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      -      -      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "inventory_before": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 0 %, 51\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      3      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      -      -      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "label": "baseline",
+      "order": 4,
+      "repetition": 2,
+      "returncode": 0,
+      "start_utc": "2026-10-17T07:56:58.132149+00:00",
+      "tool": null
+    },
+    {
+      "argv": [
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/candidate",
+        "large",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/repeats/candidate-02"
+      ],
+      "binary_sha256": "12b44d4de0e70fc1be203180a3bb369308688c9dab1e653165093689cc3565ca",
+      "elapsed_s": 0.8662152090109885,
+      "files": {
+        "fixture.json": "e117269f1f006c504ea6e4818c5d9354149b0c5a1aea4089a7e3d1fadc4408da",
+        "run.log": "df191479da511ebb5a891b3824c238d108ff07bb718883befdfbcdc4723443f7",
+        "state-0.json": "42d40d99feaf6904b9cb710d15e9f21a335a72fb7473fd8d162b4c27f32368b8",
+        "state-1.json": "d79fd6717bb4fd0f4a751e0cfb0d84efeac77bff9a0bd95604b09bf23d6a32a3",
+        "state-2.json": "5e40c3228cf06be488b5e741bd1e772b3b22044ae0f094ab95480bb448c09a85",
+        "step-0-after_collision.json": "772e75362761f283a33864eaf2e2aa2a053be6b68f035c1d0509aa9175af6eaa",
+        "step-0-after_imprint.json": "95c27df72e1879588a9b904f9d52f0ec3fd2ef014b08e47e5a060844786a2451",
+        "step-0-before_collision.json": "bdb1031da5f35955fa8080f270de28630c1357488e9280bfc770784935edf89d",
+        "step-0-before_imprint.json": "66ba98d05eb8562adc7b724ab82dab481ea61e47e457d74fac2d72cda58d162e",
+        "step-0-collision.csv": "005fe2cdbb0f47eb229690e0e86aac8f866ba85a577766cb9ff807629dbf885a",
+        "step-1-after_collision.json": "1cf68b50f25f118796a07d247f4bed31ed7e334b1f6bb5048c43165195fd71d4",
+        "step-1-after_imprint.json": "a8793373a4d8e2e9d00927f386693ffd111c4fe5af750e017424d8dd37b9e4c1",
+        "step-1-before_collision.json": "c6ecdd567b870920bc4dbd903f64ac583457ad82e91574971fcb04224a9907d9",
+        "step-1-before_imprint.json": "4ae974da1babeedb9ea3dc5ce430c14f10c227d859812b09ac384a6bd29ef4af",
+        "step-1-collision.csv": "10361eceb6db02cb1ddc32e439abed96a02bc2eabb783ce49498cb8b322ce0b3"
+      },
+      "input_sha256": "cce9fe7b636ebcb7968fc9f216b0f342c906daf1298855bee05c33563dc6dee8",
+      "inventory_after": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 1 %, 52\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      1      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      0      0      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "inventory_before": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 7 %, 52\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      1      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      0      0      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "label": "candidate",
+      "order": 5,
+      "repetition": 2,
+      "returncode": 0,
+      "start_utc": "2026-10-17T07:56:59.396591+00:00",
+      "tool": null
+    },
+    {
+      "argv": [
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/baseline",
+        "large",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/repeats/baseline-03"
+      ],
+      "binary_sha256": "3ca0d0c65992015065c5907f451430b049d94b22bdd6f94e21e6f302129144f7",
+      "elapsed_s": 0.9163348679430783,
+      "files": {
+        "fixture.json": "e117269f1f006c504ea6e4818c5d9354149b0c5a1aea4089a7e3d1fadc4408da",
+        "run.log": "78f63e4ac4ef9130feea1cf67f66af1977cdb7f87871f4961f4936cacde69ca7",
+        "state-0.json": "42d40d99feaf6904b9cb710d15e9f21a335a72fb7473fd8d162b4c27f32368b8",
+        "state-1.json": "764a97ca9ed8cd4aee3d61c96ddcbf66eec2c02491753c1427797a0f055e4376",
+        "state-2.json": "e10bb0c2e571d4c5d68b366bf6c7b5339b852e89cbf062c009c56384535f94fc",
+        "step-0-after_collision.json": "bf00b0600a727f326cb297bcb8bc726225804631800216bb819910e914863048",
+        "step-0-after_imprint.json": "02396c0abec6bc723fb74ab3fdef28c5b04253dae4af2df9b1bdb28fcad7425d",
+        "step-0-before_collision.json": "4e2ce80c4d9b2caf42d9c86a675cc0ea0a5aeedcd506a2fd7fe2f4a49c83a30f",
+        "step-0-before_imprint.json": "66ba98d05eb8562adc7b724ab82dab481ea61e47e457d74fac2d72cda58d162e",
+        "step-0-collision.csv": "005fe2cdbb0f47eb229690e0e86aac8f866ba85a577766cb9ff807629dbf885a",
+        "step-1-after_collision.json": "17f9a6f43b6d98f3e0ab01b4278407c275399e7a29e678374d9156ad41190c32",
+        "step-1-after_imprint.json": "52edbbe702f7c6c49eed101aea811efb5bf4cc093e4848aa88e1e12114b793de",
+        "step-1-before_collision.json": "8f2a91ac0f9edeab5bd1e64fb43ceeb8c9cd211b944fcce95d7ffe262d4ab3ed",
+        "step-1-before_imprint.json": "0cc67d6ea5c468fb9ddfc0851f0ca0b5946b0c3f4c87015161329057d53a09c8",
+        "step-1-collision.csv": "10361eceb6db02cb1ddc32e439abed96a02bc2eabb783ce49498cb8b322ce0b3"
+      },
+      "input_sha256": "cce9fe7b636ebcb7968fc9f216b0f342c906daf1298855bee05c33563dc6dee8",
+      "inventory_after": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 3 %, 52\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      1      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      2      0      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "inventory_before": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 1 %, 52\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      2      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      0      0      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "label": "baseline",
+      "order": 6,
+      "repetition": 3,
+      "returncode": 0,
+      "start_utc": "2026-10-17T07:57:00.606123+00:00",
+      "tool": null
+    },
+    {
+      "argv": [
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/candidate",
+        "large",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/repeats/candidate-03"
+      ],
+      "binary_sha256": "12b44d4de0e70fc1be203180a3bb369308688c9dab1e653165093689cc3565ca",
+      "elapsed_s": 0.9668083479627967,
+      "files": {
+        "fixture.json": "e117269f1f006c504ea6e4818c5d9354149b0c5a1aea4089a7e3d1fadc4408da",
+        "run.log": "9fd99cf6d899e27a3e0c5724e28951c4a3d26594fabe24371054f019bf3d63cf",
+        "state-0.json": "42d40d99feaf6904b9cb710d15e9f21a335a72fb7473fd8d162b4c27f32368b8",
+        "state-1.json": "764a97ca9ed8cd4aee3d61c96ddcbf66eec2c02491753c1427797a0f055e4376",
+        "state-2.json": "e10bb0c2e571d4c5d68b366bf6c7b5339b852e89cbf062c009c56384535f94fc",
+        "step-0-after_collision.json": "bf00b0600a727f326cb297bcb8bc726225804631800216bb819910e914863048",
+        "step-0-after_imprint.json": "02396c0abec6bc723fb74ab3fdef28c5b04253dae4af2df9b1bdb28fcad7425d",
+        "step-0-before_collision.json": "4e2ce80c4d9b2caf42d9c86a675cc0ea0a5aeedcd506a2fd7fe2f4a49c83a30f",
+        "step-0-before_imprint.json": "66ba98d05eb8562adc7b724ab82dab481ea61e47e457d74fac2d72cda58d162e",
+        "step-0-collision.csv": "005fe2cdbb0f47eb229690e0e86aac8f866ba85a577766cb9ff807629dbf885a",
+        "step-1-after_collision.json": "17f9a6f43b6d98f3e0ab01b4278407c275399e7a29e678374d9156ad41190c32",
+        "step-1-after_imprint.json": "52edbbe702f7c6c49eed101aea811efb5bf4cc093e4848aa88e1e12114b793de",
+        "step-1-before_collision.json": "8f2a91ac0f9edeab5bd1e64fb43ceeb8c9cd211b944fcce95d7ffe262d4ab3ed",
+        "step-1-before_imprint.json": "0cc67d6ea5c468fb9ddfc0851f0ca0b5946b0c3f4c87015161329057d53a09c8",
+        "step-1-collision.csv": "10361eceb6db02cb1ddc32e439abed96a02bc2eabb783ce49498cb8b322ce0b3"
+      },
+      "input_sha256": "cce9fe7b636ebcb7968fc9f216b0f342c906daf1298855bee05c33563dc6dee8",
+      "inventory_after": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 11 %, 52\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      0      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      4      0      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "inventory_before": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 5 %, 52\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      1      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      2      0      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "label": "candidate",
+      "order": 7,
+      "repetition": 3,
+      "returncode": 0,
+      "start_utc": "2026-10-17T07:57:01.894605+00:00",
+      "tool": null
+    },
+    {
+      "argv": [
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/baseline",
+        "large",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/repeats/baseline-04"
+      ],
+      "binary_sha256": "3ca0d0c65992015065c5907f451430b049d94b22bdd6f94e21e6f302129144f7",
+      "elapsed_s": 0.966639893129468,
+      "files": {
+        "fixture.json": "e117269f1f006c504ea6e4818c5d9354149b0c5a1aea4089a7e3d1fadc4408da",
+        "run.log": "0c9e7572d5b244950ebd8ce7a5376cfeae54d8ed24d37fe87c55f0cb75513fb1",
+        "state-0.json": "42d40d99feaf6904b9cb710d15e9f21a335a72fb7473fd8d162b4c27f32368b8",
+        "state-1.json": "d79fd6717bb4fd0f4a751e0cfb0d84efeac77bff9a0bd95604b09bf23d6a32a3",
+        "state-2.json": "1da3a8c5be161472b8ab6c50f7d83e42582423860658d2f81291e04dd51a482d",
+        "step-0-after_collision.json": "772e75362761f283a33864eaf2e2aa2a053be6b68f035c1d0509aa9175af6eaa",
+        "step-0-after_imprint.json": "95c27df72e1879588a9b904f9d52f0ec3fd2ef014b08e47e5a060844786a2451",
+        "step-0-before_collision.json": "bdb1031da5f35955fa8080f270de28630c1357488e9280bfc770784935edf89d",
+        "step-0-before_imprint.json": "66ba98d05eb8562adc7b724ab82dab481ea61e47e457d74fac2d72cda58d162e",
+        "step-0-collision.csv": "005fe2cdbb0f47eb229690e0e86aac8f866ba85a577766cb9ff807629dbf885a",
+        "step-1-after_collision.json": "6d43cc37eb34418328a124415cb553631ef3bfcfe32c036b2e56c397741426e0",
+        "step-1-after_imprint.json": "db153596b219bb56fa582ccbffacdc1aa866f0444228348fbb55df60981faab7",
+        "step-1-before_collision.json": "4b95951608d55f0f95a3217c860e5236c84b1e7200b8a9c9b236394dd4660440",
+        "step-1-before_imprint.json": "4ae974da1babeedb9ea3dc5ce430c14f10c227d859812b09ac384a6bd29ef4af",
+        "step-1-collision.csv": "10361eceb6db02cb1ddc32e439abed96a02bc2eabb783ce49498cb8b322ce0b3"
+      },
+      "input_sha256": "cce9fe7b636ebcb7968fc9f216b0f342c906daf1298855bee05c33563dc6dee8",
+      "inventory_after": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 2 %, 52\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      1      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      1      0      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "inventory_before": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 11 %, 52\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      1      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      7      0      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "label": "baseline",
+      "order": 8,
+      "repetition": 4,
+      "returncode": 0,
+      "start_utc": "2026-10-17T07:57:03.202589+00:00",
+      "tool": null
+    },
+    {
+      "argv": [
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/candidate",
+        "large",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/repeats/candidate-04"
+      ],
+      "binary_sha256": "12b44d4de0e70fc1be203180a3bb369308688c9dab1e653165093689cc3565ca",
+      "elapsed_s": 0.9165844079107046,
+      "files": {
+        "fixture.json": "e117269f1f006c504ea6e4818c5d9354149b0c5a1aea4089a7e3d1fadc4408da",
+        "run.log": "eec861c5d808214ddc68b2a5fc0d0bdff43363063be4730ef616c24ebc64f570",
+        "state-0.json": "42d40d99feaf6904b9cb710d15e9f21a335a72fb7473fd8d162b4c27f32368b8",
+        "state-1.json": "764a97ca9ed8cd4aee3d61c96ddcbf66eec2c02491753c1427797a0f055e4376",
+        "state-2.json": "be589dbc29f85dc342aed9fc4e47f8821469bef2a32e885ed73d41639408242f",
+        "step-0-after_collision.json": "bf00b0600a727f326cb297bcb8bc726225804631800216bb819910e914863048",
+        "step-0-after_imprint.json": "02396c0abec6bc723fb74ab3fdef28c5b04253dae4af2df9b1bdb28fcad7425d",
+        "step-0-before_collision.json": "4e2ce80c4d9b2caf42d9c86a675cc0ea0a5aeedcd506a2fd7fe2f4a49c83a30f",
+        "step-0-before_imprint.json": "66ba98d05eb8562adc7b724ab82dab481ea61e47e457d74fac2d72cda58d162e",
+        "step-0-collision.csv": "005fe2cdbb0f47eb229690e0e86aac8f866ba85a577766cb9ff807629dbf885a",
+        "step-1-after_collision.json": "2a69642c6257cadec7c5e5baceeb479d05b537380674bc866d44f8ef1cfbfbb4",
+        "step-1-after_imprint.json": "50dae92b5dffd9f2c3c54416b4e5b77cdd84b7617da43a49ba90e3631db16f54",
+        "step-1-before_collision.json": "bc0e88a13812093574246b886cc2ae684ea941e6415033d14eb37c6bc5d8d7a2",
+        "step-1-before_imprint.json": "0cc67d6ea5c468fb9ddfc0851f0ca0b5946b0c3f4c87015161329057d53a09c8",
+        "step-1-collision.csv": "10361eceb6db02cb1ddc32e439abed96a02bc2eabb783ce49498cb8b322ce0b3"
+      },
+      "input_sha256": "cce9fe7b636ebcb7968fc9f216b0f342c906daf1298855bee05c33563dc6dee8",
+      "inventory_after": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 3 %, 52\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      0      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      3      0      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "inventory_before": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 2 %, 52\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      1      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      1      0      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "label": "candidate",
+      "order": 9,
+      "repetition": 4,
+      "returncode": 0,
+      "start_utc": "2026-10-17T07:57:04.526458+00:00",
+      "tool": null
+    },
+    {
+      "argv": [
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/baseline",
+        "large",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/repeats/baseline-05"
+      ],
+      "binary_sha256": "3ca0d0c65992015065c5907f451430b049d94b22bdd6f94e21e6f302129144f7",
+      "elapsed_s": 0.9166607777588069,
+      "files": {
+        "fixture.json": "e117269f1f006c504ea6e4818c5d9354149b0c5a1aea4089a7e3d1fadc4408da",
+        "run.log": "a63bcbabd56accb86670a066dccfe18f845e17c9de9d2d12af2d37b8690ab91c",
+        "state-0.json": "42d40d99feaf6904b9cb710d15e9f21a335a72fb7473fd8d162b4c27f32368b8",
+        "state-1.json": "764a97ca9ed8cd4aee3d61c96ddcbf66eec2c02491753c1427797a0f055e4376",
+        "state-2.json": "e10bb0c2e571d4c5d68b366bf6c7b5339b852e89cbf062c009c56384535f94fc",
+        "step-0-after_collision.json": "bf00b0600a727f326cb297bcb8bc726225804631800216bb819910e914863048",
+        "step-0-after_imprint.json": "02396c0abec6bc723fb74ab3fdef28c5b04253dae4af2df9b1bdb28fcad7425d",
+        "step-0-before_collision.json": "4e2ce80c4d9b2caf42d9c86a675cc0ea0a5aeedcd506a2fd7fe2f4a49c83a30f",
+        "step-0-before_imprint.json": "66ba98d05eb8562adc7b724ab82dab481ea61e47e457d74fac2d72cda58d162e",
+        "step-0-collision.csv": "005fe2cdbb0f47eb229690e0e86aac8f866ba85a577766cb9ff807629dbf885a",
+        "step-1-after_collision.json": "17f9a6f43b6d98f3e0ab01b4278407c275399e7a29e678374d9156ad41190c32",
+        "step-1-after_imprint.json": "52edbbe702f7c6c49eed101aea811efb5bf4cc093e4848aa88e1e12114b793de",
+        "step-1-before_collision.json": "8f2a91ac0f9edeab5bd1e64fb43ceeb8c9cd211b944fcce95d7ffe262d4ab3ed",
+        "step-1-before_imprint.json": "0cc67d6ea5c468fb9ddfc0851f0ca0b5946b0c3f4c87015161329057d53a09c8",
+        "step-1-collision.csv": "10361eceb6db02cb1ddc32e439abed96a02bc2eabb783ce49498cb8b322ce0b3"
+      },
+      "input_sha256": "cce9fe7b636ebcb7968fc9f216b0f342c906daf1298855bee05c33563dc6dee8",
+      "inventory_after": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 6 %, 53\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      1      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      4      0      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "inventory_before": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 4 %, 53\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      0      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      5      0      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "label": "baseline",
+      "order": 10,
+      "repetition": 5,
+      "returncode": 0,
+      "start_utc": "2026-10-17T07:57:05.790202+00:00",
+      "tool": null
+    },
+    {
+      "argv": [
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/candidate",
+        "large",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/repeats/candidate-05"
+      ],
+      "binary_sha256": "12b44d4de0e70fc1be203180a3bb369308688c9dab1e653165093689cc3565ca",
+      "elapsed_s": 0.9165963833220303,
+      "files": {
+        "fixture.json": "e117269f1f006c504ea6e4818c5d9354149b0c5a1aea4089a7e3d1fadc4408da",
+        "run.log": "0b568fb49ff84131c4cf426a182583ff7d6cd742dcac1ea42b4b52e16aba692f",
+        "state-0.json": "42d40d99feaf6904b9cb710d15e9f21a335a72fb7473fd8d162b4c27f32368b8",
+        "state-1.json": "764a97ca9ed8cd4aee3d61c96ddcbf66eec2c02491753c1427797a0f055e4376",
+        "state-2.json": "e10bb0c2e571d4c5d68b366bf6c7b5339b852e89cbf062c009c56384535f94fc",
+        "step-0-after_collision.json": "bf00b0600a727f326cb297bcb8bc726225804631800216bb819910e914863048",
+        "step-0-after_imprint.json": "02396c0abec6bc723fb74ab3fdef28c5b04253dae4af2df9b1bdb28fcad7425d",
+        "step-0-before_collision.json": "4e2ce80c4d9b2caf42d9c86a675cc0ea0a5aeedcd506a2fd7fe2f4a49c83a30f",
+        "step-0-before_imprint.json": "66ba98d05eb8562adc7b724ab82dab481ea61e47e457d74fac2d72cda58d162e",
+        "step-0-collision.csv": "005fe2cdbb0f47eb229690e0e86aac8f866ba85a577766cb9ff807629dbf885a",
+        "step-1-after_collision.json": "17f9a6f43b6d98f3e0ab01b4278407c275399e7a29e678374d9156ad41190c32",
+        "step-1-after_imprint.json": "52edbbe702f7c6c49eed101aea811efb5bf4cc093e4848aa88e1e12114b793de",
+        "step-1-before_collision.json": "8f2a91ac0f9edeab5bd1e64fb43ceeb8c9cd211b944fcce95d7ffe262d4ab3ed",
+        "step-1-before_imprint.json": "0cc67d6ea5c468fb9ddfc0851f0ca0b5946b0c3f4c87015161329057d53a09c8",
+        "step-1-collision.csv": "10361eceb6db02cb1ddc32e439abed96a02bc2eabb783ce49498cb8b322ce0b3"
+      },
+      "input_sha256": "cce9fe7b636ebcb7968fc9f216b0f342c906daf1298855bee05c33563dc6dee8",
+      "inventory_after": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 4 %, 53\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      4      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      0      0      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "inventory_before": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 6 %, 53\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      1      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      4      0      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "label": "candidate",
+      "order": 11,
+      "repetition": 5,
+      "returncode": 0,
+      "start_utc": "2026-10-17T07:57:07.043659+00:00",
+      "tool": null
+    },
+    {
+      "argv": [
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/baseline",
+        "large",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/repeats/baseline-06"
+      ],
+      "binary_sha256": "3ca0d0c65992015065c5907f451430b049d94b22bdd6f94e21e6f302129144f7",
+      "elapsed_s": 0.8660627333447337,
+      "files": {
+        "fixture.json": "e117269f1f006c504ea6e4818c5d9354149b0c5a1aea4089a7e3d1fadc4408da",
+        "run.log": "77667cafab689d92e6c5fb0725088da34e49a3d9eabecba7518288c5f46e88ea",
+        "state-0.json": "42d40d99feaf6904b9cb710d15e9f21a335a72fb7473fd8d162b4c27f32368b8",
+        "state-1.json": "764a97ca9ed8cd4aee3d61c96ddcbf66eec2c02491753c1427797a0f055e4376",
+        "state-2.json": "e10bb0c2e571d4c5d68b366bf6c7b5339b852e89cbf062c009c56384535f94fc",
+        "step-0-after_collision.json": "bf00b0600a727f326cb297bcb8bc726225804631800216bb819910e914863048",
+        "step-0-after_imprint.json": "02396c0abec6bc723fb74ab3fdef28c5b04253dae4af2df9b1bdb28fcad7425d",
+        "step-0-before_collision.json": "4e2ce80c4d9b2caf42d9c86a675cc0ea0a5aeedcd506a2fd7fe2f4a49c83a30f",
+        "step-0-before_imprint.json": "66ba98d05eb8562adc7b724ab82dab481ea61e47e457d74fac2d72cda58d162e",
+        "step-0-collision.csv": "005fe2cdbb0f47eb229690e0e86aac8f866ba85a577766cb9ff807629dbf885a",
+        "step-1-after_collision.json": "17f9a6f43b6d98f3e0ab01b4278407c275399e7a29e678374d9156ad41190c32",
+        "step-1-after_imprint.json": "52edbbe702f7c6c49eed101aea811efb5bf4cc093e4848aa88e1e12114b793de",
+        "step-1-before_collision.json": "8f2a91ac0f9edeab5bd1e64fb43ceeb8c9cd211b944fcce95d7ffe262d4ab3ed",
+        "step-1-before_imprint.json": "0cc67d6ea5c468fb9ddfc0851f0ca0b5946b0c3f4c87015161329057d53a09c8",
+        "step-1-collision.csv": "10361eceb6db02cb1ddc32e439abed96a02bc2eabb783ce49498cb8b322ce0b3"
+      },
+      "input_sha256": "cce9fe7b636ebcb7968fc9f216b0f342c906daf1298855bee05c33563dc6dee8",
+      "inventory_after": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 0 %, 53\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      0      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      -      -      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "inventory_before": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 0 %, 53\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      3      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      0      0      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "label": "baseline",
+      "order": 12,
+      "repetition": 6,
+      "returncode": 0,
+      "start_utc": "2026-10-17T07:57:08.294468+00:00",
+      "tool": null
+    },
+    {
+      "argv": [
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/candidate",
+        "large",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/repeats/candidate-06"
+      ],
+      "binary_sha256": "12b44d4de0e70fc1be203180a3bb369308688c9dab1e653165093689cc3565ca",
+      "elapsed_s": 0.9161744462326169,
+      "files": {
+        "fixture.json": "e117269f1f006c504ea6e4818c5d9354149b0c5a1aea4089a7e3d1fadc4408da",
+        "run.log": "8335a665d6ff7b73726c7019d3010f1f72083dcf2d5b933c715b1de6ae95ac99",
+        "state-0.json": "42d40d99feaf6904b9cb710d15e9f21a335a72fb7473fd8d162b4c27f32368b8",
+        "state-1.json": "764a97ca9ed8cd4aee3d61c96ddcbf66eec2c02491753c1427797a0f055e4376",
+        "state-2.json": "e10bb0c2e571d4c5d68b366bf6c7b5339b852e89cbf062c009c56384535f94fc",
+        "step-0-after_collision.json": "bf00b0600a727f326cb297bcb8bc726225804631800216bb819910e914863048",
+        "step-0-after_imprint.json": "02396c0abec6bc723fb74ab3fdef28c5b04253dae4af2df9b1bdb28fcad7425d",
+        "step-0-before_collision.json": "4e2ce80c4d9b2caf42d9c86a675cc0ea0a5aeedcd506a2fd7fe2f4a49c83a30f",
+        "step-0-before_imprint.json": "66ba98d05eb8562adc7b724ab82dab481ea61e47e457d74fac2d72cda58d162e",
+        "step-0-collision.csv": "005fe2cdbb0f47eb229690e0e86aac8f866ba85a577766cb9ff807629dbf885a",
+        "step-1-after_collision.json": "17f9a6f43b6d98f3e0ab01b4278407c275399e7a29e678374d9156ad41190c32",
+        "step-1-after_imprint.json": "52edbbe702f7c6c49eed101aea811efb5bf4cc093e4848aa88e1e12114b793de",
+        "step-1-before_collision.json": "8f2a91ac0f9edeab5bd1e64fb43ceeb8c9cd211b944fcce95d7ffe262d4ab3ed",
+        "step-1-before_imprint.json": "0cc67d6ea5c468fb9ddfc0851f0ca0b5946b0c3f4c87015161329057d53a09c8",
+        "step-1-collision.csv": "10361eceb6db02cb1ddc32e439abed96a02bc2eabb783ce49498cb8b322ce0b3"
+      },
+      "input_sha256": "cce9fe7b636ebcb7968fc9f216b0f342c906daf1298855bee05c33563dc6dee8",
+      "inventory_after": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 5 %, 53\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      1      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      1      0      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "inventory_before": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 0 %, 53\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      0      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      0      0      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "label": "candidate",
+      "order": 13,
+      "repetition": 6,
+      "returncode": 0,
+      "start_utc": "2026-10-17T07:57:09.529311+00:00",
+      "tool": null
+    },
+    {
+      "argv": [
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/baseline",
+        "large",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/repeats/baseline-07"
+      ],
+      "binary_sha256": "3ca0d0c65992015065c5907f451430b049d94b22bdd6f94e21e6f302129144f7",
+      "elapsed_s": 1.0171424462459981,
+      "files": {
+        "fixture.json": "e117269f1f006c504ea6e4818c5d9354149b0c5a1aea4089a7e3d1fadc4408da",
+        "run.log": "5f43434931186c819e2c7a63615cc94f6b697cb6a8f44dfc69842913bb9bb843",
+        "state-0.json": "42d40d99feaf6904b9cb710d15e9f21a335a72fb7473fd8d162b4c27f32368b8",
+        "state-1.json": "764a97ca9ed8cd4aee3d61c96ddcbf66eec2c02491753c1427797a0f055e4376",
+        "state-2.json": "e10bb0c2e571d4c5d68b366bf6c7b5339b852e89cbf062c009c56384535f94fc",
+        "step-0-after_collision.json": "bf00b0600a727f326cb297bcb8bc726225804631800216bb819910e914863048",
+        "step-0-after_imprint.json": "02396c0abec6bc723fb74ab3fdef28c5b04253dae4af2df9b1bdb28fcad7425d",
+        "step-0-before_collision.json": "4e2ce80c4d9b2caf42d9c86a675cc0ea0a5aeedcd506a2fd7fe2f4a49c83a30f",
+        "step-0-before_imprint.json": "66ba98d05eb8562adc7b724ab82dab481ea61e47e457d74fac2d72cda58d162e",
+        "step-0-collision.csv": "005fe2cdbb0f47eb229690e0e86aac8f866ba85a577766cb9ff807629dbf885a",
+        "step-1-after_collision.json": "17f9a6f43b6d98f3e0ab01b4278407c275399e7a29e678374d9156ad41190c32",
+        "step-1-after_imprint.json": "52edbbe702f7c6c49eed101aea811efb5bf4cc093e4848aa88e1e12114b793de",
+        "step-1-before_collision.json": "8f2a91ac0f9edeab5bd1e64fb43ceeb8c9cd211b944fcce95d7ffe262d4ab3ed",
+        "step-1-before_imprint.json": "0cc67d6ea5c468fb9ddfc0851f0ca0b5946b0c3f4c87015161329057d53a09c8",
+        "step-1-collision.csv": "10361eceb6db02cb1ddc32e439abed96a02bc2eabb783ce49498cb8b322ce0b3"
+      },
+      "input_sha256": "cce9fe7b636ebcb7968fc9f216b0f342c906daf1298855bee05c33563dc6dee8",
+      "inventory_after": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 10 %, 53\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      4      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      1      0      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "inventory_before": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 2 %, 53\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      2      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      1      0      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "label": "baseline",
+      "order": 14,
+      "repetition": 7,
+      "returncode": 0,
+      "start_utc": "2026-10-17T07:57:10.798923+00:00",
+      "tool": null
+    },
+    {
+      "argv": [
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/candidate",
+        "large",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/repeats/candidate-07"
+      ],
+      "binary_sha256": "12b44d4de0e70fc1be203180a3bb369308688c9dab1e653165093689cc3565ca",
+      "elapsed_s": 0.8662524847313762,
+      "files": {
+        "fixture.json": "e117269f1f006c504ea6e4818c5d9354149b0c5a1aea4089a7e3d1fadc4408da",
+        "run.log": "2c566fae7fc2ec3a48c5d84550d4dff9033caa40a555d04dce3662bee3167910",
+        "state-0.json": "42d40d99feaf6904b9cb710d15e9f21a335a72fb7473fd8d162b4c27f32368b8",
+        "state-1.json": "d79fd6717bb4fd0f4a751e0cfb0d84efeac77bff9a0bd95604b09bf23d6a32a3",
+        "state-2.json": "5e40c3228cf06be488b5e741bd1e772b3b22044ae0f094ab95480bb448c09a85",
+        "step-0-after_collision.json": "772e75362761f283a33864eaf2e2aa2a053be6b68f035c1d0509aa9175af6eaa",
+        "step-0-after_imprint.json": "95c27df72e1879588a9b904f9d52f0ec3fd2ef014b08e47e5a060844786a2451",
+        "step-0-before_collision.json": "bdb1031da5f35955fa8080f270de28630c1357488e9280bfc770784935edf89d",
+        "step-0-before_imprint.json": "66ba98d05eb8562adc7b724ab82dab481ea61e47e457d74fac2d72cda58d162e",
+        "step-0-collision.csv": "005fe2cdbb0f47eb229690e0e86aac8f866ba85a577766cb9ff807629dbf885a",
+        "step-1-after_collision.json": "1cf68b50f25f118796a07d247f4bed31ed7e334b1f6bb5048c43165195fd71d4",
+        "step-1-after_imprint.json": "a8793373a4d8e2e9d00927f386693ffd111c4fe5af750e017424d8dd37b9e4c1",
+        "step-1-before_collision.json": "c6ecdd567b870920bc4dbd903f64ac583457ad82e91574971fcb04224a9907d9",
+        "step-1-before_imprint.json": "4ae974da1babeedb9ea3dc5ce430c14f10c227d859812b09ac384a6bd29ef4af",
+        "step-1-collision.csv": "10361eceb6db02cb1ddc32e439abed96a02bc2eabb783ce49498cb8b322ce0b3"
+      },
+      "input_sha256": "cce9fe7b636ebcb7968fc9f216b0f342c906daf1298855bee05c33563dc6dee8",
+      "inventory_after": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 1 %, 53\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      0      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      1      0      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "inventory_before": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 10 %, 53\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      1      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      3      0      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "label": "candidate",
+      "order": 15,
+      "repetition": 7,
+      "returncode": 0,
+      "start_utc": "2026-10-17T07:57:12.180161+00:00",
+      "tool": null
+    },
+    {
+      "argv": [
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/baseline",
+        "large",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/repeats/baseline-08"
+      ],
+      "binary_sha256": "3ca0d0c65992015065c5907f451430b049d94b22bdd6f94e21e6f302129144f7",
+      "elapsed_s": 0.9166983067989349,
+      "files": {
+        "fixture.json": "e117269f1f006c504ea6e4818c5d9354149b0c5a1aea4089a7e3d1fadc4408da",
+        "run.log": "f27888ca03a06acd5890cfb7514d83c0e361723c8f0e244d25cc1c8c308e3164",
+        "state-0.json": "42d40d99feaf6904b9cb710d15e9f21a335a72fb7473fd8d162b4c27f32368b8",
+        "state-1.json": "764a97ca9ed8cd4aee3d61c96ddcbf66eec2c02491753c1427797a0f055e4376",
+        "state-2.json": "e10bb0c2e571d4c5d68b366bf6c7b5339b852e89cbf062c009c56384535f94fc",
+        "step-0-after_collision.json": "bf00b0600a727f326cb297bcb8bc726225804631800216bb819910e914863048",
+        "step-0-after_imprint.json": "02396c0abec6bc723fb74ab3fdef28c5b04253dae4af2df9b1bdb28fcad7425d",
+        "step-0-before_collision.json": "4e2ce80c4d9b2caf42d9c86a675cc0ea0a5aeedcd506a2fd7fe2f4a49c83a30f",
+        "step-0-before_imprint.json": "66ba98d05eb8562adc7b724ab82dab481ea61e47e457d74fac2d72cda58d162e",
+        "step-0-collision.csv": "005fe2cdbb0f47eb229690e0e86aac8f866ba85a577766cb9ff807629dbf885a",
+        "step-1-after_collision.json": "17f9a6f43b6d98f3e0ab01b4278407c275399e7a29e678374d9156ad41190c32",
+        "step-1-after_imprint.json": "52edbbe702f7c6c49eed101aea811efb5bf4cc093e4848aa88e1e12114b793de",
+        "step-1-before_collision.json": "8f2a91ac0f9edeab5bd1e64fb43ceeb8c9cd211b944fcce95d7ffe262d4ab3ed",
+        "step-1-before_imprint.json": "0cc67d6ea5c468fb9ddfc0851f0ca0b5946b0c3f4c87015161329057d53a09c8",
+        "step-1-collision.csv": "10361eceb6db02cb1ddc32e439abed96a02bc2eabb783ce49498cb8b322ce0b3"
+      },
+      "input_sha256": "cce9fe7b636ebcb7968fc9f216b0f342c906daf1298855bee05c33563dc6dee8",
+      "inventory_after": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 5 %, 54\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      0      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      3      0      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "inventory_before": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 19 %, 54\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      0      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      3      0      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "label": "baseline",
+      "order": 16,
+      "repetition": 8,
+      "returncode": 0,
+      "start_utc": "2026-10-17T07:57:13.407421+00:00",
+      "tool": null
+    },
+    {
+      "argv": [
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/candidate",
+        "large",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/repeats/candidate-08"
+      ],
+      "binary_sha256": "12b44d4de0e70fc1be203180a3bb369308688c9dab1e653165093689cc3565ca",
+      "elapsed_s": 0.9164271890185773,
+      "files": {
+        "fixture.json": "e117269f1f006c504ea6e4818c5d9354149b0c5a1aea4089a7e3d1fadc4408da",
+        "run.log": "9065826226d3655c11c2595c3a5fffce035a852729a949309fe13d78495a61bc",
+        "state-0.json": "42d40d99feaf6904b9cb710d15e9f21a335a72fb7473fd8d162b4c27f32368b8",
+        "state-1.json": "d79fd6717bb4fd0f4a751e0cfb0d84efeac77bff9a0bd95604b09bf23d6a32a3",
+        "state-2.json": "5e40c3228cf06be488b5e741bd1e772b3b22044ae0f094ab95480bb448c09a85",
+        "step-0-after_collision.json": "772e75362761f283a33864eaf2e2aa2a053be6b68f035c1d0509aa9175af6eaa",
+        "step-0-after_imprint.json": "95c27df72e1879588a9b904f9d52f0ec3fd2ef014b08e47e5a060844786a2451",
+        "step-0-before_collision.json": "bdb1031da5f35955fa8080f270de28630c1357488e9280bfc770784935edf89d",
+        "step-0-before_imprint.json": "66ba98d05eb8562adc7b724ab82dab481ea61e47e457d74fac2d72cda58d162e",
+        "step-0-collision.csv": "005fe2cdbb0f47eb229690e0e86aac8f866ba85a577766cb9ff807629dbf885a",
+        "step-1-after_collision.json": "1cf68b50f25f118796a07d247f4bed31ed7e334b1f6bb5048c43165195fd71d4",
+        "step-1-after_imprint.json": "a8793373a4d8e2e9d00927f386693ffd111c4fe5af750e017424d8dd37b9e4c1",
+        "step-1-before_collision.json": "c6ecdd567b870920bc4dbd903f64ac583457ad82e91574971fcb04224a9907d9",
+        "step-1-before_imprint.json": "4ae974da1babeedb9ea3dc5ce430c14f10c227d859812b09ac384a6bd29ef4af",
+        "step-1-collision.csv": "10361eceb6db02cb1ddc32e439abed96a02bc2eabb783ce49498cb8b322ce0b3"
+      },
+      "input_sha256": "cce9fe7b636ebcb7968fc9f216b0f342c906daf1298855bee05c33563dc6dee8",
+      "inventory_after": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 19 %, 54\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      1      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      2      0      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "inventory_before": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 5 %, 54\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      0      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      3      0      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "label": "candidate",
+      "order": 17,
+      "repetition": 8,
+      "returncode": 0,
+      "start_utc": "2026-10-17T07:57:14.670881+00:00",
+      "tool": null
+    },
+    {
+      "argv": [
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/baseline",
+        "large",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/repeats/baseline-09"
+      ],
+      "binary_sha256": "3ca0d0c65992015065c5907f451430b049d94b22bdd6f94e21e6f302129144f7",
+      "elapsed_s": 0.9163627349771559,
+      "files": {
+        "fixture.json": "e117269f1f006c504ea6e4818c5d9354149b0c5a1aea4089a7e3d1fadc4408da",
+        "run.log": "ba9952b53cd93b14d22f4f1131b3e61d749efd8ed09609905dc33fffb1199b0b",
+        "state-0.json": "42d40d99feaf6904b9cb710d15e9f21a335a72fb7473fd8d162b4c27f32368b8",
+        "state-1.json": "764a97ca9ed8cd4aee3d61c96ddcbf66eec2c02491753c1427797a0f055e4376",
+        "state-2.json": "e10bb0c2e571d4c5d68b366bf6c7b5339b852e89cbf062c009c56384535f94fc",
+        "step-0-after_collision.json": "bf00b0600a727f326cb297bcb8bc726225804631800216bb819910e914863048",
+        "step-0-after_imprint.json": "02396c0abec6bc723fb74ab3fdef28c5b04253dae4af2df9b1bdb28fcad7425d",
+        "step-0-before_collision.json": "4e2ce80c4d9b2caf42d9c86a675cc0ea0a5aeedcd506a2fd7fe2f4a49c83a30f",
+        "step-0-before_imprint.json": "66ba98d05eb8562adc7b724ab82dab481ea61e47e457d74fac2d72cda58d162e",
+        "step-0-collision.csv": "005fe2cdbb0f47eb229690e0e86aac8f866ba85a577766cb9ff807629dbf885a",
+        "step-1-after_collision.json": "17f9a6f43b6d98f3e0ab01b4278407c275399e7a29e678374d9156ad41190c32",
+        "step-1-after_imprint.json": "52edbbe702f7c6c49eed101aea811efb5bf4cc093e4848aa88e1e12114b793de",
+        "step-1-before_collision.json": "8f2a91ac0f9edeab5bd1e64fb43ceeb8c9cd211b944fcce95d7ffe262d4ab3ed",
+        "step-1-before_imprint.json": "0cc67d6ea5c468fb9ddfc0851f0ca0b5946b0c3f4c87015161329057d53a09c8",
+        "step-1-collision.csv": "10361eceb6db02cb1ddc32e439abed96a02bc2eabb783ce49498cb8b322ce0b3"
+      },
+      "input_sha256": "cce9fe7b636ebcb7968fc9f216b0f342c906daf1298855bee05c33563dc6dee8",
+      "inventory_after": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 1 %, 54\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      1      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      -      -      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "inventory_before": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 19 %, 54\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      1      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      1      0      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "label": "baseline",
+      "order": 18,
+      "repetition": 9,
+      "returncode": 0,
+      "start_utc": "2026-10-17T07:57:15.928121+00:00",
+      "tool": null
+    },
+    {
+      "argv": [
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/candidate",
+        "large",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/repeats/candidate-09"
+      ],
+      "binary_sha256": "12b44d4de0e70fc1be203180a3bb369308688c9dab1e653165093689cc3565ca",
+      "elapsed_s": 0.9164609890431166,
+      "files": {
+        "fixture.json": "e117269f1f006c504ea6e4818c5d9354149b0c5a1aea4089a7e3d1fadc4408da",
+        "run.log": "2dce5174ba3933575779b78c67ebfc528314669ad729b12eae408c9a616c76c1",
+        "state-0.json": "42d40d99feaf6904b9cb710d15e9f21a335a72fb7473fd8d162b4c27f32368b8",
+        "state-1.json": "d79fd6717bb4fd0f4a751e0cfb0d84efeac77bff9a0bd95604b09bf23d6a32a3",
+        "state-2.json": "5e40c3228cf06be488b5e741bd1e772b3b22044ae0f094ab95480bb448c09a85",
+        "step-0-after_collision.json": "772e75362761f283a33864eaf2e2aa2a053be6b68f035c1d0509aa9175af6eaa",
+        "step-0-after_imprint.json": "95c27df72e1879588a9b904f9d52f0ec3fd2ef014b08e47e5a060844786a2451",
+        "step-0-before_collision.json": "bdb1031da5f35955fa8080f270de28630c1357488e9280bfc770784935edf89d",
+        "step-0-before_imprint.json": "66ba98d05eb8562adc7b724ab82dab481ea61e47e457d74fac2d72cda58d162e",
+        "step-0-collision.csv": "005fe2cdbb0f47eb229690e0e86aac8f866ba85a577766cb9ff807629dbf885a",
+        "step-1-after_collision.json": "1cf68b50f25f118796a07d247f4bed31ed7e334b1f6bb5048c43165195fd71d4",
+        "step-1-after_imprint.json": "a8793373a4d8e2e9d00927f386693ffd111c4fe5af750e017424d8dd37b9e4c1",
+        "step-1-before_collision.json": "c6ecdd567b870920bc4dbd903f64ac583457ad82e91574971fcb04224a9907d9",
+        "step-1-before_imprint.json": "4ae974da1babeedb9ea3dc5ce430c14f10c227d859812b09ac384a6bd29ef4af",
+        "step-1-collision.csv": "10361eceb6db02cb1ddc32e439abed96a02bc2eabb783ce49498cb8b322ce0b3"
+      },
+      "input_sha256": "cce9fe7b636ebcb7968fc9f216b0f342c906daf1298855bee05c33563dc6dee8",
+      "inventory_after": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 2 %, 54\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      2      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      -      -      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "inventory_before": {
+        "compute": "6819, /usr/libexec/gnome-remote-desktop-daemon, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 266 MiB\n",
+        "gpu": "NVIDIA RTX A6000, GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de, 595.84, 1 %, 54\n",
+        "pmon": "# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command \n# Idx           #    C/G      %      %      %      %      %      %    name \n    0       6535     G      1      0      -      -      -      -    Xorg           \n    0       6819   C+G      -      -      -      -      -      -    gnome-remote-de\n    0       6896     G      -      -      -      -      -      -    gnome-shell    \n    0       7649     G      -      -      -      -      -      -    xdg-desktop-por\n    0       7682     G      -      -      -      -      -      -    snapd-desktop-i\n    0     219150     G      -      -      -      -      -      -    zotero-bin     \n    0    3708962     G      -      -      -      -      -      -    nautilus       \n    0    3875928     G      -      -      -      -      -      -    firefox        \n"
+      },
+      "label": "candidate",
+      "order": 19,
+      "repetition": 9,
+      "returncode": 0,
+      "start_utc": "2026-10-17T07:57:17.187892+00:00",
+      "tool": null
+    }
+  ],
+  "sanitizer_runs": [
+    {
+      "argv": [
+        "/usr/local/cuda-12.6/bin/compute-sanitizer",
+        "--tool",
+        "memcheck",
+        "--error-exitcode",
+        "99",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/baseline",
+        "large",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/sanitizers/baseline-memcheck"
+      ],
+      "binary_sha256": "3ca0d0c65992015065c5907f451430b049d94b22bdd6f94e21e6f302129144f7",
+      "label": "baseline",
+      "log_sha256": "922a09393d3e552df72bd11bc6379b87cada8d567a1f73b117c072209248b5a4",
+      "returncode": 0,
+      "tool": "memcheck"
+    },
+    {
+      "argv": [
+        "/usr/local/cuda-12.6/bin/compute-sanitizer",
+        "--tool",
+        "memcheck",
+        "--error-exitcode",
+        "99",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/candidate",
+        "large",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/sanitizers/candidate-memcheck"
+      ],
+      "binary_sha256": "12b44d4de0e70fc1be203180a3bb369308688c9dab1e653165093689cc3565ca",
+      "label": "candidate",
+      "log_sha256": "c81fb3b3a97f94b591bab47e1b5686eb32dbb11f67f0b9433d7df07256f97033",
+      "returncode": 0,
+      "tool": "memcheck"
+    },
+    {
+      "argv": [
+        "/usr/local/cuda-12.6/bin/compute-sanitizer",
+        "--tool",
+        "racecheck",
+        "--error-exitcode",
+        "99",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/baseline",
+        "large",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/sanitizers/baseline-racecheck"
+      ],
+      "binary_sha256": "3ca0d0c65992015065c5907f451430b049d94b22bdd6f94e21e6f302129144f7",
+      "label": "baseline",
+      "log_sha256": "bca2a1addf5fb3f8476f662e51462c0104c72e5b4f3a5c8a810d78204f6e2675",
+      "returncode": 0,
+      "tool": "racecheck"
+    },
+    {
+      "argv": [
+        "/usr/local/cuda-12.6/bin/compute-sanitizer",
+        "--tool",
+        "racecheck",
+        "--error-exitcode",
+        "99",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/candidate",
+        "large",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/sanitizers/candidate-racecheck"
+      ],
+      "binary_sha256": "12b44d4de0e70fc1be203180a3bb369308688c9dab1e653165093689cc3565ca",
+      "label": "candidate",
+      "log_sha256": "f1e5a3661e69eab34b7f9ae5c337edc14618a5dbe0197f3b4b7c8a08d0084cc6",
+      "returncode": 0,
+      "tool": "racecheck"
+    },
+    {
+      "argv": [
+        "/usr/local/cuda-12.6/bin/compute-sanitizer",
+        "--tool",
+        "initcheck",
+        "--error-exitcode",
+        "99",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/baseline",
+        "large",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/sanitizers/baseline-initcheck"
+      ],
+      "binary_sha256": "3ca0d0c65992015065c5907f451430b049d94b22bdd6f94e21e6f302129144f7",
+      "label": "baseline",
+      "log_sha256": "2289059ca0917b770f90fefca76771ed6c9d2e998bcd123fa7ad4d114082bf7d",
+      "returncode": 0,
+      "tool": "initcheck"
+    },
+    {
+      "argv": [
+        "/usr/local/cuda-12.6/bin/compute-sanitizer",
+        "--tool",
+        "initcheck",
+        "--error-exitcode",
+        "99",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/candidate",
+        "large",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/sanitizers/candidate-initcheck"
+      ],
+      "binary_sha256": "12b44d4de0e70fc1be203180a3bb369308688c9dab1e653165093689cc3565ca",
+      "label": "candidate",
+      "log_sha256": "42c0f570fa00c501c62bfdeaa530beaaf96bcf7c7d1227faee495911c596b5bf",
+      "returncode": 0,
+      "tool": "initcheck"
+    },
+    {
+      "argv": [
+        "/usr/local/cuda-12.6/bin/compute-sanitizer",
+        "--tool",
+        "synccheck",
+        "--error-exitcode",
+        "99",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/baseline",
+        "large",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/sanitizers/baseline-synccheck"
+      ],
+      "binary_sha256": "3ca0d0c65992015065c5907f451430b049d94b22bdd6f94e21e6f302129144f7",
+      "label": "baseline",
+      "log_sha256": "044839234c3e8cd263d245c7c82945cba399bbacd8223ece193406f7e7d263fb",
+      "returncode": 0,
+      "tool": "synccheck"
+    },
+    {
+      "argv": [
+        "/usr/local/cuda-12.6/bin/compute-sanitizer",
+        "--tool",
+        "synccheck",
+        "--error-exitcode",
+        "99",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/candidate",
+        "large",
+        "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/sanitizers/candidate-synccheck"
+      ],
+      "binary_sha256": "12b44d4de0e70fc1be203180a3bb369308688c9dab1e653165093689cc3565ca",
+      "label": "candidate",
+      "log_sha256": "c79ffcd9bcee53b5408f5bac6f3c7e66a312867b422c88a93ffdb9af2ba46e48",
+      "returncode": 0,
+      "tool": "synccheck"
+    }
+  ],
+  "source_base": "26bf84aa2a3acb4edf9accc295a3cbcec7398770",
+  "source_header_provenance": "all archived header SHA256 values verified against named immutable commits",
+  "user_exception": "2026-10-17 explicit permission: Allow desktop services; no other simulations"
+}

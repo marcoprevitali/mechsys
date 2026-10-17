@@ -1,0 +1,45 @@
+{
+  "all_equal_complete_inputs_give_equal_claims": true,
+  "all_indices_unique_and_in_range": true,
+  "cohorts": [
+    {
+      "complete_input_cohorts": 1,
+      "contribution_cohorts": 1,
+      "pair_order_cohorts": 1,
+      "step": 0
+    },
+    {
+      "complete_input_cohorts": 2,
+      "contribution_cohorts": 2,
+      "pair_order_cohorts": 1,
+      "step": 1
+    }
+  ],
+  "fluid": [
+    {
+      "energy_bookkeeping_hashes": 1,
+      "fluid_hashes": 1,
+      "gpu_history_hashes": 1,
+      "histories_hashes": 1,
+      "pairs_hashes": 1,
+      "snapshot": "state-0.json"
+    },
+    {
+      "energy_bookkeeping_hashes": 1,
+      "fluid_hashes": 1,
+      "gpu_history_hashes": 1,
+      "histories_hashes": 1,
+      "pairs_hashes": 1,
+      "snapshot": "state-1.json"
+    },
+    {
+      "energy_bookkeeping_hashes": 1,
+      "fluid_hashes": 1,
+      "gpu_history_hashes": 1,
+      "histories_hashes": 1,
+      "pairs_hashes": 1,
+      "snapshot": "state-2.json"
+    }
+  ],
+  "limitation": "existing diagnostics synchronize; exact instruction order not traced; two-step legacy case, zero DEM histories"
+}

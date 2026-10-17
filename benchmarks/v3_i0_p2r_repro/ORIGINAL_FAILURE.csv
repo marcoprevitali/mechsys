@@ -1,0 +1,4 @@
+snapshot,reference_file_sha256,candidate_file_sha256,differing_binary64_fields,max_abs,max_ulp,first_path,structural_equal,nonfinite_differences,history_equal,gpu_history_equal,pairs_equal
+state-0.json,42d40d99feaf6904b9cb710d15e9f21a335a72fb7473fd8d162b4c27f32368b8,42d40d99feaf6904b9cb710d15e9f21a335a72fb7473fd8d162b4c27f32368b8,0,0.0,0,,True,0,True,True,True
+state-1.json,d79fd6717bb4fd0f4a751e0cfb0d84efeac77bff9a0bd95604b09bf23d6a32a3,764a97ca9ed8cd4aee3d61c96ddcbf66eec2c02491753c1427797a0f055e4376,18,1.3877787807814457e-17,1618481116086272,/particles/0/F/0,True,0,True,True,True
+state-2.json,5e40c3228cf06be488b5e741bd1e772b3b22044ae0f094ab95480bb448c09a85,e10bb0c2e571d4c5d68b366bf6c7b5339b852e89cbf062c009c56384535f94fc,20,3.198396408832238e-18,18336,/particles/0/F/0,True,0,True,True,True

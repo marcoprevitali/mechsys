@@ -1,14 +1,14 @@
 # MechSys GPU DEM optimization — PROJECT_STATUS.md
 
-**As-of:** 2026-10-16 (V3-I0-P2R robust arithmetic; strict compatibility HARD STOP)
-**State:** `V3-I0-P2R PARTIAL: geometry/coupled exchange pass, K strict default-off FAIL` / `baseline CUDA atomic sums also non-repeatable` / `RobustTwelveEdgeProxy default false, unmerged/unaccepted overall` / `V3-I0-P2 historical FAIL retained` / `V3-I0-P1 historical PASS retained for registered subset` / `Scheme A NOT_STARTED` / `C2 BLOCKED` / `coupled restart NOT_VALIDATED` / `P2-B NOT_RUN`
+**As-of:** 2026-10-17 (V3-I0-P2R-R read-only CUDA reproducibility investigation)
+**State:** `V3-I0-P2R-R observational PASS within bounded scope; delivery receipt external` / `CASE A: valid FP64 atomic-order variation, no competing defect found in tested scope` / `V3-I0-P2R PARTIAL, P2R-K strict default-off FAIL unchanged` / `RobustTwelveEdgeProxy default false, unmerged/unaccepted overall` / `V3-I0-P2 historical FAIL retained` / `Scheme A NOT_STARTED` / `C2 BLOCKED` / `coupled restart NOT_VALIDATED` / `P2-B NOT_RUN`
 **Reference decision (user, 2026-10-16):** explicitly select `UseVelocityVerlet=true` for all new validation, profiling, benchmarks and optimization decisions. Legacy position-Verlet/leapfrog data are separately labeled controls, not VV reference evidence. `AGENTS.md` records this policy; the compatibility constructor default remains false. `test_cu_04 <input> <Nproc> <dthoot> <qin> 1` must print `DEM_BENCHMARK_INTEGRATOR velocity_verlet=1`; use `--vv` in the registered runner.
-**Next bounded decision (requires user direction after hard stop):** review strict default-off reproducibility contract before any P2R promotion. Start at `benchmarks/v3_i0_p2r/V3_I0_P2R_DECISION.md` and DEFAULT_OFF_DIAGNOSIS.json. The unchanged baseline is not bitwise self-repeatable on CUDA large; do not silently relax K or implement deterministic force accumulation within the arithmetic patch. Geometry remediation and bounded coupled exchange pass, but required46 strict controls are not closed. No automatic Scheme A/restart/performance work.
+**Next bounded decision (requires user review):** read §5.14 and `benchmarks/v3_i0_p2r_repro/REPRODUCIBILITY_DECISION.md`. Review a NEW compatibility-contract design with phase-aware propagation budgets, or separately authorize a deterministic reference-only gather prototype for both new controls. Neither is implemented/authorized by the audit. Do not waive old K, select a lucky repeat, promote P2R or start Scheme A/restart/performance work.
 **Agent:** GLM-5.3 Flash (or successor); operational rules in `AGENTS.md`.
 **Original project:** https://github.com/Axtal/mechsys
 **Fork URL / owner:** https://github.com/marcoprevitali/mechsys / `marcoprevitali` (authenticated account and public fork metadata verified 2026-10-15)
 **Old local checkout:** `/home/msys/mechsys` at `e4ba163ec9f32c8bccb0fd8619ba79e000d3d6d8`; preserved dirty and not mutated during `F0`
-**Current work:** `fix/v3-i0-p2r-robust-tangency`, exact base `bf6616973be1335da1caa7d75f8a34aa0f6c1c22`; preregistration `fb6405ba334a457606903dd34efd1d606804983a`; implementation `1bde930295a9852e64a810e02e22b2bba21f98fc`. Independent full preparation clone `/tmp/mechsys-v3-i0-p2r.do4dZe/work`; persistent delivery target `/home/msys/git/mechsys-v3-i0-p2r-robust-tangency`. Exact final tip/origin/clean status and archive proof in external P2R DELIVERY.json. Origin=user fork, upstream push disabled. P2/P1/V3-I0/V3-D/V2 and original clones preserved READ ONLY. PROJECT_STATUS.md remains authoritative; PROJECT_STATE.md is its pointer.
+**Current work:** `validation/v3-i0-p2r-reproducibility`, exact base `26bf84aa2a3acb4edf9accc295a3cbcec7398770`; independent full preparation clone `/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/work`; persistent delivery target `/home/msys/git/mechsys-v3-i0-p2r-reproducibility`. Exact final tip/origin/clean/full-clone/archive proof in external reproducibility DELIVERY.json. Production headers byte-identical to base. Origin=user fork, upstream push disabled. P2R/P2/P1/V3-I0/V3-D/V2 and original clones preserved READ ONLY. Historical P2R implementation remains1bde930; its independent clone remains26bf84a. PROJECT_STATUS.md authoritative; PROJECT_STATE.md is its pointer.
 **Precision of historical benchmarks:** GPU double precision (`-DUSE_GPU_DOUBLE`) on NVIDIA RTX A6000 (84 SMs); do not assume the current host/GPU is unchanged.
 
 > **Evidence levels:** `HISTORICAL_REPORTED` means results transcribed from the user-supplied DeepSeek work summary dated 2026-10-14; they have **not** yet been independently reproduced or verified against source. `SOURCE_VERIFIED` requires auditing the actual local code. `MEASURED` requires raw timing/logs + code SHA. `PASS` requires documented numerical acceptance checks. Keep these labels distinct.
@@ -860,6 +860,75 @@ Archive verification is delivery evidence,not a scientific gate waiver.
 study or separately authorize deterministic accumulation. Do not relaxK,
 promote this branch,implement SchemeA/coupled restart or run performance work.
 
+### 5.14 V3-I0-P2R-R — read-only reproducibility (2026-10-17 / Codex)
+
+**Observational PASS within bounded scope; P2R-K FAIL unchanged.** Source and
+tools support CASE A (legitimate unordered FP64 atomics) for CUDA large. No
+production code/flags/synchronization/default/tolerance edits, no reduction or
+SchemeA/restart/performance work. This does not reopen or accept the old gate.
+
+| Gate | Auditable outcome |
+|---|---|
+|R-A|PASS:4 archived SHA256/index/full payload audits,9,944 files;3,980 live P2R files; exact source/header/executable/input hashes verified BEFORE experiments|
+|R-B/C|PASS characterization:10 unchanged baseline+10 candidate-off runs,serial/interleaved; baseline1/2/3 and candidate1/2/4 initial/first/final numerical hashes; both bitwise self-repeatability FAIL|
+|R-D/E|PASS:190 pairs x11 snapshots; identical first93 particle/cell contributions, varying live sums; exact Fraction sums/gamma93 budgets and valid-order witnesses for180 normal+72 sanitizer scalars|
+|R-F/G|PASS scoped assessment:8 sanitizer runs zero reports; source/indices/initialization/streams checked; genuine parsed physical-state differences, not serialization-only|
+|R-H/I/J|PASS:bounded consequences quantified, phase/energy caveats, two unimplemented compatibility options and smallest next decision documented; no old-gate revision|
+|R-K|Final commit/push/remote/clean/isolated-full-clone/raw archive verified in new external DELIVERY.json, not inferred from documentation|
+
+Exact binaries:baseline3ca0d0c65992015065c5907f451430b049d94b22bdd6f94e21e6f302129144f7
+(headersbf661697);candidate12b44d4de0e70fc1be203180a3bb369308688c9dab1e653165093689cc3565ca
+(headers1bde930;actual dirty-build provenance retained, not clean-HEAD claim).
+Source probe c49435ccc2306cbddfdbf31852adfa9bdd1a3b5859c15d0717c03578a2001739.
+Canonical input cce9fe7b636ebcb7968fc9f216b0f342c906daf1298855bee05c33563dc6dee8.
+Manifest retains original fixture byte hash, all commands/flags, per-run
+process inventory/GPU/configuration/order and initial/final/intermediate hashes.
+
+Run `<exact archived CUDA binary> large OUTPUT`,Nproc1,all occupancy flags false,
+P1_RADIUS2.2,MECHSYS_EXCHANGE_AUDIT1. Two-step10^3 D3Q15,legacy coupled integration
+explicitly labeled; NOT VV reference validation. RTXA6000 UUID
+GPU-8cfc4ebf-51b9-f72f-6d58-98b94dbdf5de,driver595.84,CUDA12.6.85/g++13.3,
+sm86/O3/FP64/no fast-math. User explicitly allowed desktop/remote-desktop
+services after exclusivity conflict; no other simulations/compute jobs present
+in inventories. No uncontaminated-timing claim or performance measurements.
+
+45 baseline pairs+45 candidate pairs+100 cross pairs:99 first differ after
+step0 imprint,24 after step1 imprint,67 exact through final. Initial complete
+states and first93 claim records exact. Particle PersistentId1/index0,firstF.x
+difference1.3877787807814457e-17; first torque difference<=2.494e-18. Native
+SASS confirms nine FP64 RN atomics. gamma93=1.0325074129014063e-14; largest
+first accumulated error versus exact rounded-input sum4.527e-17,all within
+derived component bounds; offline witnesses do NOT identify actual GPU order.
+No competing defect found in tested scope; sanitizer racecheck is shared-memory
+only, not universal global-race proof. No rebuild/nonzero history tested here.
+
+Final maximum force difference4.337e-18,torque4.066e-18,w5.242e-22,Q3.752e-22;
+x/v/fluid grids/93 candidate IDs+ordering/empty histories/Evis/Efric/Wext exact.
+Analytic-inertia rotational energy variation9.040e-27. Exchange momentum
+residual<=4.825e-17;phase-aligned reconstructed half-step total momentum
+residual<=1.546e-12 (rounded coordinates,identical across runs);discrete
+translational kinetic/work residual<=4.788e-16,variation<=3.447e-20. Large
+unaligned centered-output work residual retained and explained,not called
+conservation. No conserved full LBM energy or long-time bound asserted.
+
+Artifacts/commands:`benchmarks/v3_i0_p2r_repro/README.md`,decision and CSV/JSON
+ledgers. New raw namespace
+`/home/msys/SIMS/mechsys_v3_i0_p2r_repro_validation/20261017-default-off-audit/`.
+Original checkout diffSHA256 remains
+e98dcc578695992948f3d804f572f6b212888ac2381832ae261be9c4e99132e9;
+F0 backup remains `/home/msys/SIMS/mechsys_gpu_backups/20261015-150003/`.
+All prior evidence and clones retained. New work only scripts/parsers/offline
+results and project documentation; exact tip/commits are in delivery receipt.
+Tooling commit0e8b0f4 precedes evidence/handoff commit. Fresh-directory offline
+replay regenerates20 analysis CSV/JSON files with identical SHA256 values;
+see OFFLINE_REPLAY_VERIFICATION.json. No simulation binary rebuild.
+
+**Next bounded task requires review:** design-only NEW compatibility contract
+and phase-aware propagation/balance budgets,or explicitly authorize a reference
+deterministic gather experiment applied to both new controls. No numerical
+contract implemented;gamma93 justifies the summation component,not the entire
+evolved-state gate. Current architecture cannot reliably satisfy strict K.
+
 ## 6. Git/repository topology and record
 
 
@@ -934,7 +1003,17 @@ Protection:         `origin` = user's fork; `upstream` fetch-only / push-disable
 | 2026-10-15 | P0-R complete: HISTORICAL_REBUILD_SHARE_UNRECONCILED (record self-contradicts); poly 23.6 s rebuild = Nproc=1 (21.24 s measured); neeint 6.4x interaction-list gap discovered; V0-A/B UNPROVEN; first experiments recommended and gated | §5.4, benchmarks/p0_reconciliation/ | MEASURED |
 | 2026-10-15 | Concurrent agent session edited this clone during P0-R (branch deleted, domain.h temporarily broken) and an external MoFEM job contaminated timing reps; mitigations applied; session separation recommended | §5.4 environment incident | COORDINATION HAZARD — user action recommended |
 
-### Current bounded decision (after V3-I0-P2R compatibility stop)
+### Current bounded decision (after V3-I0-P2R-R observational audit)
+
+1. Read §5.14 and benchmarks/v3_i0_p2r_repro/REPRODUCIBILITY_DECISION.md.
+   CASE A within tested scope; P2R remains PARTIAL / original K FAIL unchanged.
+2. Review a NEW phase-aware numerical compatibility-contract design, or
+   explicitly authorize a deterministic reference-only gather prototype for
+   both new controls. No code/gate/default change is implied by this audit.
+3. Keep prior archives and clones, all three default-off switches and no
+   merge/promotion. Scheme A/coupled VV/restart/P2-B remain blocked or not run.
+
+### Superseded bounded decision (after V3-I0-P2R compatibility stop)
 
 1. Read §5.13 and benchmarks/v3_i0_p2r/V3_I0_P2R_DECISION.md. Arithmetic and
    bounded coupled exchange pass;overallPARTIAL,K strict compatibilityFAIL.

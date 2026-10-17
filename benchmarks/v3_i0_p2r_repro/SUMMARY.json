@@ -1,0 +1,204 @@
+{
+  "all_first_sums_within_gamma": true,
+  "all_observed_sums_have_permutation_witness": true,
+  "archived_only": false,
+  "comparison_selftest": "PASS",
+  "first_divergence": {
+    "IDENTICAL": 67,
+    "step-0-after_imprint.json": 99,
+    "step-1-after_imprint.json": 24
+  },
+  "first_summation_n": 93,
+  "max_first_sum_error": 4.526544070126981e-17,
+  "original_gate": "P2R-K FAIL unchanged",
+  "pair_counts": {
+    "baseline-baseline": 45,
+    "baseline-candidate": 100,
+    "candidate-candidate": 45
+  },
+  "run_count": 20,
+  "same_before_imprint": true,
+  "same_initial_claims": true,
+  "unique_hashes": {
+    "baseline": {
+      "state-0.json": {
+        "claim_sha256": 1,
+        "contact_history_sha256": 1,
+        "file_sha256": 1,
+        "numerical_sha256": 1,
+        "pair_sha256": 1,
+        "particle_sha256": 1
+      },
+      "state-1.json": {
+        "claim_sha256": 1,
+        "contact_history_sha256": 1,
+        "file_sha256": 2,
+        "numerical_sha256": 2,
+        "pair_sha256": 1,
+        "particle_sha256": 2
+      },
+      "state-2.json": {
+        "claim_sha256": 1,
+        "contact_history_sha256": 1,
+        "file_sha256": 3,
+        "numerical_sha256": 3,
+        "pair_sha256": 1,
+        "particle_sha256": 3
+      },
+      "step-0-after_collision.json": {
+        "claim_sha256": 1,
+        "contact_history_sha256": 1,
+        "file_sha256": 2,
+        "numerical_sha256": 2,
+        "pair_sha256": 1,
+        "particle_sha256": 2
+      },
+      "step-0-after_imprint.json": {
+        "claim_sha256": 1,
+        "contact_history_sha256": 1,
+        "file_sha256": 2,
+        "numerical_sha256": 2,
+        "pair_sha256": 1,
+        "particle_sha256": 2
+      },
+      "step-0-before_collision.json": {
+        "claim_sha256": 1,
+        "contact_history_sha256": 1,
+        "file_sha256": 2,
+        "numerical_sha256": 2,
+        "pair_sha256": 1,
+        "particle_sha256": 2
+      },
+      "step-0-before_imprint.json": {
+        "claim_sha256": 1,
+        "contact_history_sha256": 1,
+        "file_sha256": 1,
+        "numerical_sha256": 1,
+        "pair_sha256": 1,
+        "particle_sha256": 1
+      },
+      "step-1-after_collision.json": {
+        "claim_sha256": 1,
+        "contact_history_sha256": 1,
+        "file_sha256": 3,
+        "numerical_sha256": 3,
+        "pair_sha256": 1,
+        "particle_sha256": 3
+      },
+      "step-1-after_imprint.json": {
+        "claim_sha256": 2,
+        "contact_history_sha256": 1,
+        "file_sha256": 3,
+        "numerical_sha256": 3,
+        "pair_sha256": 1,
+        "particle_sha256": 3
+      },
+      "step-1-before_collision.json": {
+        "claim_sha256": 1,
+        "contact_history_sha256": 1,
+        "file_sha256": 3,
+        "numerical_sha256": 3,
+        "pair_sha256": 1,
+        "particle_sha256": 3
+      },
+      "step-1-before_imprint.json": {
+        "claim_sha256": 1,
+        "contact_history_sha256": 1,
+        "file_sha256": 2,
+        "numerical_sha256": 2,
+        "pair_sha256": 1,
+        "particle_sha256": 2
+      }
+    },
+    "candidate": {
+      "state-0.json": {
+        "claim_sha256": 1,
+        "contact_history_sha256": 1,
+        "file_sha256": 1,
+        "numerical_sha256": 1,
+        "pair_sha256": 1,
+        "particle_sha256": 1
+      },
+      "state-1.json": {
+        "claim_sha256": 1,
+        "contact_history_sha256": 1,
+        "file_sha256": 2,
+        "numerical_sha256": 2,
+        "pair_sha256": 1,
+        "particle_sha256": 2
+      },
+      "state-2.json": {
+        "claim_sha256": 1,
+        "contact_history_sha256": 1,
+        "file_sha256": 4,
+        "numerical_sha256": 4,
+        "pair_sha256": 1,
+        "particle_sha256": 4
+      },
+      "step-0-after_collision.json": {
+        "claim_sha256": 1,
+        "contact_history_sha256": 1,
+        "file_sha256": 2,
+        "numerical_sha256": 2,
+        "pair_sha256": 1,
+        "particle_sha256": 2
+      },
+      "step-0-after_imprint.json": {
+        "claim_sha256": 1,
+        "contact_history_sha256": 1,
+        "file_sha256": 2,
+        "numerical_sha256": 2,
+        "pair_sha256": 1,
+        "particle_sha256": 2
+      },
+      "step-0-before_collision.json": {
+        "claim_sha256": 1,
+        "contact_history_sha256": 1,
+        "file_sha256": 2,
+        "numerical_sha256": 2,
+        "pair_sha256": 1,
+        "particle_sha256": 2
+      },
+      "step-0-before_imprint.json": {
+        "claim_sha256": 1,
+        "contact_history_sha256": 1,
+        "file_sha256": 1,
+        "numerical_sha256": 1,
+        "pair_sha256": 1,
+        "particle_sha256": 1
+      },
+      "step-1-after_collision.json": {
+        "claim_sha256": 1,
+        "contact_history_sha256": 1,
+        "file_sha256": 4,
+        "numerical_sha256": 4,
+        "pair_sha256": 1,
+        "particle_sha256": 4
+      },
+      "step-1-after_imprint.json": {
+        "claim_sha256": 2,
+        "contact_history_sha256": 1,
+        "file_sha256": 4,
+        "numerical_sha256": 4,
+        "pair_sha256": 1,
+        "particle_sha256": 4
+      },
+      "step-1-before_collision.json": {
+        "claim_sha256": 1,
+        "contact_history_sha256": 1,
+        "file_sha256": 4,
+        "numerical_sha256": 4,
+        "pair_sha256": 1,
+        "particle_sha256": 4
+      },
+      "step-1-before_imprint.json": {
+        "claim_sha256": 1,
+        "contact_history_sha256": 1,
+        "file_sha256": 2,
+        "numerical_sha256": 2,
+        "pair_sha256": 1,
+        "particle_sha256": 2
+      }
+    }
+  }
+}

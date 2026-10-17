@@ -1,0 +1,107 @@
+{
+  "artifact_checks": [
+    {
+      "file": "KINETIC_ENERGY_VARIATION.csv",
+      "identical_to_report": true,
+      "sha256": "bb6cf16f40b9406a6c0d9110e42134c9d5122aee980857b4a5b36a775470fc60"
+    },
+    {
+      "file": "ORIGINAL_FAILURE.csv",
+      "identical_to_report": true,
+      "sha256": "b35883574dc47d55bb6812ef23e89dc44ab8e305a6a3b32f84f6f18f1ba491cc"
+    },
+    {
+      "file": "NUMERICAL_CONSEQUENCES.csv",
+      "identical_to_report": true,
+      "sha256": "5472ff16e56003a66d607ad80e4e8f5fbf2ec69014a0e5cf912efba1c7e96410"
+    },
+    {
+      "file": "ALL_PAIRWISE_SNAPSHOTS.csv",
+      "identical_to_report": true,
+      "sha256": "6342a922e94e2b4ab41e72d727adee4c5206630406001f420c7ffe1c76f9eb91"
+    },
+    {
+      "file": "FIRST_DIVERGENCE.csv",
+      "identical_to_report": true,
+      "sha256": "d74e79a8b8c9d04f93ed53a84ed0dd760df4fbd201e6ba287001c21ca388b3ad"
+    },
+    {
+      "file": "FLUID_HISTORY_STRUCTURE.csv",
+      "identical_to_report": true,
+      "sha256": "5f079d3f402f30c8de255bc5b5eda79efc2ed346ac6254a62ac9255d07a11980"
+    },
+    {
+      "file": "CONTRIBUTION_BITS.csv",
+      "identical_to_report": true,
+      "sha256": "b93db4ab39317ab1f3973feabdc123dd062249182a72aea1f8ffd12e1d10bd5f"
+    },
+    {
+      "file": "TRACE_SUMMARY.json",
+      "identical_to_report": true,
+      "sha256": "52c65406da8fc73a6068d67176da10a7c4f056e2ec3996a5e209bf4bbaeb643c"
+    },
+    {
+      "file": "INDEPENDENT_SUMS.csv",
+      "identical_to_report": true,
+      "sha256": "63d43028df5d4ad8beb9fa2dfc6365f31d741195cdda4d8e5a880f7259452739"
+    },
+    {
+      "file": "BALANCE_AND_WORK.csv",
+      "identical_to_report": true,
+      "sha256": "9d36695973e60bf946f5b4466c3c90ab7012883038aac70a1ad0ebf36ae293dc"
+    },
+    {
+      "file": "SANITIZER_INDEPENDENT_SUMS.csv",
+      "identical_to_report": true,
+      "sha256": "d9665bcbca14d137b83475809706b078c5aab188d2d8c4349c9a6b103f915697"
+    },
+    {
+      "file": "CONTROLLED_INPUT_CHECKS.csv",
+      "identical_to_report": true,
+      "sha256": "40ef7d8284ffedd59391d89cd06674b2174e5556326a30a163049265a0a20c0c"
+    },
+    {
+      "file": "PAIRWISE_SUMMARY.csv",
+      "identical_to_report": true,
+      "sha256": "e0e464d858fb9a7322605ff3c8e39f96c26f36d4cddcf46c4217e43338b7e451"
+    },
+    {
+      "file": "BALANCE_SUMMARY.csv",
+      "identical_to_report": true,
+      "sha256": "2ab10c608762966f333aace11bba1e854f8d1b5604fd4056f360b0b66818de91"
+    },
+    {
+      "file": "SUMMARY.json",
+      "identical_to_report": true,
+      "sha256": "09ad90dd65ef6dc9d7b44a5243022aa0349a245e8f8f59b39ea67e0e3a4c1eb1"
+    },
+    {
+      "file": "CANDIDATE_REPEATABILITY.csv",
+      "identical_to_report": true,
+      "sha256": "9be17467edb1d01a16a4dae855317763e7f20095e5f2fedfeacafc2c1c117dc4"
+    },
+    {
+      "file": "BASELINE_REPEATABILITY.csv",
+      "identical_to_report": true,
+      "sha256": "f040b6719af72fbf85b1e638184f5b26a9e0b17d9e4a95573d707c310afcb923"
+    },
+    {
+      "file": "ORDER_WITNESSES.json",
+      "identical_to_report": true,
+      "sha256": "ff07dc0f9efacda150aedd9b30d1bc726eaba5a0f4b67a0436f4d8ea4cf218c4"
+    },
+    {
+      "file": "SANITIZER_ORDER_WITNESSES.json",
+      "identical_to_report": true,
+      "sha256": "917edc289a8f5deac139209a2deadf3fb388c39b2fad6837cf0d66459467b5ef"
+    },
+    {
+      "file": "BALANCE_AND_WORK_PHASE_ALIGNED.csv",
+      "identical_to_report": true,
+      "sha256": "9d36695973e60bf946f5b4466c3c90ab7012883038aac70a1ad0ebf36ae293dc"
+    }
+  ],
+  "fresh_output": "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/replay-report",
+  "manifest_exception": "input/source/executable/run data unchanged; analysis/output directory is intentionally different",
+  "status": "PASS"
+}
