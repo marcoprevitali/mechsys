@@ -5,6 +5,7 @@ No solver, compiler, debugger, GPU, production Python import, or network call.
 It checks exact arithmetic/interval claims and honest conditional statuses.
 """
 import argparse, copy, csv, hashlib, json, os, sys
+from itertools import permutations
 from fractions import Fraction as Q
 from pathlib import Path
 import arithmetic as A
@@ -22,6 +23,45 @@ def decode(x):
 def equal_values(expected,actual):
     assert expected==actual,'Exact regenerated certificate differs'
 
+def independent_witnesses(p,graphs):
+    # Exact hand-derived dyadic maps, separate from archived output values.
+    z=[I(0)]*3
+    synthetic={**p,'mass':Q(4),'x':[Q(2)]*3,'xb':[Q(3,2)]*3}
+    t1,_=translate(synthetic,[I(Q(1,8))]*3,z,graphs['Translate'][0])
+    assert all(v.point()==Q(81,32) for v in t1['x'])
+    assert all(v.point()==Q(33,64) for v in t1['v'])
+    t2,_=translate({**synthetic,**t1},[I(Q(-1,8))]*3,z,graphs['Translate'][0])
+    assert all(v.point()==Q(97,32) for v in t2['x'])
+    assert all(v.point()==Q(33,64) for v in t2['v'])
+    qsynthetic={**p,'Q':[Q(1),Q(0),Q(0),Q(0)],'wb':[Q(1,8),Q(0),Q(0)]}
+    r,_=rotate(qsynthetic,z,z,graphs['Rotate'][0])
+    assert [v.point() for v in r['qD']]==[Q(1023,1024),Q(1,16),Q(0),Q(0)]
+    assert r['norm'].point()==Q(1025,1024)
+    assert [v.point() for v in r['Q']]==[rn(Q(1023,1025)),rn(Q(64,1025)),Q(0),Q(0)]
+    # A non-exact divide and midpoint angular update, checked as rationals.
+    tq=A.exact(.1);acc=A.op('div',I(tq),I(3));assert acc.point()==rn(tq/3)
+    mid=A.fma(I(Q(1,2)),acc,I(Q(1,8)));assert mid.point()==rn(Q(1,8)+acc.point()/2)
+    pop=[I(Q(1,2)),I(Q(1,4)),I(Q(1,8)),I(Q(1,8))]+[I(0)]*11
+    rho,vel,mom=moments(pop)
+    assert rho.point()==1 and [v.point() for v in mom]==[Q(1,8),Q(1,8),Q(0)]
+    assert [v.point() for v in vel]==[Q(1,8),Q(1,8),Q(0)]
+    from derive import W
+    pp,tau,B,neq=collision([I(w) for w in W],I(1),z,I(Q(1,2)),[I(Q(1,64)),I(Q(-1,64))]+[I(0)]*13)
+    assert all(v.point()==0 for v in neq)
+    b=rn(rn(Q(1,2)*rn(A.exact(.8)-Q(1,2)))/rn(Q(1,2)+rn(A.exact(.8)-Q(1,2))))
+    assert B.point()==b
+    for k,om in [(0,Q(1,64)),(1,Q(-1,64))]:
+        assert pp[k].contains(rn(W[k]+rn(b*om)))
+        assert pp[k].contains(rn(W[k]+b*om))
+    terms=list(map(A.exact,[.1,.2,-.3]));s=sum(terms);g=3*A.U/(1-3*A.U);e=g*sum(map(abs,terms))
+    for order in permutations(terms):
+        acc=Q(0)
+        for v in order:acc=rn(acc+v)
+        assert abs(acc-s)<=e
+    return dict(translation_rounding=True,angular_rounding=True,ordered_quaternion_and_normalization=True,
+      density_velocity=True,collision_formation=True,force_accumulation_six_orders=True,
+      one_step=True,two_step=True)
+
 def verify(root,manifest=True):
     A.selftest()
     one=read(root/'ONE_STEP_CERTIFICATE.json');two=read(root/'TWO_STEP_CERTIFICATE.json')
@@ -29,6 +69,7 @@ def verify(root,manifest=True):
     assert one['status']=='PARTIAL' and two['status']=='PARTIAL; NO complete two-step certificate'
     assert 'CONDITIONAL' in one['rotation_status'] and 'CONDITIONAL' in one['collision_status']
     p=decode(frozen['initial_particles'])[0];claims=decode(frozen['first_claims'])
+    witnesses=independent_witnesses(p,graphs)
     f,fr=accumulation(claims,'force');t,tr=accumulation(claims,'torque')
     assert one['accumulation']==fr+tr
     inertia=from_bits(frozen['principal_inertia']['binary64'][0])
@@ -98,6 +139,7 @@ def verify(root,manifest=True):
     assert summary['recommended_outcome']=='D4' and summary['production_unchanged']
     assert summary['strict_sign_unresolved_branch_rows']==292 and summary['branch_rows']==len(branches)
     assert summary['unresolved_branch_rows']==sum(r['status']=='UNRESOLVED' for r in branches)
+    assert summary['conditional_branch_rows']==sum(r['basis'] not in ['CERTIFIED','SOURCE_AND_FROZEN_INPUT'] for r in branches)
     # Every historical tracked source/test/artifact is byte-identical to base.
     for name in git(ROOT,'ls-tree','-r','--name-only','-z',BASE).split(b'\0'):
         if not name:continue
@@ -112,6 +154,7 @@ def verify(root,manifest=True):
     return dict(status='PASS verification of PARTIAL artifacts only',milestone='V3-I0-P2R-D',
       historical_P2R_K='FAIL unchanged',prospective_P2R_KN='NOT_APPROVED / NOT_IMPLEMENTED / NOT_RUN',
       exact_RN_witnesses=True,translation_replay=True,conditional_rotation_replay=True,
+      independent_arithmetic_witnesses=witnesses,
       conditional_two_step_particle_feedback_replay=True,first_qD_real_norm_floor='>99/100',
       conditional_collision_streaming_moment_replay=True,
       branch_rows=len(branches),strict_sign_unresolved=292,corruption_witnesses_rejected=faults,

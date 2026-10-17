@@ -1,0 +1,91 @@
+{
+  "base": "031e5e307a1d3a5001537c58cb791bf31edc6ae5",
+  "protected_checkouts_before": {
+    "/home/msys/git/mechsys-v2-restart": {
+      "all_tracked_and_untracked_content_sha256": "067645212cee8e014361877330ec84ab48034654111d5ada252bde7f192f2784",
+      "branch": "validation/v2-restart-coupled",
+      "head": "2b8d8c335709046e224f4c43aa930144ae6854e7",
+      "remotes": "origin\thttps://github.com/marcoprevitali/mechsys.git (fetch)\norigin\thttps://github.com/marcoprevitali/mechsys.git (push)\nupstream\thttps://github.com/Axtal/mechsys.git (fetch)\nupstream\tPUSH_DISABLED (push)\n",
+      "status": "",
+      "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/msys/git/mechsys-v3-coupled-design": {
+      "all_tracked_and_untracked_content_sha256": "e9ee8c38d60e0130a843afe48926d8ff4c81265f58e22c6ff6461605d7a6b5eb",
+      "branch": "design/v3-coupled-vv",
+      "head": "d801c80cce15691b2a886a31d7e0bd864de35c10",
+      "remotes": "origin\thttps://github.com/marcoprevitali/mechsys.git (fetch)\norigin\thttps://github.com/marcoprevitali/mechsys.git (push)\nupstream\thttps://github.com/Axtal/mechsys.git (fetch)\nupstream\tPUSH_DISABLED (push)\n",
+      "status": "",
+      "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/msys/git/mechsys-v3-i0-exchange-audit": {
+      "all_tracked_and_untracked_content_sha256": "c140574cb0c81398ac8aed038db56f51f6a1e1db8ebbdb1c4b1e030f358dc10c",
+      "branch": "validation/v3-i0-exchange-audit",
+      "head": "38da1b918281883fdc5fb46ea8171082993a1136",
+      "remotes": "origin\thttps://github.com/marcoprevitali/mechsys.git (fetch)\norigin\thttps://github.com/marcoprevitali/mechsys.git (push)\nupstream\thttps://github.com/Axtal/mechsys.git (fetch)\nupstream\tPUSH_DISABLED (push)\n",
+      "status": "",
+      "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/msys/git/mechsys-v3-i0-p1-cell-coverage": {
+      "all_tracked_and_untracked_content_sha256": "1d70912ac6a3a516f299da4470c543e7d153251c241fe4ee03de0673a1a26ebe",
+      "branch": "fix/v3-i0-p1-cell-coverage",
+      "head": "e0d6c2fcc581b4caf9d020ebbf05f15c2f5a102f",
+      "remotes": "origin\thttps://github.com/marcoprevitali/mechsys.git (fetch)\norigin\thttps://github.com/marcoprevitali/mechsys.git (push)\nupstream\thttps://github.com/Axtal/mechsys.git (fetch)\nupstream\tPUSH_DISABLED (push)\n",
+      "status": "",
+      "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/msys/git/mechsys-v3-i0-p2-edge-proxy": {
+      "all_tracked_and_untracked_content_sha256": "ee49bb4b18a74b8ea5e5c8a8d057400d40a9afbe503b26c40316a660340c277a",
+      "branch": "fix/v3-i0-p2-edge-proxy",
+      "head": "bf6616973be1335da1caa7d75f8a34aa0f6c1c22",
+      "remotes": "origin\thttps://github.com/marcoprevitali/mechsys.git (fetch)\norigin\thttps://github.com/marcoprevitali/mechsys.git (push)\nupstream\thttps://github.com/Axtal/mechsys.git (fetch)\nupstream\tPUSH_DISABLED (push)\n",
+      "status": "",
+      "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/msys/git/mechsys-v3-i0-p2r-compatibility-design": {
+      "all_tracked_and_untracked_content_sha256": "b1dec8cc841fa4592af4c343ce48cbb0060a8f61b1f957e23453a160a0944911",
+      "branch": "design/v3-i0-p2r-compatibility",
+      "head": "031e5e307a1d3a5001537c58cb791bf31edc6ae5",
+      "remotes": "origin\thttps://github.com/marcoprevitali/mechsys.git (fetch)\norigin\thttps://github.com/marcoprevitali/mechsys.git (push)\nupstream\thttps://github.com/Axtal/mechsys.git (fetch)\nupstream\tPUSH_DISABLED (push)\n",
+      "status": "",
+      "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/msys/git/mechsys-v3-i0-p2r-reproducibility": {
+      "all_tracked_and_untracked_content_sha256": "87050c7af4ab7d287674d5b7419e246ed6365a864b660294ce698aaf4ff46d6a",
+      "branch": "validation/v3-i0-p2r-reproducibility",
+      "head": "587dfbff889495b4a7ade6b5c2c107ae4febdfde",
+      "remotes": "origin\thttps://github.com/marcoprevitali/mechsys.git (fetch)\norigin\thttps://github.com/marcoprevitali/mechsys.git (push)\nupstream\thttps://github.com/Axtal/mechsys.git (fetch)\nupstream\tPUSH_DISABLED (push)\n",
+      "status": "",
+      "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/msys/git/mechsys-v3-i0-p2r-robust-tangency": {
+      "all_tracked_and_untracked_content_sha256": "edd3fa695f2163b4d8374a132ef4c53dfe1a8bbfea022151db95ccb111552ebc",
+      "branch": "fix/v3-i0-p2r-robust-tangency",
+      "head": "26bf84aa2a3acb4edf9accc295a3cbcec7398770",
+      "remotes": "origin\thttps://github.com/marcoprevitali/mechsys.git (fetch)\norigin\thttps://github.com/marcoprevitali/mechsys.git (push)\nupstream\thttps://github.com/Axtal/mechsys.git (fetch)\nupstream\tPUSH_DISABLED (push)\n",
+      "status": "",
+      "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/msys/mechsys": {
+      "all_tracked_and_untracked_content_sha256": "d3538ebabdf566823468bea7a762428254e4964b1b7fc629347cd898815173b0",
+      "branch": "perf/p0-reconciliation",
+      "head": "e4ba163ec9f32c8bccb0fd8619ba79e000d3d6d8",
+      "remotes": "origin\thttps://github.com/marcoprevitali/mechsys.git (fetch)\norigin\thttps://github.com/marcoprevitali/mechsys.git (push)\nupstream\thttps://github.com/Axtal/mechsys.git (fetch)\nupstream\thttps://github.com/Axtal/mechsys.git (push)\n",
+      "status": " M lib/dem/dem.cuh\n M lib/dem/distance.h\n M lib/dem/domain.h\n M lib/dem/interacton.h\n M tdem/CMakeLists.txt\n M tdem/PID_v2.cpp\n M tdem/test_cu_01.cu\n?? AGENTS.md\n?? AGENTS_OLD.md\n?? PROJECT_STATE_OLD.md\n?? PROJECT_STATUS.md\n?? PROJECT_STATUS_OLD2.md\n?? tdem/TX_PID_periodic.cpp\n?? tdem/TX_PID_periodic.cu\n?? tdem/shearbox_LE_const_vol.cu\n?? tdem/test_tx_pid_periodic.inp\n",
+      "tracked_diff_sha256": "e98dcc578695992948f3d804f572f6b212888ac2381832ae261be9c4e99132e9"
+    }
+  },
+  "raw": "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified",
+  "sha256": {
+    "/tmp/mechsys-v3-i0-p2r-derivation.cHuxOt/static/baseline.ptx": "9a8639b2489f7484abe21b930b1f93964c0dcc7ce355637de4df5db82f465e85",
+    "/tmp/mechsys-v3-i0-p2r-derivation.cHuxOt/static/candidate.ptx": "38abcbb5f986ba025f8f3a525e652311f90e33c7d380cded46e573def44f50f0",
+    "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/EXECUTABLES.json": "20d19ef36aa5ca095e5211a09f3bd3dce7b4fb812a32d93192afa1024fd87567",
+    "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/INPUT.json": "cce9fe7b636ebcb7968fc9f216b0f342c906daf1298855bee05c33563dc6dee8",
+    "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/baseline": "3ca0d0c65992015065c5907f451430b049d94b22bdd6f94e21e6f302129144f7",
+    "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/candidate": "12b44d4de0e70fc1be203180a3bb369308688c9dab1e653165093689cc3565ca",
+    "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/repeats/baseline-00/fixture.json": "e117269f1f006c504ea6e4818c5d9354149b0c5a1aea4089a7e3d1fadc4408da",
+    "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/repeats/baseline-00/state-0.json": "42d40d99feaf6904b9cb710d15e9f21a335a72fb7473fd8d162b4c27f32368b8",
+    "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/repeats/baseline-00/step-0-after_imprint.json": "95c27df72e1879588a9b904f9d52f0ec3fd2ef014b08e47e5a060844786a2451",
+    "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/repeats/baseline-00/step-0-before_imprint.json": "66ba98d05eb8562adc7b724ab82dab481ea61e47e457d74fac2d72cda58d162e"
+  },
+  "solver_executions": 0
+}

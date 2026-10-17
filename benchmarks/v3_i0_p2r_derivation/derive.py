@@ -266,6 +266,7 @@ def second_feedback(p1,grid1,claims,graph):
         for j in range(3):
             lo=sum(c[name][j].lo for c in formed);hi=sum(c[name][j].hi for c in formed)
             sa=sum(c[name][j].absmax() for c in formed);g=Q(93)*U/(1-Q(93)*U);e=g*sa
+            assert sa*(1+g)<A.from_bits(A.MAX_BITS),'Atomic partial-sum overflow domain'
             vv.append(I(lo-e,hi+e))
             ledger.append(dict(quantity=name,component=j,formation_pairwise_bound=str(hi-lo),
               accumulation_each=str(e),total_pairwise_bound=str(hi-lo+2*e),
@@ -436,7 +437,7 @@ def run(static,raw,out):
       arithmetic_witnesses='PASS',one_step_observation_checks=checked,two_step_conditional_observation_checks=checks2,
       branch_rows=len(branches),unresolved_branch_rows=sum(r['status']=='UNRESOLVED' for r in branches),
       strict_sign_unresolved_branch_rows=sum(r['strict_sign_status']=='UNRESOLVED' for r in branches),
-      conditional_branch_rows=sum(r['basis']!='CERTIFIED' for r in branches),
+      conditional_branch_rows=sum(r['basis'] not in ['CERTIFIED','SOURCE_AND_FROZEN_INPUT'] for r in branches),
       source_sha256={p:sha(ROOT/p) for p in used},protected_checkouts_after=preservation(),
       production_unchanged=not git_diff_lib(),
       maximum_one_step_errors={k:float(max(v.width() for v in values)) for k,values in {**trans,**{k:v for k,v in rot.items() if isinstance(v,list)}}.items()},

@@ -1,0 +1,48 @@
+{
+  "baseline": {
+    "argv": [
+      "gdb",
+      "--batch",
+      "-x",
+      "/tmp/mechsys-v3-i0-p2r-derivation.cHuxOt/work/benchmarks/v3_i0_p2r_derivation/inertia.gdb",
+      "--args",
+      "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/baseline",
+      "large",
+      "/tmp/mechsys-v3-i0-p2r-derivation.cHuxOt/host-observation/baseline-pre-solve"
+    ],
+    "binary_sha256": "3ca0d0c65992015065c5907f451430b049d94b22bdd6f94e21e6f302129144f7",
+    "inertia_bits": [
+      "40c0dd7f24550855",
+      "40c0dd7f24550855",
+      "40c0dd7f24550855"
+    ],
+    "log_sha256": "4709360c7a0aae706ce5b3d405451c73ae2e52d71fd806d0ffb2e7056ac95e19",
+    "mass_bits": "40b16c394b9da965",
+    "returncode": 0,
+    "solver_steps": 0,
+    "stop": "AddSphere+0x20f, before Solve; inferior terminated by GDB quit"
+  },
+  "candidate": {
+    "argv": [
+      "gdb",
+      "--batch",
+      "-x",
+      "/tmp/mechsys-v3-i0-p2r-derivation.cHuxOt/work/benchmarks/v3_i0_p2r_derivation/inertia.gdb",
+      "--args",
+      "/tmp/mechsys-v3-i0-p2r-repro.iXq6mh/raw-verified/binaries/candidate",
+      "large",
+      "/tmp/mechsys-v3-i0-p2r-derivation.cHuxOt/host-observation/candidate-pre-solve"
+    ],
+    "binary_sha256": "12b44d4de0e70fc1be203180a3bb369308688c9dab1e653165093689cc3565ca",
+    "inertia_bits": [
+      "40c0dd7f24550855",
+      "40c0dd7f24550855",
+      "40c0dd7f24550855"
+    ],
+    "log_sha256": "17e8a6ca9c7c3b4014c5061fcee5a48c3f54f07a5541f75be44a91e82156a1a1",
+    "mass_bits": "40b16c394b9da965",
+    "returncode": 0,
+    "solver_steps": 0,
+    "stop": "AddSphere+0x20f, before Solve; inferior terminated by GDB quit"
+  }
+}

@@ -1,0 +1,182 @@
+{
+  "arithmetic_witnesses": "PASS",
+  "base": "031e5e307a1d3a5001537c58cb791bf31edc6ae5",
+  "branch_rows": 11356,
+  "conditional_branch_rows": 11331,
+  "feedback_ledger": [
+    {
+      "accumulation_each": "504747466391784366771/1329227995784902148526216220373942272",
+      "accumulation_each_display": 3.797297890146631e-16,
+      "component": 0,
+      "formation_pairwise_bound": "22087/36893488147419103232",
+      "formation_pairwise_display": 5.986693345921834e-16,
+      "quantity": "force",
+      "total_pairwise_bound": "902631486270708839197/664613997892451074263108110186971136"
+    },
+    {
+      "accumulation_each": "139140707550240891933/664613997892451074263108110186971136",
+      "accumulation_each_display": 2.093556680892491e-16,
+      "component": 1,
+      "formation_pairwise_bound": "21929/36893488147419103232",
+      "formation_pairwise_display": 5.943867360108657e-16,
+      "quantity": "force",
+      "total_pairwise_bound": "42082447500931758263/41538374868278192141444256886685696"
+    },
+    {
+      "accumulation_each": "683029398373658096301/5316911983139608594104864881495769088",
+      "accumulation_each_display": 1.2846355187740627e-16,
+      "component": 2,
+      "formation_pairwise_bound": "172281/295147905179352825856",
+      "formation_pairwise_display": 5.837107327436725e-16,
+      "quantity": "force",
+      "total_pairwise_bound": "279349836647459364615/332306998946225537131554055093485568"
+    },
+    {
+      "accumulation_each": "633668646971508366791358409365/2854495385411890289240116632565405474415968256",
+      "accumulation_each_display": 2.2198972547299213e-16,
+      "component": 0,
+      "formation_pairwise_bound": "539042600523051/633825300114114700748351602688",
+      "formation_pairwise_display": 8.504592676026045e-16,
+      "quantity": "torque",
+      "total_pairwise_bound": "7389938697590854567854315600309/5708990770823780578480233265130810948831936512"
+    },
+    {
+      "accumulation_each": "2533234500337980265209021458091/5708990770823780578480233265130810948831936512",
+      "accumulation_each_display": 4.4372720188728673e-16,
+      "component": 1,
+      "formation_pairwise_bound": "524423492174761/316912650057057350374175801344",
+      "formation_pairwise_display": 1.6547887630245847e-15,
+      "quantity": "torque",
+      "total_pairwise_bound": "3628410694111553611483051854115/1427247692705945144620058316282702737207984128"
+    },
+    {
+      "accumulation_each": "559926525546534951544497073575/1427247692705945144620058316282702737207984128",
+      "accumulation_each_display": 3.92312090191549e-16,
+      "component": 2,
+      "formation_pairwise_bound": "262245032083925/158456325028528675187087900672",
+      "formation_pairwise_display": 1.6549988271955069e-15,
+      "quantity": "torque",
+      "total_pairwise_bound": "3481946308638902310506892095725/1427247692705945144620058316282702737207984128"
+    }
+  ],
+  "geometry_observation_checks": 186,
+  "geometry_observation_misses": 0,
+  "initial_Q_norm_squared": "40564819207303346393761349247529/40564819207303340847894502572032",
+  "maximum_one_step_errors": {
+    "Q": 1.202252219630244e-19,
+    "qD": 1.202252219630244e-19,
+    "v": 0.0,
+    "w": 1.1860264876040255e-19,
+    "wa": 2.372052975208051e-19,
+    "wb": 2.372052975208051e-19,
+    "x": 0.0,
+    "xb": 0.0
+  },
+  "maximum_primitive_local_error": 5.553306509544704e-16,
+  "new_solver_steps": 0,
+  "one_step_observation_checks": 952868,
+  "production_unchanged": true,
+  "protected_checkouts_after": {
+    "/home/msys/git/mechsys-v2-restart": {
+      "all_tracked_and_untracked_content_sha256": "067645212cee8e014361877330ec84ab48034654111d5ada252bde7f192f2784",
+      "branch": "validation/v2-restart-coupled",
+      "head": "2b8d8c335709046e224f4c43aa930144ae6854e7",
+      "remotes": "origin\thttps://github.com/marcoprevitali/mechsys.git (fetch)\norigin\thttps://github.com/marcoprevitali/mechsys.git (push)\nupstream\thttps://github.com/Axtal/mechsys.git (fetch)\nupstream\tPUSH_DISABLED (push)\n",
+      "status": "",
+      "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/msys/git/mechsys-v3-coupled-design": {
+      "all_tracked_and_untracked_content_sha256": "e9ee8c38d60e0130a843afe48926d8ff4c81265f58e22c6ff6461605d7a6b5eb",
+      "branch": "design/v3-coupled-vv",
+      "head": "d801c80cce15691b2a886a31d7e0bd864de35c10",
+      "remotes": "origin\thttps://github.com/marcoprevitali/mechsys.git (fetch)\norigin\thttps://github.com/marcoprevitali/mechsys.git (push)\nupstream\thttps://github.com/Axtal/mechsys.git (fetch)\nupstream\tPUSH_DISABLED (push)\n",
+      "status": "",
+      "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/msys/git/mechsys-v3-i0-exchange-audit": {
+      "all_tracked_and_untracked_content_sha256": "c140574cb0c81398ac8aed038db56f51f6a1e1db8ebbdb1c4b1e030f358dc10c",
+      "branch": "validation/v3-i0-exchange-audit",
+      "head": "38da1b918281883fdc5fb46ea8171082993a1136",
+      "remotes": "origin\thttps://github.com/marcoprevitali/mechsys.git (fetch)\norigin\thttps://github.com/marcoprevitali/mechsys.git (push)\nupstream\thttps://github.com/Axtal/mechsys.git (fetch)\nupstream\tPUSH_DISABLED (push)\n",
+      "status": "",
+      "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/msys/git/mechsys-v3-i0-p1-cell-coverage": {
+      "all_tracked_and_untracked_content_sha256": "1d70912ac6a3a516f299da4470c543e7d153251c241fe4ee03de0673a1a26ebe",
+      "branch": "fix/v3-i0-p1-cell-coverage",
+      "head": "e0d6c2fcc581b4caf9d020ebbf05f15c2f5a102f",
+      "remotes": "origin\thttps://github.com/marcoprevitali/mechsys.git (fetch)\norigin\thttps://github.com/marcoprevitali/mechsys.git (push)\nupstream\thttps://github.com/Axtal/mechsys.git (fetch)\nupstream\tPUSH_DISABLED (push)\n",
+      "status": "",
+      "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/msys/git/mechsys-v3-i0-p2-edge-proxy": {
+      "all_tracked_and_untracked_content_sha256": "ee49bb4b18a74b8ea5e5c8a8d057400d40a9afbe503b26c40316a660340c277a",
+      "branch": "fix/v3-i0-p2-edge-proxy",
+      "head": "bf6616973be1335da1caa7d75f8a34aa0f6c1c22",
+      "remotes": "origin\thttps://github.com/marcoprevitali/mechsys.git (fetch)\norigin\thttps://github.com/marcoprevitali/mechsys.git (push)\nupstream\thttps://github.com/Axtal/mechsys.git (fetch)\nupstream\tPUSH_DISABLED (push)\n",
+      "status": "",
+      "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/msys/git/mechsys-v3-i0-p2r-compatibility-design": {
+      "all_tracked_and_untracked_content_sha256": "b1dec8cc841fa4592af4c343ce48cbb0060a8f61b1f957e23453a160a0944911",
+      "branch": "design/v3-i0-p2r-compatibility",
+      "head": "031e5e307a1d3a5001537c58cb791bf31edc6ae5",
+      "remotes": "origin\thttps://github.com/marcoprevitali/mechsys.git (fetch)\norigin\thttps://github.com/marcoprevitali/mechsys.git (push)\nupstream\thttps://github.com/Axtal/mechsys.git (fetch)\nupstream\tPUSH_DISABLED (push)\n",
+      "status": "",
+      "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/msys/git/mechsys-v3-i0-p2r-reproducibility": {
+      "all_tracked_and_untracked_content_sha256": "87050c7af4ab7d287674d5b7419e246ed6365a864b660294ce698aaf4ff46d6a",
+      "branch": "validation/v3-i0-p2r-reproducibility",
+      "head": "587dfbff889495b4a7ade6b5c2c107ae4febdfde",
+      "remotes": "origin\thttps://github.com/marcoprevitali/mechsys.git (fetch)\norigin\thttps://github.com/marcoprevitali/mechsys.git (push)\nupstream\thttps://github.com/Axtal/mechsys.git (fetch)\nupstream\tPUSH_DISABLED (push)\n",
+      "status": "",
+      "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/msys/git/mechsys-v3-i0-p2r-robust-tangency": {
+      "all_tracked_and_untracked_content_sha256": "edd3fa695f2163b4d8374a132ef4c53dfe1a8bbfea022151db95ccb111552ebc",
+      "branch": "fix/v3-i0-p2r-robust-tangency",
+      "head": "26bf84aa2a3acb4edf9accc295a3cbcec7398770",
+      "remotes": "origin\thttps://github.com/marcoprevitali/mechsys.git (fetch)\norigin\thttps://github.com/marcoprevitali/mechsys.git (push)\nupstream\thttps://github.com/Axtal/mechsys.git (fetch)\nupstream\tPUSH_DISABLED (push)\n",
+      "status": "",
+      "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/msys/mechsys": {
+      "all_tracked_and_untracked_content_sha256": "d3538ebabdf566823468bea7a762428254e4964b1b7fc629347cd898815173b0",
+      "branch": "perf/p0-reconciliation",
+      "head": "e4ba163ec9f32c8bccb0fd8619ba79e000d3d6d8",
+      "remotes": "origin\thttps://github.com/marcoprevitali/mechsys.git (fetch)\norigin\thttps://github.com/marcoprevitali/mechsys.git (push)\nupstream\thttps://github.com/Axtal/mechsys.git (fetch)\nupstream\thttps://github.com/Axtal/mechsys.git (push)\n",
+      "status": " M lib/dem/dem.cuh\n M lib/dem/distance.h\n M lib/dem/domain.h\n M lib/dem/interacton.h\n M tdem/CMakeLists.txt\n M tdem/PID_v2.cpp\n M tdem/test_cu_01.cu\n?? AGENTS.md\n?? AGENTS_OLD.md\n?? PROJECT_STATE_OLD.md\n?? PROJECT_STATUS.md\n?? PROJECT_STATUS_OLD2.md\n?? tdem/TX_PID_periodic.cpp\n?? tdem/TX_PID_periodic.cu\n?? tdem/shearbox_LE_const_vol.cu\n?? tdem/test_tx_pid_periodic.inp\n",
+      "tracked_diff_sha256": "e98dcc578695992948f3d804f572f6b212888ac2381832ae261be9c4e99132e9"
+    }
+  },
+  "recommended_outcome": "D4",
+  "source_sha256": {
+    "lib/dem/dem.cuh": "eec7b7c28ceb788ce075248071094e1f6431289fcbbc30c70bdf25ad8fbc311f",
+    "lib/dem/domain.h": "b68d631763a77c99531d7b9cca174653dcce50211465d30510d24bff56b6ba24",
+    "lib/dem/dompargen.h": "b6efbdf2bdfb9dee6a42e35a2237f1690021f6710485ee3a50ce6c115b4ca558",
+    "lib/dem/particle.h": "0f1af5dc124ab18561409985c72068116d095d4b40937e81a6ca5bd8fe6653cb",
+    "lib/flbm/lbm.cuh": "a638cdc19d87f07fb00eccce71b866dfc20ed4087ea58ebe1401e3747f8b8ab4",
+    "lib/lbmdem/Domain.h": "d0bf752d8f06c621591ff485aa2913a5455430ac055fe8fd3374267ad140b892",
+    "lib/lbmdem/lbmdem.cuh": "514a17fa570fc6af704801d0ed95ccc3711db3dc453f71cc2ee661b6b988c522",
+    "lib/linalg/quaternion.h": "e64e6e801706c69214fb77cce1f11bb55bf7bdd98b8663af6aef4f0025d4d700"
+  },
+  "status": "PARTIAL",
+  "strict_sign_unresolved_branch_rows": 292,
+  "two_step_conditional_observation_checks": 1015112,
+  "unresolved": [
+    {
+      "quantity": "second-step legacy geometry compiled-graph equivalence",
+      "reason": "source interval graph does not translate all SASS contractions/control predicates"
+    },
+    {
+      "quantity": "second-step full collision/stream/macroscopic enclosure",
+      "reason": "finite conditional boxes evaluated, but second geometry/formation compiled-graph certificate not closed"
+    },
+    {
+      "quantity": "two-step independent exchange budget allocation",
+      "reason": "requires a joint nonduplicated reference-formation and actual-write proof; componentwise compatibility boxes are not that residual"
+    }
+  ],
+  "unresolved_branch_rows": 11331
+}

@@ -5,35 +5,60 @@ record. This file is a concise re-entry point, not a replacement for that record
 
 ## Current objective and boundary
 
-**V3-I0-P2R-C PARTIAL design — not complete. Historical P2R-K FAIL preserved;
-new P2R-KN is PROPOSED / NOT YET APPROVED / NOT IMPLEMENTED / NOT RUN.**
-Read PROJECT_STATUS.md §5.15 and
-[contract decision](benchmarks/v3_i0_p2r_contract/CONTRACT_DECISION.md).
-Independent full clone/branch design/v3-i0-p2r-compatibility from exact
-587dfbff889495b4a7ade6b5c2c107ae4febdfde. Persistent target
-/home/msys/git/mechsys-v3-i0-p2r-compatibility-design;final originSHA/clean/
-protection proof in external contract DELIVERY.json. Documentation ONLY:
-ten requested design files+source/evidence hashes,no source/test/tolerance
-change,no new builds/simulations/acceptance/performance runs.
+**V3-I0-P2R-D PARTIAL — D4 proof-closure stop. No complete one/two-step
+certificate. Historical P2R-K FAIL preserved; P2R-KN NOT APPROVED /
+NOT IMPLEMENTED / NOT RUN.** Read PROJECT_STATUS.md §5.16 and
+[derivation decision](benchmarks/v3_i0_p2r_derivation/DERIVATION_DECISION.md).
+Independent full clone/branch analysis/v3-i0-p2r-targeted-derivation from exact
+031e5e307a1d3a5001537c58cb791bf31edc6ae5;preparation
+/tmp/mechsys-v3-i0-p2r-derivation.cHuxOt/work,persistent target
+/home/msys/git/mechsys-v3-i0-p2r-targeted-derivation. Tooling commit
+776539e82b8696297b719db1ff35d77205ac8f80;final tip/origin/clean/archive/
+protection proof in external derivation DELIVERY.json. No production,old test,
+fixture,tolerance,history,default or guard edits;no builds or solver steps.
 
-Exact structural/multiset/owner/model/phase rules and gamma93 rounded-term sum
-bounds derived;independent collision/exchange budgets unchanged,not B_old+E.
-Actual translation/gyro/ordered quaternion/normalization and fluid maps audited.
-Reported v lags x;xb=x-h*v andwb=w startup is not an acceleration-corrected
-staggered bootstrap. Operational phases are known,physical initial-time
-interpretation stillneedsreview. One/two-step propagation recurrences are
-conditional;actual parameter/primitive/norm/density and geometric/limiter/
-rebuild branch enclosures are not fully certified. No complete trajectory
-tolerance or long-time theorem. C-D/E/F PARTIAL;all new history/event tests NOT RUN.
+Discrete xb=x-h*v,wb=w startup and actual legacy phase map fully specified.
+Physical startup interpretation is separately PHYSICAL_STARTUP_UNRESOLVED,
+not a barrier to comparing exact algorithmic seeds. Both unchanged frozen
+binaries' actual HOST I stores were observed BEFORE Solve:all components
+40c0dd7f24550855,8634.993296269482. Constructor RN replay agrees;upload source
+copies I;the missing historical device-I snapshot is not fabricated. Actual
+nonunit Q0 retained. Exact-rational RN/FMA/sqrt interval arithmetic proves
+first x1,xb1,vS1 singleton for every93-term order. Finite first angular/fluid
+and full second formation/particle/fluid boxes evaluated CONDITIONALLY,not a
+complete SASS certificate or new tolerance. Real qD norm floor>99/100 in the
+evaluated family;first RN norm[1,1]. No unspecified M1 called proof.
 
-**Next recommendation OPTION D (requires authorization):** targeted phase/
-bootstrap and certified one/two-step primitive/feedback/branch derivation on
-the frozen no-contact case. Do not implement B1 harness with missing budgets,
-deterministic A1,KN acceptance or higher tolerances automatically. All old
-P2/P2R/P2R-R evidence/defaults/guards retained. Coupled VV BLOCKED,SchemeA
-NOT IMPLEMENTED,coupled restart NOT VALIDATED,P2-B NOT RUN;VV policy unchanged.
-New receipt namespace:
-/home/msys/SIMS/mechsys_v3_i0_p2r_contract/20261017-phase-aware-design/.
+All28 frozen runs (20normal+8sanitizer) enclosed offline:952,868 first checks,
+1,015,112 second conditional checks,186 occupancy checks;3 corrupted proof
+copies rejected. No new simulation/sanitizer/performance campaign. Primitive
+local bounds not fitted to observed differences. CSV11,356 predicate/groups:
+292 initial corner min/max exact ties[0,0],including cell533 squared norms51/4.
+Strict-sign rule cannot certify them by tighter rounding. Not physical
+instabilities;internal observed branches were not captured. Positive
+conditional margins are not marked unconditional PASS. Full compiled graph/
+predicate audit and correlated old exchange-budget allocation remain open.
+Old budgets unchanged,not B_old+E. D-D/F/G/H/I/J PARTIAL,D-E PASS only for
+frozen rounded-input translation;D-A/B/C/K/L bounded PASS as decision explains.
+
+**Next bounded task requires review:** exact-tie/compiled-branch proof for
+frozen legacy SphereCube,starting cell533. Reconcile equal-value selections
+with strict predicate contract;do not add epsilon or exclude frozen cases.
+Remaining rotation/fluid mapping and joint old-budget proof still required
+before any KN approval. No harness,deterministic kernels,SchemeA,coupled
+VV/restart,P2-B/performance automatically follows. VV reference policy intact.
+Receipt namespace:
+/home/msys/SIMS/mechsys_v3_i0_p2r_derivation/20261017-targeted-derivation/.
+
+## Preserved C design checkpoint
+
+C remains historically PARTIAL,all contract documents unchanged under
+benchmarks/v3_i0_p2r_contract/. Its startup question is now explicitly separate;
+some missing input/primitive bounds were resolved by D,not silently relabeled
+as a complete C-E/F proof. C full clone
+/home/msys/git/mechsys-v3-i0-p2r-compatibility-design at031e5e3 and its external
+contract DELIVERY.json remain preserved. Contact/history,event,deterministic
+alternative and prospective campaign designs remain unimplemented/unrun.
 
 ## Preserved P2R-R observational checkpoint
 

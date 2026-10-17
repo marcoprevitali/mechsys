@@ -1,0 +1,14 @@
+Breakpoint 1 at 0x6a5ff
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+[New Thread 0x7a8d025ff000 (LWP 2213579)]
+[New Thread 0x7a8d0094a000 (LWP 2213580)]
+[New Thread 0x7a8cf5fff000 (LWP 2213581)]
+[New Thread 0x7a8cdaffd000 (LWP 2213582)]
+
+Thread 1 "candidate" hit Breakpoint 1, 0x0000593c01b2a5ff in DEM::Domain::AddSphere(int, blitz::TinyVector<double, 3> const&, double, double) ()
+INERTIA_BITS 40c0dd7f24550855 40c0dd7f24550855 40c0dd7f24550855
+MASS_BITS 40b16c394b9da965
+MXCSR 00001fa0
+#0  0x0000593c01b2a5ff in DEM::Domain::AddSphere(int, blitz::TinyVector<double, 3> const&, double, double) ()
+#1  0x0000593c01ad794b in main ()

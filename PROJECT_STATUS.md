@@ -1,14 +1,14 @@
 # MechSys GPU DEM optimization — PROJECT_STATUS.md
 
-**As-of:** 2026-10-17 (V3-I0-P2R-C design-only numerical compatibility contract)
-**State:** `V3-I0-P2R-C PARTIAL design, critical phase/propagation closure unresolved` / `P2R-KN PROPOSED, NOT YET APPROVED / NOT IMPLEMENTED / NOT RUN` / `P2R-K historical strict FAIL unchanged` / `P2R-R observational PASS within bounded scope preserved` / `V3-I0-P2R overall PARTIAL` / `all occupancy switches default false, unmerged` / `V3-I0-P2 historical FAIL retained` / `Scheme A NOT_IMPLEMENTED` / `C2 BLOCKED` / `coupled restart NOT_VALIDATED` / `P2-B NOT_RUN`
+**As-of:** 2026-10-17 (V3-I0-P2R-D targeted derivation, PARTIAL)
+**State:** `V3-I0-P2R-D PARTIAL; D4 proof-closure stop; no full one/two-step certificate` / `P2R-KN NOT APPROVED / NOT IMPLEMENTED / NOT RUN` / `P2R-K historical strict FAIL unchanged` / `P2R-C PARTIAL design preserved` / `P2R-R observational PASS within bounded scope preserved` / `V3-I0-P2R overall PARTIAL` / `all occupancy switches default false, unmerged` / `V3-I0-P2 historical FAIL retained` / `Scheme A NOT_IMPLEMENTED` / `C2 BLOCKED` / `coupled restart NOT_VALIDATED` / `P2-B NOT_RUN`
 **Reference decision (user, 2026-10-16):** explicitly select `UseVelocityVerlet=true` for all new validation, profiling, benchmarks and optimization decisions. Legacy position-Verlet/leapfrog data are separately labeled controls, not VV reference evidence. `AGENTS.md` records this policy; the compatibility constructor default remains false. `test_cu_04 <input> <Nproc> <dthoot> <qin> 1` must print `DEM_BENCHMARK_INTEGRATOR velocity_verlet=1`; use `--vv` in the registered runner.
-**Next bounded decision (requires review/authorization):** read §5.15 and `benchmarks/v3_i0_p2r_contract/CONTRACT_DECISION.md`. Recommend OPTION D: targeted physical-startup/phase and certified one/two-step feedback/branch-envelope derivation. No complete evolved-state acceptance radius is justified yet. Do not implement KN/B1 or deterministic A1, waive old K, promote P2R or start Scheme A/restart/performance work automatically.
+**Next bounded decision (requires review/authorization):** read §5.16 and `benchmarks/v3_i0_p2r_derivation/DERIVATION_DECISION.md`. Review an exact-tie/compiled-branch proof for legacy SphereCube, starting with cell533's equal corner norms. The strict-sign criterion leaves292 exact-zero rows unresolved; rotation/fluid SASS mapping and joint old-budget allocation also remain open. Do not implement KN/B1 or deterministic A1, enlarge tolerances, waive old K, promote P2R or start Scheme A/restart/performance work automatically.
 **Agent:** GLM-5.3 Flash (or successor); operational rules in `AGENTS.md`.
 **Original project:** https://github.com/Axtal/mechsys
 **Fork URL / owner:** https://github.com/marcoprevitali/mechsys / `marcoprevitali` (authenticated account and public fork metadata verified 2026-10-15)
 **Old local checkout:** `/home/msys/mechsys` at `e4ba163ec9f32c8bccb0fd8619ba79e000d3d6d8`; preserved dirty and not mutated during `F0`
-**Current work:** `design/v3-i0-p2r-compatibility`, exact base `587dfbff889495b4a7ade6b5c2c107ae4febdfde`; independent full preparation clone `/tmp/mechsys-v3-i0-p2r-contract.FxULUy/work`; persistent delivery target `/home/msys/git/mechsys-v3-i0-p2r-compatibility-design`. Final tip/origin/clean/full-clone/protected-source proof is in external contract DELIVERY.json. No production/test/old-evidence edits; documentation only. Origin=user fork, upstream push disabled. Reproducibility/P2R/P2/P1/V3-I0/V3-D/V2 and original clones preserved READ ONLY. Historical P2R implementation remains1bde930, P2R final26bf84a, reproducibility final587dfbf. PROJECT_STATUS.md authoritative; PROJECT_STATE.md is its pointer.
+**Current work:** `analysis/v3-i0-p2r-targeted-derivation`, exact base `031e5e307a1d3a5001537c58cb791bf31edc6ae5`; independent full preparation clone `/tmp/mechsys-v3-i0-p2r-derivation.cHuxOt/work`; persistent delivery target `/home/msys/git/mechsys-v3-i0-p2r-targeted-derivation`. Tooling commit `776539e82b8696297b719db1ff35d77205ac8f80`; final tip/origin/clean/full-clone/archive/protected-source proof is in external derivation DELIVERY.json. Analysis/diagnostic artifacts and two handoffs only; no production/test/old-evidence edits. Origin=user fork, upstream push disabled. C/R/P2R/P2/P1/V3-I0/V3-D/V2 and original clones preserved READ ONLY. Historical P2R implementation remains1bde930, P2R final26bf84a, R final587dfbf, C final031e5e3. PROJECT_STATUS.md authoritative; PROJECT_STATE.md is its pointer.
 **Precision of historical benchmarks:** GPU double precision (`-DUSE_GPU_DOUBLE`) on NVIDIA RTX A6000 (84 SMs); do not assume the current host/GPU is unchanged.
 
 > **Evidence levels:** `HISTORICAL_REPORTED` means results transcribed from the user-supplied DeepSeek work summary dated 2026-10-14; they have **not** yet been independently reproduced or verified against source. `SOURCE_VERIFIED` requires auditing the actual local code. `MEASURED` requires raw timing/logs + code SHA. `PASS` requires documented numerical acceptance checks. Keep these labels distinct.
@@ -1005,6 +1005,82 @@ original SHA/F0 backup unchanged as §6. Only design/handoff records committed;
 exact final commits/remote/clean status are in new DELIVERY.json. No new GPU
 environment/timing claim; all numerical observations cited are prior evidence.
 
+### 5.16 V3-I0-P2R-D — targeted derivation (2026-10-17 / Codex)
+
+**PARTIAL; recommend D4 proof-closure stop, not a complete one/two-step
+compatibility certificate.** Requested deliverables and reproducible scripts
+are in `benchmarks/v3_i0_p2r_derivation/`. Historical K FAIL,new KN NOT APPROVED /
+NOT IMPLEMENTED / NOT RUN and all old scientific statuses are preserved.
+No production header,old test,fixture,tolerance,history,default or coupled VV
+guard changed. No compiler build,solver timestep,new sanitizer campaign,
+deterministic accumulation,SchemeA,restart,P2-B or performance run.
+
+| Gate | Result |
+|---|---|
+|D-A|PASS: prior tracked source/tests/artifacts byte-identical to031e5e3 except handoffs; protected checkout fingerprints; R archive hash unchanged|
+|D-B|PASS: algorithmic startup/phase specified; physical startup convention remains a separate PHYSICAL_STARTUP_UNRESOLVED accuracy gate|
+|D-C|PASS bounded provenance: input bits pinned; actual host I stores read in both unchanged executables; expected upload path audited,not a fabricated historical device snapshot|
+|D-D|PARTIAL: exact primitive/RN/FMA/sqrt arithmetic and compiled translation; complete rotation/fluid/geometry SASS correspondence remains open|
+|D-E|PASS for frozen rounded-input translation map: all admissible93-term orders give singleton x1,xb1,vS1 enclosures|
+|D-F/G/H|PARTIAL: finite evaluated angular/q/collision/stream/moment/second-feedback boxes,not complete compiled-map certificates|
+|D-I|PARTIAL:11,356 predicate/group rows,292 exact-zero strict-sign cases; conditional signs remain overall UNRESOLVED; full compiled catalog unclosed|
+|D-J|PARTIAL: old budgets preserved; complete correlated reference/actual-write allocation not proved to fit them|
+|D-K/L|PASS for partial-artifact verification and accurate limitations,not full numerical acceptance|
+|D-M|Exact final tip/remote SHA,clean full clones and new archive/preservation proof in external DELIVERY.json|
+
+Host-only GDB observations stopped at AddSphere+0x20f BEFORE Solve. Both exact
+frozen binaries store m bits40b16c394b9da965 and all three I bits40c0dd7f24550855,
+I=8634.993296269482. Exact RN replay of binary64 .4*m*R*R matches. PropsReady
+skips property recomputation and UploadParticle copies I. The original frozen
+observer omitted device I; fresh observations do not masquerade as old device
+records. Actual Q0's real squared norm is not1 and is retained. Startup xb=x-h*v,
+wb=w establishes a discrete initial state but no physical endpoint convention.
+
+Exact-rational RN endpoint composition and squared-midpoint sqrt verification
+replace symbolic rounding placeholders for evaluated graph slices. The compiled
+Translate DADD/DFMA map collapses first x/v uncertainty despite nonzero F0 sum
+bounds. Conditional first angular max diameters:wa/wb2.372052975208051e-19,
+w1.1860264876040255e-19,Q1.202252219630244e-19;these are not approved tolerances.
+Real qD norm>99/100 in that family;computed first norm interval[1,1]. First
+collision depends on entry caches,not already-updated particles or F/T sums.
+Second formation uses full propagated w/q/surface and shared f1 inputs; its
+componentwise diameter and E_A1+E_B1 are evaluated separately,not reused2E0.
+Second collision/stream/moment boxes are also evaluated conditionally. No M1
+is left symbolic and called a certificate.
+
+Offline corroboration across20 normal+8 frozen sanitizer executions passes
+952,868 first-step and1,015,112 conditional second-step checks;186 source-proxy
+occupancies are enclosed. No observed mismatch sets a radius. Streaming checks
+all15,000 periodic destinations as a bijection,adding no rounding error.
+The standalone verifier also rejects3 corrupted in-memory certificate copies.
+
+Precise branch witness:cell533,center(3,3,5),sphere(5,5,5),corner0/4 relative
+vectors(-5/2,-5/2,+/-1/2),both exact squared norms51/4. The dmax predicate is
+exactly0. Under the requested strict-sign rule,[0,0] remains unresolved;292
+initial min/max ties cannot be made strict by tighter arithmetic. These are
+not demonstrated physical instabilities or missing contacts. The old observer
+did not capture these internal predicates; CSV says NOT_CAPTURED. A future
+exact-tie/idempotent-min/max proof must be reconciled with the contract; no
+case exclusion,geometric epsilon or implicit rule change is made here.
+
+Other open obligations:full SASS/source/contraction membership and predicate
+catalog,including legacy initial candidate construction;independent correlated
+exchange/reference arithmetic proving fit in every old b_c/particle/global/
+angular budget. Existing exchange PASS evidence remains its registered scope;
+compatibility intervals cannot be added to old budgets. No full first-step
+certificate is claimed,so D2 would overstate completion;D1/D3 also unjustified.
+
+Exact commands,inputs,binary/source hashes,partial attempts and receipts are
+in the new namespace. R raw archive SHA256 remains
+516c9a6ca7c79983883e87a1fdc6a9d5e86a6a3bf5965129808df30e92b341f7.
+External new archive/delivery namespace:
+`/home/msys/SIMS/mechsys_v3_i0_p2r_derivation/20261017-targeted-derivation/`.
+Original tracked diff SHA256 remains
+e98dcc578695992948f3d804f572f6b212888ac2381832ae261be9c4e99132e9;
+original SHA/F0 backup unchanged as §6. No new timing/production-throughput
+claim. Next bounded task requires review:exact-tie and compiled-branch proof
+for frozen legacy SphereCube,starting cell533,before any KN harness approval.
+
 ## 6. Git/repository topology and record
 
 
@@ -1079,7 +1155,18 @@ Protection:         `origin` = user's fork; `upstream` fetch-only / push-disable
 | 2026-10-15 | P0-R complete: HISTORICAL_REBUILD_SHARE_UNRECONCILED (record self-contradicts); poly 23.6 s rebuild = Nproc=1 (21.24 s measured); neeint 6.4x interaction-list gap discovered; V0-A/B UNPROVEN; first experiments recommended and gated | §5.4, benchmarks/p0_reconciliation/ | MEASURED |
 | 2026-10-15 | Concurrent agent session edited this clone during P0-R (branch deleted, domain.h temporarily broken) and an external MoFEM job contaminated timing reps; mitigations applied; session separation recommended | §5.4 environment incident | COORDINATION HAZARD — user action recommended |
 
-### Current bounded decision (after V3-I0-P2R-C partial design)
+### Current bounded decision (after V3-I0-P2R-D partial derivation)
+
+1. Read §5.16 and benchmarks/v3_i0_p2r_derivation/DERIVATION_DECISION.md.
+   Keep D PARTIAL,no full certificate,old K FAIL,new KN unapproved/unimplemented/unrun.
+2. Review an exact-tie/compiled-branch proof for legacy SphereCube,starting
+   cell533. Do not reinterpret exact ties as physical instabilities or silently
+   redefine the strict-sign branch rule. Compiled rotation/fluid mapping and
+   nonduplicated old-budget allocation still need closure after that.
+3. Preserve all prior clones/archives/defaults/guards; no new harness,kernel,
+   occupancy promotion,SchemeA,coupled VV/restart,P2-B or performance work follows.
+
+### Superseded bounded decision (after V3-I0-P2R-C partial design)
 
 1. Read §5.15 and benchmarks/v3_i0_p2r_contract/CONTRACT_DECISION.md. Keep
    design PARTIAL,old K FAIL,new KN NOT YET APPROVED / NOT IMPLEMENTED / NOT RUN.
