@@ -17,6 +17,7 @@
 ########################################################################
 
 SET(EXES
+  test_2spheres
   nonconvex
   ttt
   test_periodic
@@ -37,6 +38,7 @@ SET(EXES
 )
 
 SET(CUDAPROGS
+    test_2spheres_gpu
     test_cu_01
     test_cu_02
     test_cu_03
