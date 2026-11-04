@@ -1,5 +1,5 @@
 # Optional bounded regressions. Numerical output stays in the build directory.
-FOREACH(name test_contact test_vv test_history)
+FOREACH(name test_contact test_vv test_history test_legacy_coupling)
     ADD_EXECUTABLE(dem_${name}_cpu ${name}.cpp)
     TARGET_LINK_LIBRARIES(dem_${name}_cpu ${LIBS})
     SET_TARGET_PROPERTIES(dem_${name}_cpu PROPERTIES COMPILE_FLAGS "${FLAGS}" LINK_FLAGS "${LFLAGS}")
@@ -12,12 +12,14 @@ FOREACH(name test_contact test_vv test_history)
 ENDFOREACH()
 ADD_CUSTOM_TARGET(dem_contact_regression_binaries DEPENDS
     dem_test_contact_cpu dem_test_contact_gpu dem_test_vv_cpu dem_test_vv_gpu
-    dem_test_history_cpu dem_test_history_gpu)
+    dem_test_history_cpu dem_test_history_gpu dem_test_legacy_coupling_cpu dem_test_legacy_coupling_gpu)
 ADD_TEST(NAME dem_contact_cpu COMMAND dem_test_contact_cpu ${CMAKE_CURRENT_BINARY_DIR}/contact_cpu)
 ADD_TEST(NAME dem_contact_gpu COMMAND dem_test_contact_gpu ${CMAKE_CURRENT_BINARY_DIR}/contact_gpu)
 ADD_TEST(NAME dem_vv_cpu COMMAND dem_test_vv_cpu)
 ADD_TEST(NAME dem_vv_gpu COMMAND dem_test_vv_gpu)
-SET_TESTS_PROPERTIES(dem_contact_cpu dem_contact_gpu dem_vv_cpu dem_vv_gpu PROPERTIES TIMEOUT 120 RUN_SERIAL TRUE)
+ADD_TEST(NAME dem_legacy_coupling_cpu COMMAND dem_test_legacy_coupling_cpu)
+ADD_TEST(NAME dem_legacy_coupling_gpu COMMAND dem_test_legacy_coupling_gpu)
+SET_TESTS_PROPERTIES(dem_contact_cpu dem_contact_gpu dem_vv_cpu dem_vv_gpu dem_legacy_coupling_cpu dem_legacy_coupling_gpu PROPERTIES TIMEOUT 120 RUN_SERIAL TRUE)
 IF(A_WITH_EXPERIMENTAL_VV_COUPLING)
     ADD_EXECUTABLE(dem_test_coupling test_coupling.cu)
     TARGET_LINK_LIBRARIES(dem_test_coupling ${CUDA_LIBRARIES})

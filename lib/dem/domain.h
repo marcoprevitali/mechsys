@@ -3882,6 +3882,27 @@ inline void Domain::GetParticles (int Tag, Array<Particle*> & P)
 //////////////////////////////////////////// CUDA IMPLEMENTATION ///////////////////////////////////////////
 inline void Domain::UpLoadDevice(size_t Nc, bool first,bool updateState)
 {
+    if (updateState)
+    {
+        // Ordinary coupled Solve initializes DEM particles directly, without
+        // the standalone Solve bootstrap. Legacy movement does not consume VV
+        // accelerations, but the shared upload still needs valid zero buffers.
+        if (!UseVelocityVerlet)
+        {
+            if (A.Size()!=Particles.Size())
+            {
+                A.Resize(Particles.Size());
+                for (size_t i=0;i<A.Size();i++) A[i]=OrthoSys::O;
+            }
+            if (Wdot.Size()!=Particles.Size())
+            {
+                Wdot.Resize(Particles.Size());
+                for (size_t i=0;i<Wdot.Size();i++) Wdot[i]=OrthoSys::O;
+            }
+        }
+        if (A.Size()!=Particles.Size() || Wdot.Size()!=Particles.Size())
+            throw new Fatal("VV device upload requires initialized acceleration state");
+    }
     if (first)
     {
         demaux.Time = Time;

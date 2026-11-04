@@ -120,7 +120,8 @@ tensile cutoff, activation correction, force decomposition, action/reaction,
 and CPU/CUDA agreement. The VV test checks fast contact formation, repeated
 rebuild reference resets, preserved GPU state/history, and vertex rotation.
 The coupling smoke checks three tiny fixtures against fixed mass/momentum
-budgets. The history probe supports short CPU/CUDA comparisons, feature
+budgets. Two-step CPU/CUDA checks also run ordinary legacy coupled Solve,
+including its entry without standalone VV acceleration initialization. The history probe supports short CPU/CUDA comparisons, feature
 oracles, and full-step checkpoint continuation. Export checks require Python
 with `h5py` and `numpy`. These are bounded regressions, not a full workload
 or scientific-accuracy certification.
