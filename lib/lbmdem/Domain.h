@@ -634,6 +634,9 @@ inline void LaunchFusedStreamMacro (size_t Nneigh, size_t Nblk, size_t Nthread, 
 inline void Domain::Solve(double Tf, double dtOut, ptDFun_t ptSetup, ptDFun_t ptReport,
                           char const * TheFileKey, bool RenderVideo, size_t TheNproc)
 {
+    if (DEMDOM.UseVelocityVerlet || DEMDOM.CheckpointReady)
+        throw new Fatal("LBM-DEM Solve uses legacy integration; use the opt-in experimental benchmark coupling API for supported VV cases. Coupled restart is unsupported");
+
     FileKey.Printf("%s",TheFileKey);
     idx_out = 0;
     Finished = false;
