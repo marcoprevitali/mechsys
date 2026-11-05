@@ -136,32 +136,6 @@ double R;
 
 
 
-// i dont actually understand how gn works, so if i set positive gn, convert it into coeff of restitution
-/*
-if (Gn>0){
-  printf("Converted Gn: %g",Gn);
-  double m = R*R*R * M_PI* (4.0 / 3) * rho;
-  double mij = m*m/(m+m);
-  double discriminant = 4.0 * mij * Kn - Gn * Gn;
-  double exponent = -Gn * M_PI / std::sqrt(discriminant);
-  double Gn = std::exp(exponent);
-
-  printf(" into %g\n",Gn);
-    Gn = -Gn;
-}
-
-if (Gt>0){
-  printf("Converted Gt: %g",Gt);
-  double m = R*R*R * M_PI* (4.0 / 3) * rho;
-  double mij = m*m/(m+m);
-  double discriminant = (8.0/7) * mij * Kt - Gt * Gt;
-  double exponent = -Gt * M_PI / std::sqrt(discriminant);
-  double Gt = std::exp(exponent);
-
-  printf(" into %g\n",Gt);
-    Gt = -Gt;
-}
-*/
 
     for (size_t i=0;i<dom.Particles.Size();i++)
     {
