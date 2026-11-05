@@ -16,6 +16,48 @@ VV path refreshes the rotation caches before the cached feature kernels run.
 The legacy coupled solver rejects the standalone VV selector instead of
 silently running a different integrator.
 
+## Provenance and authorship
+
+This contribution mixes work written directly by the author with work written
+with AI assistance. The split is recorded here so a reviewer can weigh the two
+parts appropriately; it is the author's statement and cannot be reconstructed
+from the commit history, because both parts were committed together.
+
+**Written by the author directly:**
+
+| Component | Where |
+| --- | --- |
+| Velocity Verlet, translation (half kick, drift, final kick; CPU and CUDA) | `Particle::TranslateHalfStep`, `Particle::TranslateVelVerlet`, `VerletStep1`, `FinalizeVelocity` |
+| Coulomb criterion and its three modes | `CInteractonSphere::CalcForce`, the `sphereCoulombMode` branches and `friction_limit` selection |
+| Tensile cutoff | the `sphereTensileCutoff` branch on the elastic-plus-dashpot normal force |
+| Tangential-overlap / first-contact correction | `sphereFirstContactCorrection`, `activationFraction`, `InContact`, `PrevDelta` |
+| Additional contact outputs (`NormalOverlap`, `TangentialOverlap`, `Rolling`, dashpot components, overlap-based row predicate) | `Domain::WriteBF`, `HasContactOutput`, `H5LTmake_dataset_float` calls |
+
+These define the physics of the feature: the integrator's staging, the friction
+cone, the tensile clamp, the activation fraction and what is exported.
+
+**Written at least partially with AI assistance, then reviewed and validated by
+the author:**
+
+| Component | Where |
+| --- | --- |
+| Velocity Verlet, rotation (quaternion half kick, exponential map, vertex rotation, final kick) | `Particle::UpdateAngularVelocityHalf`, `Particle::RotateVelVerlet`, `Exp_GPU`, `OrientationUpdate`, `FinalizeRotation` |
+| Velocity-Verlet coupling with LBM (experimental `Session` API, momentum exchange, guards) | `lib/lbmdem/experimental/`, `tlbmdem/tlbmdem_cu_benchmark.cu` |
+
+The AI-assisted parts carry the least certainty about their physics and are
+therefore the parts a reviewer should scrutinise most:
+
+- the rotational path is covered by the same regression suite as the
+  translational one (quaternion normalisation, vertex rotation, prescribed
+  spin rejection), but it has no analytic rotational-VV test;
+- the coupled path is opt-in, default-off, described as **first order**, and its
+  guards reject configurations it cannot represent. It is not claimed to be
+  accurate or fast, and the legacy coupled solver is unchanged.
+
+Everything, including the AI-assisted parts, was reviewed, tested and accepted
+by the author; the bounded regression results in this document apply to the
+whole contribution.
+
 ## Sphere contact controls
 
 These controls apply to linear and Hertz sphere contacts on CPU and CUDA.
