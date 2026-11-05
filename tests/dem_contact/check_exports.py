@@ -20,6 +20,7 @@ def verify(prefix):
         with h5py.File(stem.with_suffix('.h5')) as data:
             assert data['ID1'].size == data['ID2'].size == 1
             np.testing.assert_allclose(data[dataset][:], values, rtol=1e-6, atol=1e-22)
+            np.testing.assert_array_equal(data['Rolling'][:], [3, 4, 5])
             assert all(np.isfinite(data[key][:]).all() for key in data)
         for item in ET.parse(stem.with_suffix('.xmf')).findall('.//DataItem'):
             filename, key = item.text.strip().split(':', 1)

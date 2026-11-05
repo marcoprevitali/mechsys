@@ -312,9 +312,15 @@ __global__ void CalcForceVV_LE(InteractonCU const * Int, ComInteractonCU * CInt,
     real delta = r1 + r2 - dist;
 
     DIntVV[ic].Fn = make_real3(0.0, 0.0, 0.0);
+    DIntVV[ic].F = make_real3(0.0, 0.0, 0.0);
+    DIntVV[ic].PrevDelta = delta;
+    DIntVV[ic].InContact = delta > 0.0;
+    // Retain the custom law's existing tangential/rolling state during a
+    // temporary gap; inactive candidates contribute no force or overlap row.
 
     if (delta > 0.0)
     {
+        RecordContactOverlap(CInt[id],delta);
         real3 n = -1.0 * Branch / dist;
         real  d = (r1 * r1 - r2 * r2 + dist * dist) / (2.0 * dist);
         real3 x1c = xi + d * n;
@@ -336,6 +342,7 @@ __global__ void CalcForceVV_LE(InteractonCU const * Int, ComInteractonCU * CInt,
         if (dotreal3(Fn_total, n) < 0.0)
         {
             Fn_total = make_real3(0.0, 0.0, 0.0);
+            Fn_dashpot = -1.0 * Fn_elastic;
         }
 
         DIntVV[ic].Fn = Fn_total;
@@ -464,9 +471,15 @@ __global__ void CalcForceVV_Hertz_LE(InteractonCU const * Int, ComInteractonCU *
     real delta = r1 + r2 - dist;
 
     DIntVV[ic].Fn = make_real3(0.0, 0.0, 0.0);
+    DIntVV[ic].F = make_real3(0.0, 0.0, 0.0);
+    DIntVV[ic].PrevDelta = delta;
+    DIntVV[ic].InContact = delta > 0.0;
+    // Retain the custom law's existing tangential/rolling state during a
+    // temporary gap; inactive candidates contribute no force or overlap row.
 
     if (delta > 0.0)
     {
+        RecordContactOverlap(CInt[id],delta);
         real3 n = -1.0 * Branch / dist;
         real  d = (r1 * r1 - r2 * r2 + dist * dist) / (2.0 * dist);
         real3 x1c = xi + d * n;
@@ -504,9 +517,15 @@ __global__ void CalcForceVV_Hertz_LE(InteractonCU const * Int, ComInteractonCU *
             DIntVV[ic].Fr = Int[id].Eta * Int[id].Mu * norm(DIntVV[ic].Fn) * tan;
         }
 
-        DIntVV[ic].F = DIntVV[ic].Fn + DIntVV[ic].Ft +
-                       Int[id].Gn * sqrt(sqrtdelta) * dotreal3(n, vrel) * n +
-                       Int[id].Gt * sqrt(sqrtdelta) * vt;
+        real3 Fn_dashpot = Int[id].Gn * sqrt(sqrtdelta) * dotreal3(n, vrel) * n;
+        real3 Ft_dashpot = Int[id].Gt * sqrt(sqrtdelta) * vt;
+        DIntVV[ic].F = DIntVV[ic].Fn + DIntVV[ic].Ft + Fn_dashpot + Ft_dashpot;
+        atomicAdd(&CInt[id].Fndpot.x, Fn_dashpot.x);
+        atomicAdd(&CInt[id].Fndpot.y, Fn_dashpot.y);
+        atomicAdd(&CInt[id].Fndpot.z, Fn_dashpot.z);
+        atomicAdd(&CInt[id].Ftdpot.x, Ft_dashpot.x);
+        atomicAdd(&CInt[id].Ftdpot.y, Ft_dashpot.y);
+        atomicAdd(&CInt[id].Ftdpot.z, Ft_dashpot.z);
 
         if (diagnostics != NULL)
         {
@@ -592,6 +611,8 @@ __global__ void ResetLE(ParticleCU * Par, DynParticleCU * DPar,
         CInt[id].Fndpot = make_real3(0.0, 0.0, 0.0);
         CInt[id].Ftdpot = make_real3(0.0, 0.0, 0.0);
         CInt[id].Fther = make_real3(0.0, 0.0, 0.0);
+        CInt[id].Nc = 0;
+        CInt[id].NormalOverlap = 0.0;
         CInt[id].Epot = 0.0;
         CInt[id].dEvis = 0.0;
         CInt[id].dEfric = 0.0;
@@ -604,14 +625,10 @@ __global__ void ResetLE(ParticleCU * Par, DynParticleCU * DPar,
 //   that the wrap relabels images instead of kicking the particle.  While the box
 //   is being compressed (vZmin/vZmax non-zero) the crossing also receives the
 //   relative velocity of the two boundaries.
-//   x and y are deliberately NOT wrapped here: the library ResetMaxD, which the
-//   local drivers call immediately afterwards, performs the plain periodic wrap in
-//   all three directions.
-//   Why this is local and launched directly: the library's per-step wrap is a
-//   hard-wired launch with no hook and no extraparams argument, so it can neither
-//   be replaced nor be given the Lees-Edwards state.  Launching WrapZ from our own
-//   loop keeps that state in pExtraParams and needs no library change at all.
+//   The plain x/y wrap follows the LE z shift. Current/reference vertices move
+//   together, preserving accumulated displacement for the pre-force skin check.
 __global__ void WrapZ(DynParticleCU * DPar, ParticleCU const * Par,
+                      real3 * Verts, real3 * Vertso,
                       dem_aux const * demaux, LeExtra const * le)
 {
     size_t ic = threadIdx.x + blockIdx.x * blockDim.x;
@@ -625,56 +642,36 @@ __global__ void WrapZ(DynParticleCU * DPar, ParticleCU const * Par,
     if (Lz <= 0.0) return;
 
     real3 dis = make_real3(0.0, 0.0, 0.0);
-    bool wrapped = false;
-
     if (demaux[0].pz)
     {
-        if (DPar[ic].x.z < demaux[0].Zmin)
-        {
-            dis.z = Lz;
-            wrapped = true;
+        // A constant image-velocity shift commutes with the final VV kick.
+        while (DPar[ic].x.z + dis.z < demaux[0].Zmin) {
+            dis.z += Lz;
+            dis.x += le[0].state.strain * Lz;
+            DPar[ic].v.x += le[0].state.shear_rate * Lz;
+            DPar[ic].v.z += le[0].state.vZmax - le[0].state.vZmin;
         }
-        else if (DPar[ic].x.z >= demaux[0].Zmax)
-        {
-            dis.z = -Lz;
-            wrapped = true;
-        }
-
-        // Lees-Edwards correction during shear.
-        if (wrapped && fabs(le[0].state.shear_rate) > 1e-12)
-        {
-            real shear_shift = le[0].state.strain * Lz;
-            real vel_shift   = le[0].state.shear_rate * Lz;
-            if (dis.z > 0)   // bottom -> top
-            {
-                dis.x += shear_shift;
-                DPar[ic].v.x += vel_shift;
-            }
-            else             // top -> bottom
-            {
-                dis.x -= shear_shift;
-                DPar[ic].v.x -= vel_shift;
-            }
-        }
-
-        // Match the image velocity when the periodic cell height is changing.
-        // Crossings receive the relative velocity of the two periodic images.
-        if (wrapped && (fabs(le[0].state.vZmin) > 1e-12 || fabs(le[0].state.vZmax) > 1e-12))
-        {
-            real vz_jump = le[0].state.vZmax - le[0].state.vZmin;
-            if (dis.z > 0)   // bottom -> top
-            {
-                DPar[ic].v.z += vz_jump;
-            }
-            else             // top -> bottom
-            {
-                DPar[ic].v.z -= vz_jump;
-            }
+        while (DPar[ic].x.z + dis.z >= demaux[0].Zmax) {
+            dis.z -= Lz;
+            dis.x -= le[0].state.strain * Lz;
+            DPar[ic].v.x -= le[0].state.shear_rate * Lz;
+            DPar[ic].v.z -= le[0].state.vZmax - le[0].state.vZmin;
         }
     }
-
-    DPar[ic].x  = DPar[ic].x  + dis;
+    if (demaux[0].px) {
+        while (DPar[ic].x.x + dis.x < demaux[0].Xmin) dis.x += demaux[0].Per.x;
+        while (DPar[ic].x.x + dis.x >= demaux[0].Xmax) dis.x -= demaux[0].Per.x;
+    }
+    if (demaux[0].py) {
+        while (DPar[ic].x.y + dis.y < demaux[0].Ymin) dis.y += demaux[0].Per.y;
+        while (DPar[ic].x.y + dis.y >= demaux[0].Ymax) dis.y -= demaux[0].Per.y;
+    }
+    DPar[ic].x = DPar[ic].x + dis;
     DPar[ic].xb = DPar[ic].xb + dis;
+    for (size_t iv=Par[ic].Nvi;iv<Par[ic].Nvf;iv++) {
+        Verts[iv] = Verts[iv] + dis;
+        Vertso[iv] = Vertso[iv] + dis;
+    }
 }
 } // namespace DEM
 
@@ -1223,9 +1220,31 @@ static void ResetContactsLeesEdwardsSpheres(DEM::Domain & dom, double strain)
 //   entry point used by both phase drivers.
 static void UpdateContactsDeviceLeesEdwards(DEM::Domain & dom, double strain)
 {
+    // The custom Hertz kernel stores tangential FORCE. Preserve it directly
+    // by pair identity, including temporary gaps where a zero Hertz stiffness
+    // makes the library's CPU displacement conversion non-invertible.
+    thrust::host_vector<DEM::DynInteractonCU> old = dom.bDynInteractonsVV;
+    thrust::host_vector<DEM::ComInteractonCU> common = dom.bComInteractons;
+    std::unordered_map<size_t,DEM::DynInteractonCU> histories;
+    for (auto const & h : old) {
+        auto const & c = common[h.Idx];
+        histories.emplace(HashFunction(c.I1,c.I2),h);
+    }
     dom.DnLoadDevice(dom.Nproc, true);
     ResetContactsLeesEdwardsSpheres(dom, strain);
-    dom.UpLoadDevice(dom.Nproc, true, true);
+    dom.UpLoadDevice(dom.Nproc, true, false);
+    thrust::host_vector<DEM::DynInteractonCU> current = dom.bDynInteractonsVV;
+    common = dom.bComInteractons;
+    for (auto & h : current) {
+        auto const & c = common[h.Idx];
+        auto const found = histories.find(HashFunction(c.I1,c.I2));
+        if (found != histories.end()) {
+            h.Ft=found->second.Ft;h.Fr=found->second.Fr;
+            h.PrevDelta=found->second.PrevDelta;h.InContact=found->second.InContact;
+        }
+    }
+    thrust::copy(current.begin(),current.end(),dom.bDynInteractonsVV.begin());
+    cudaMemset(dom.pMaxDCU,0,dom.demaux.nverts*sizeof(real));
 }
 
 // ShiftZOriginToZero -- after compression the cell sits at [Zmin_target, Zmax_target].
@@ -1558,15 +1577,14 @@ static void PrepareShearSolve(DEM::Domain & dom, double dt,
     dom.Finished = false;
 }
 
-// RefreshDeviceAccelerations -- recompute the device accelerations after a contact
-//   rebuild: pReset, then the four force kernels, then pRecomputeAccelerations.
-//   Without it the next velocity-Verlet half step would use accelerations derived
-//   from the pre-rebuild force state.  (MechSys does the same at the end of
-//   Domain::UpdateContactsDevice; here it is explicit because the LE rebuild does not
-//   go through that method.)
-//   All four launches go through Domain's pointers, so this is overload-free.
+// Sample initial forces at zero duration. Sampling must not consume a history
+// step; list rebuilds never call this function and preserve A/Wdot instead.
 static void RefreshDeviceAccelerations(DEM::Domain & dom)
 {
+    auto const history = dom.bDynInteractonsVV;
+    double const dt = dom.demaux.dt;
+    dom.demaux.dt = 0.0;
+    UploadAux(dom);
     size_t nt = dom.Nthread;
 
     dom.pReset<<<(dom.demaux.nparts + dom.demaux.ncoint) / nt + 1, nt>>>
@@ -1595,16 +1613,16 @@ static void RefreshDeviceAccelerations(DEM::Domain & dom)
 
     dom.pRecomputeAccelerations<<<(dom.demaux.nparts + nt - 1) / nt, nt>>>
         (dom.pParticlesCU, dom.pDynParticlesCU, dom.pA, dom.pWdot, dom.pdemaux);
+    dom.bDynInteractonsVV = history;
+    dom.pDynInteractonsVV = thrust::raw_pointer_cast(dom.bDynInteractonsVV.data());
+    dom.demaux.dt = dt;
+    UploadAux(dom);
 }
 
-// RebuildLeesEdwardsContacts -- the Phase 3 rebuild action: refresh the contact list
-//   for the current strain, recompute the device accelerations, and record the strain
-//   at which the list was built.  That recorded strain is what the Lees-Edwards
-//   rebuild criterion in SolveLeesEdwardsShear measures against.
+// Rebuild only the candidate list, preserving post-drift state and histories.
 static void RebuildLeesEdwardsContacts(DEM::Domain & dom, UserData & dat)
 {
     UpdateContactsDeviceLeesEdwards(dom, dat.cum_strain);
-    RefreshDeviceAccelerations(dom);
     dat.le_contact_strain = dat.cum_strain;
     dat.le_rebuilds++;
 }
@@ -1623,22 +1641,69 @@ static void WriteShearFrame(DEM::Domain & dom)
     dom.idx_out++;
 }
 
+// One physical VV step. Particle motion and image motion share the 2*Alpha
+// pair allowance: a list is valid only while 2*max_particle_motion + image_motion
+// is smaller than that allowance. Test post-drift geometry before applying force.
+static bool AdvanceLeesEdwardsStep(DEM::Domain & dom, UserData & dat)
+{
+    AdvanceShearState(dom,dat);
+    UploadAuxLe(dom);
+    size_t nt = dom.Nthread;
+    dom.pVerletStep1<<<(dom.demaux.nparts+nt-1)/nt,nt>>>
+        (dom.pVertsCU,dom.pParticlesCU,dom.pDynParticlesCU,dom.pA,dom.pdemaux);
+    if (dom.RotPar) dom.pOrientationUpdate<<<(dom.demaux.nparts+nt-1)/nt,nt>>>
+        (dom.pVertsCU,dom.pParticlesCU,dom.pDynParticlesCU,dom.pWdot,dom.pdemaux);
+    DEM::WrapZ<<<(dom.demaux.nparts+nt-1)/nt,nt>>>
+        (dom.pDynParticlesCU,dom.pParticlesCU,dom.pVertsCU,dom.pVertsoCU,
+         dom.pdemaux,static_cast<LeExtra const *>(dom.pExtraParams));
+    size_t const blocks = dom.demaux.nverts/nt+1;
+    DEM::MaxD<<<blocks,nt>>>(dom.pVertsCU,dom.pVertsoCU,dom.pMaxDCU,dom.pdemaux);
+    real const maxdis = *thrust::max_element(dom.bMaxDCU.begin(),dom.bMaxDCU.begin()+blocks);
+    double const image_motion = fabs(dat.cum_strain-dat.le_contact_strain)*(dom.Zmax-dom.Zmin);
+    bool const rebuilt = 2.0*maxdis + image_motion >= 2.0*dom.Alpha;
+    if (rebuilt) RebuildLeesEdwardsContacts(dom,dat);
+    dom.pReset<<<(dom.demaux.nparts+dom.demaux.ncoint)/nt+1,nt>>>
+        (dom.pParticlesCU,dom.pDynParticlesCU,dom.pInteractons,
+         dom.pComInteractons,dom.pdemaux,dom.pExtraParams);
+    if (dom.demaux.nvvint > 0)
+        dom.pForceVV<<<(dom.demaux.nvvint + nt - 1) / nt, nt>>>
+            (dom.pInteractons, dom.pComInteractons, dom.pDynInteractonsVV,
+             dom.pParticlesCU, dom.pDynParticlesCU, dom.pdemaux, dom.pExtraParams);
+    if (dom.demaux.neeint > 0)
+        dom.pForceEE<<<(dom.demaux.neeint + nt - 1) / nt, nt>>>
+            (dom.pEdgesCU, dom.pVertsCU, dom.pInteractons, dom.pComInteractons,
+             dom.pDynInteractonsEE, dom.pParticlesCU, dom.pDynParticlesCU,
+             dom.pdemaux, dom.pExtraParams);
+    if (dom.demaux.nvfint > 0)
+        dom.pForceVF<<<(dom.demaux.nvfint + nt - 1) / nt, nt>>>
+            (dom.pFacesCU, dom.pFacidCU, dom.pVertsCU, dom.pInteractons,
+             dom.pComInteractons, dom.pDynInteractonsVF, dom.pParticlesCU,
+             dom.pDynParticlesCU, dom.pdemaux, dom.pExtraParams);
+    if (dom.demaux.nfvint > 0)
+        dom.pForceFV<<<(dom.demaux.nfvint + nt - 1) / nt, nt>>>
+            (dom.pFacesCU, dom.pFacidCU, dom.pVertsCU, dom.pInteractons,
+             dom.pComInteractons, dom.pDynInteractonsFV, dom.pParticlesCU,
+             dom.pDynParticlesCU, dom.pdemaux, dom.pExtraParams);
+
+    dom.pFinalizeVelocity<<<(dom.demaux.nparts + nt - 1) / nt, nt>>>
+        (dom.pParticlesCU, dom.pDynParticlesCU, dom.pA, dom.pdemaux);
+    if (dom.RotPar) dom.pFinalizeRotation<<<(dom.demaux.nparts + nt - 1) / nt, nt>>>
+        (dom.pParticlesCU, dom.pDynParticlesCU, dom.pWdot, dom.pdemaux);
+
+
+    dom.demaux.iter++;
+    dom.demaux.Time += dom.Dt;
+    dom.Time += dom.Dt;
+    dom.iter++;
+    return rebuilt;
+}
+
 // SolveLeesEdwardsShear -- Phase 3 driver (constant-volume simple shear).
 //   Written here rather than using Domain::Solve because the step loop must launch
 //   the local WrapZ, and the library's own wrap is a hard-wired launch with no
 //   hook and no extraparams (see the header note, item 3).
-//   Step order reproduces the library's CUDA velocity-Verlet path:
-//     (setup callback) -> output -> pReset -> pVerletStep1 / pOrientationUpdate ->
-//     force kernels -> pFinalizeVelocity / pFinalizeRotation -> WrapZ -> ResetMaxD ->
-//     MaxD -> counters -> rebuild.
-//   Two independent rebuild triggers, exactly as in the reference solver:
-//     * maxdis > Alpha                        -- the standard Verlet displacement test;
-//     * |gamma - gamma_last_rebuild| * Lz >= Alpha/2
-//                                             -- the accumulated Lees-Edwards image
-//       shift, which fires however little the particles themselves have moved.  In
-//       practice this one governs: it fires about 4x more often than the affine
-//       displacement criterion would, and the rebuild count (and hence the cost) is
-//       set by it, ~1.8e6 steps / (0.5*Alpha) * gamma_dot * Lz.
+//   The shared step helper checks post-drift particle/image motion before force
+//   evaluation. Rebuilds migrate contact history without integrating it again.
 static void SolveLeesEdwardsShear(DEM::Domain & dom, double shear_time,
                                   double dt, double dtOut, UserData & dat,
                                   bool Render, size_t Nproc)
@@ -1650,6 +1715,7 @@ static void SolveLeesEdwardsShear(DEM::Domain & dom, double shear_time,
     size_t iter_t = 0;
     size_t numup = 0;
 
+    dom.UseVelocityVerlet = true;
     PrepareShearSolve(dom, dt, "shearing", Nproc);
     SetPeriodicBox(dom, dat.Lx, dat.Ly, dom.Zmin, dom.Zmax);
     SetLeState(dat.cum_strain, dat.shear_rate, 0.0, 0.0);
@@ -1671,75 +1737,10 @@ static void SolveLeesEdwardsShear(DEM::Domain & dom, double shear_time,
             tout += dtOut;
         }
 
-        AdvanceShearState(dom, dat);
-        UploadAuxLe(dom);
-
-        size_t nt = dom.Nthread;
-        dom.pReset<<<(dom.demaux.nparts + dom.demaux.ncoint) / nt + 1, nt>>>
-            (dom.pParticlesCU, dom.pDynParticlesCU, dom.pInteractons,
-             dom.pComInteractons, dom.pdemaux, dom.pExtraParams);
-
-        dom.pVerletStep1<<<(dom.demaux.nparts + nt - 1) / nt, nt>>>
-            (dom.pVertsCU, dom.pParticlesCU, dom.pDynParticlesCU, dom.pA, dom.pdemaux);
-        dom.pOrientationUpdate<<<(dom.demaux.nparts + nt - 1) / nt, nt>>>
-            (dom.pVertsCU, dom.pParticlesCU, dom.pDynParticlesCU, dom.pWdot, dom.pdemaux);
-
-        if (dom.demaux.nvvint > 0)
-            dom.pForceVV<<<(dom.demaux.nvvint + nt - 1) / nt, nt>>>
-                (dom.pInteractons, dom.pComInteractons, dom.pDynInteractonsVV,
-                 dom.pParticlesCU, dom.pDynParticlesCU, dom.pdemaux, dom.pExtraParams);
-        if (dom.demaux.neeint > 0)
-            dom.pForceEE<<<(dom.demaux.neeint + nt - 1) / nt, nt>>>
-                (dom.pEdgesCU, dom.pVertsCU, dom.pInteractons, dom.pComInteractons,
-                 dom.pDynInteractonsEE, dom.pParticlesCU, dom.pDynParticlesCU,
-                 dom.pdemaux, dom.pExtraParams);
-        if (dom.demaux.nvfint > 0)
-            dom.pForceVF<<<(dom.demaux.nvfint + nt - 1) / nt, nt>>>
-                (dom.pFacesCU, dom.pFacidCU, dom.pVertsCU, dom.pInteractons,
-                 dom.pComInteractons, dom.pDynInteractonsVF, dom.pParticlesCU,
-                 dom.pDynParticlesCU, dom.pdemaux, dom.pExtraParams);
-        if (dom.demaux.nfvint > 0)
-            dom.pForceFV<<<(dom.demaux.nfvint + nt - 1) / nt, nt>>>
-                (dom.pFacesCU, dom.pFacidCU, dom.pVertsCU, dom.pInteractons,
-                 dom.pComInteractons, dom.pDynInteractonsFV, dom.pParticlesCU,
-                 dom.pDynParticlesCU, dom.pdemaux, dom.pExtraParams);
-
-        dom.pFinalizeVelocity<<<(dom.demaux.nparts + nt - 1) / nt, nt>>>
-            (dom.pParticlesCU, dom.pDynParticlesCU, dom.pA, dom.pdemaux);
-        dom.pFinalizeRotation<<<(dom.demaux.nparts + nt - 1) / nt, nt>>>
-            (dom.pParticlesCU, dom.pDynParticlesCU, dom.pWdot, dom.pdemaux);
-
-        // Lees-Edwards z-wrap, launched directly from this file: the library's
-        // own wrap is not used, the LE state arrives through pExtraParams.
-        DEM::WrapZ<<<(dom.demaux.nparts + nt - 1) / nt, nt>>>
-            (dom.pDynParticlesCU, dom.pParticlesCU, dom.pdemaux,
-             static_cast<LeExtra const *>(dom.pExtraParams));
-        DEM::ResetMaxD<<<dom.demaux.nparts / nt + 1, nt>>>
-            (dom.pVertsCU, dom.pVertsoCU, dom.pMaxDCU,
-             dom.pParticlesCU, dom.pDynParticlesCU, dom.pdemaux);
-
-        DEM::MaxD<<<dom.demaux.nverts / nt + 1, nt>>>
-            (dom.pVertsCU, dom.pVertsoCU, dom.pMaxDCU, dom.pdemaux);
-        thrust::device_vector<real>::iterator it =
-            thrust::max_element(dom.bMaxDCU.begin(), dom.bMaxDCU.end());
-        real maxdis = *it;
-
-        dom.demaux.iter++;
-        dom.demaux.Time += dt;
-        dom.Time += dt;
-        dom.iter++;
-
-        double Lz = dom.Zmax - dom.Zmin;
-        double rebuild_dx = 0.5 * dat.base_alpha;
-        if (rebuild_dx <= 0.0) rebuild_dx = 1e-12;
-        double image_shift_change = fabs(dat.cum_strain - dat.le_contact_strain) * Lz;
-
-        if (maxdis > dom.Alpha || image_shift_change >= rebuild_dx)
-        {
+        if (AdvanceLeesEdwardsStep(dom,dat)) {
             numup++;
-            iter_t += dom.iter - iter_b;
+            iter_t += dom.iter-iter_b;
             iter_b = dom.iter;
-            RebuildLeesEdwardsContacts(dom, dat);
         }
     }
 
@@ -1769,8 +1770,7 @@ static void SolveLeesEdwardsShear(DEM::Domain & dom, double shear_time,
 // kept in step with Domain::Solve by hand.
 //
 // It mirrors Domain::Solve for the configuration this solver uses
-// (USE_CUDA, UseVelocityVerlet == false, i.e. the MechSys default that this
-// solver never changes):
+// (USE_CUDA, legacy position Verlet during compression):
 //   * per-step order: setup callback -> dtOut output -> pReset ->
 //     pForceVV/EE/VF/FV -> pTranslate -> pRotate -> wrap -> ResetMaxD -> MaxD,
 //   * rebuild when maxdis > Alpha, via UpdateContactsDevice(),
@@ -1796,6 +1796,7 @@ static void SolveCompression(DEM::Domain & dom, double comp_time,
     size_t iter_t = 0;
     size_t numup  = 0;
 
+    dom.UseVelocityVerlet = false;
     PrepareShearSolve(dom, dt, "compression", Nproc);
     SetPeriodicBox(dom, dat.Lx, dat.Ly, dom.Zmin, dom.Zmax);
 
@@ -1859,8 +1860,8 @@ static void SolveCompression(DEM::Domain & dom, double comp_time,
 
         // Lees-Edwards / moving-boundary z-wrap, launched directly from here.
         DEM::WrapZ<<<(dom.demaux.nparts + nt - 1) / nt, nt>>>
-            (dom.pDynParticlesCU, dom.pParticlesCU, dom.pdemaux,
-             static_cast<LeExtra const *>(dom.pExtraParams));
+            (dom.pDynParticlesCU, dom.pParticlesCU, dom.pVertsCU, dom.pVertsoCU,
+             dom.pdemaux, static_cast<LeExtra const *>(dom.pExtraParams));
         DEM::ResetMaxD<<<dom.demaux.nparts / nt + 1, nt>>>
             (dom.pVertsCU, dom.pVertsoCU, dom.pMaxDCU,
              dom.pParticlesCU, dom.pDynParticlesCU, dom.pdemaux);

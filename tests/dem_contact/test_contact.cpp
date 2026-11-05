@@ -99,7 +99,11 @@ static void output_cases(std::string const &prefix)
     d.AddSphere(-2,Vec3_t(1.9,0,0),1,1);
     DEM::CInteractonSphere c(d.Particles[0],d.Particles[1]);
     d.PairtoCInt[HashFunction(0,1)]=&c;
-    c.Fnet=c.Ftnet=c.Fndpot=c.Ftdpot=c.Fther=c.Fn=OrthoSys::O;
+    c.Fnet=c.Ftnet=c.Fndpot=c.Ftdpot=c.Fther=OrthoSys::O;
+    // Rolling must use its own force history, even if the normal scratch field
+    // has never been assigned by a GPU force evaluation.
+    c.Fn=Vec3_t(NAN,NAN,NAN);
+    c.Fdr=Vec3_t(3,4,5);
     c.Nc=1;c.NormalOverlap=.1;
     d.WriteBF((prefix+"-overlap-zero").c_str());
     c.Nc=0;c.NormalOverlap=0;c.Fnet=Vec3_t(1,0,0);

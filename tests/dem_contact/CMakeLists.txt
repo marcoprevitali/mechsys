@@ -31,3 +31,31 @@ IF(A_WITH_EXPERIMENTAL_VV_COUPLING)
     ADD_DEPENDENCIES(dem_contact_regression_binaries dem_test_coupling)
     SET_TESTS_PROPERTIES(dem_coupling_smoke PROPERTIES TIMEOUT 120 RUN_SERIAL TRUE)
 ENDIF()
+
+# Exercise the actual example callbacks and local shearbox stepping code.
+FOREACH(name test_force_api test_periodic_pid)
+    ADD_EXECUTABLE(dem_${name}_cpu ${name}.cpp)
+    TARGET_LINK_LIBRARIES(dem_${name}_cpu ${LIBS})
+    SET_TARGET_PROPERTIES(dem_${name}_cpu PROPERTIES COMPILE_FLAGS "${FLAGS}" LINK_FLAGS "${LFLAGS}")
+    ADD_TEST(NAME dem_${name}_cpu COMMAND dem_${name}_cpu)
+    SET_TESTS_PROPERTIES(dem_${name}_cpu PROPERTIES TIMEOUT 120 RUN_SERIAL TRUE)
+    ADD_DEPENDENCIES(dem_contact_regression_binaries dem_${name}_cpu)
+ENDFOREACH()
+FOREACH(name test_periodic_pid test_shearbox)
+    ADD_EXECUTABLE(dem_${name}_gpu ${name}_gpu.cu)
+    TARGET_LINK_LIBRARIES(dem_${name}_gpu ${CUDA_LIBRARIES})
+    SET_TARGET_PROPERTIES(dem_${name}_gpu PROPERTIES COMPILE_FLAGS "${FLAGS} -DUSE_CUDA" LINK_FLAGS "${LFLAGS}")
+    IF(NOT MECHSYS_CUDA_ARCH_VIA_FLAGS)
+        SET_TARGET_PROPERTIES(dem_${name}_gpu PROPERTIES CUDA_ARCHITECTURES "${MECHSYS_CUDA_ARCH}")
+    ENDIF()
+    ADD_TEST(NAME dem_${name}_gpu COMMAND dem_${name}_gpu)
+    SET_TESTS_PROPERTIES(dem_${name}_gpu PROPERTIES TIMEOUT 120 RUN_SERIAL TRUE)
+    ADD_DEPENDENCIES(dem_contact_regression_binaries dem_${name}_gpu)
+ENDFOREACH()
+
+IF(A_WITH_TDEM)
+    ADD_CUSTOM_TARGET(dem_contribution_verification_binaries DEPENDS
+        dem_contact_regression_binaries test_saveload
+        test_cu_01 test_cu_02 test_cu_03 test_cu_04
+        PID_v2 TX_PID_periodic TX_PID_periodic_gpu shearbox_LE_const_vol)
+ENDIF()

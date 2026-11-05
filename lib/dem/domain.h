@@ -1173,18 +1173,16 @@ inline void Domain::WriteBF (char const * FileKey)
             Ftdpot[3*idx  ] = float(it->second->Ftdpot (0));
             Ftdpot[3*idx+1] = float(it->second->Ftdpot (1));
             Ftdpot[3*idx+2] = float(it->second->Ftdpot (2));
-            if (n_rl>0)
-            {
-            Froll [3*idx  ] = float(it->second->Fn    (0));
-            Froll [3*idx+1] = float(it->second->Fn    (1));
-            Froll [3*idx+2] = float(it->second->Fn    (2));
-            }
+            Froll[3*idx] = Froll[3*idx+1] = Froll[3*idx+2] = 0.0f;
         if (it->second->P1->Verts.Size()==1 && it->second->P2->Verts.Size()==1)
         {
             DEM::CInteractonSphere * Cis = dynamic_cast<DEM::CInteractonSphere*>(it->second);
             Fdvv [3*idx  ] = float(Cis->Fdvv(0)); // retrieve the data from the interaction
             Fdvv [3*idx+1] = float(Cis->Fdvv(1));
             Fdvv [3*idx+2] = float(Cis->Fdvv(2));
+            Froll[3*idx  ] = float(Cis->Fdr(0));
+            Froll[3*idx+1] = float(Cis->Fdr(1));
+            Froll[3*idx+2] = float(Cis->Fdr(2));
         }
         else
         {

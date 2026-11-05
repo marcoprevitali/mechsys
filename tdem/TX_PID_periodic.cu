@@ -160,9 +160,12 @@ __global__ void CalcStressVV(InteractonCU const * Int, ComInteractonCU const * C
         if (Int[id].BothFree) BranchVec(DPar[i2].x, DPar[i1].x, Branch, aux[0].Per);
         else                  Branch = DPar[i1].x - DPar[i2].x;
 
-        const real3 F = make_real3(CInt[id].Fnnet.x + CInt[id].Ftnet.x,
-                                   CInt[id].Fnnet.y + CInt[id].Ftnet.y,
-                                   CInt[id].Fnnet.z + CInt[id].Ftnet.z);
+        const real3 F = make_real3(CInt[id].Fnnet.x + CInt[id].Ftnet.x +
+                                   CInt[id].Fndpot.x + CInt[id].Ftdpot.x + CInt[id].Fther.x,
+                                   CInt[id].Fnnet.y + CInt[id].Ftnet.y +
+                                   CInt[id].Fndpot.y + CInt[id].Ftdpot.y + CInt[id].Fther.y,
+                                   CInt[id].Fnnet.z + CInt[id].Ftnet.z +
+                                   CInt[id].Fndpot.z + CInt[id].Ftdpot.z + CInt[id].Fther.z);
 
         atomicAdd(&s[0], F.x*Branch.x);
         atomicAdd(&s[1], F.y*Branch.y);

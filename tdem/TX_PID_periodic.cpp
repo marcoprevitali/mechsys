@@ -143,8 +143,7 @@ Mat3_t ContactStress(DEM::Domain & dom)
     for (auto & it : dom.PairtoCInt)
     {
         DEM::CInteracton * ci = it.second;
-        if (norm(ci->Fnet) <= 1.0e-12 && norm(ci->Ftnet) <= 1.0e-12) continue;
-        Vec3_t F = ci->Fnet + ci->Ftnet;
+        Vec3_t F = ci->Fnet + ci->Ftnet + ci->Fndpot + ci->Ftdpot + ci->Fther;
         Vec3_t branch;
         DEM::BranchVec(ci->P2->x, ci->P1->x, branch, dom.Per);
         for (int i = 0; i < 3; ++i)
