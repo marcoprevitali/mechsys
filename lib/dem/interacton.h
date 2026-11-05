@@ -714,7 +714,6 @@ inline bool CInteractonSphere::CalcForce(double dt, Vec3_t const & Per, size_t c
     First = false;
 
     if (delta<=0.0){
- //   printf("Reset overlap..\n");
     Fdvv = Vec3_t(0.0, 0.0, 0.0);
     vt_prev = Vec3_t(0.0, 0.0, 0.0);
     InContact = false;

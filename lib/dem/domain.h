@@ -866,7 +866,6 @@ MaxD<<<demaux.nverts/Nthread+1, Nthread>>>(pVertsCU, pVertsoCU, pMaxDCU, pdemaux
             //std::cout << iter << std::endl;
             numup++;
             iter_t+= iter - iter_b;
-            //printf("MaxDiplacement %g > %g (alpha), recalculating the Verlet list. Current step: %i, %i steps have passed since the list was last calculated.\n",maxdis,Alpha,iter,iter-iter_b);
 
             iter_b = iter;
             UpdateContactsDevice();
