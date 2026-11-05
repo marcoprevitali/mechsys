@@ -31,7 +31,7 @@ from the commit history, because both parts were committed together.
 | Coulomb criterion and its three modes | `CInteractonSphere::CalcForce`, the `sphereCoulombMode` branches and `friction_limit` selection |
 | Tensile cutoff | the `sphereTensileCutoff` branch on the elastic-plus-dashpot normal force |
 | Tangential-overlap / first-contact correction | `sphereFirstContactCorrection`, `activationFraction`, `InContact`, `PrevDelta` |
-| Additional contact outputs (`NormalOverlap`, `TangentialOverlap`, `Rolling`, dashpot components, overlap-based row predicate) | `Domain::WriteBF`, `HasContactOutput`, `H5LTmake_dataset_float` calls |
+| Additional contact outputs (`NormalOverlap`, `TangentialOverlap`, `Rolling`, dashpot components, overlap-based row predicate) | `Domain::WriteBF`, `HasContactOutput` in `lib/dem/interacton.h`, the `H5LTmake_dataset_float` calls |
 
 These define the physics of the feature: the integrator's staging, the friction
 cone, the tensile clamp, the activation fraction and what is exported.
@@ -47,12 +47,29 @@ the author:**
 The AI-assisted parts carry the least certainty about their physics and are
 therefore the parts a reviewer should scrutinise most:
 
-- the rotational path is covered by the same regression suite as the
-  translational one (quaternion normalisation, vertex rotation, prescribed
-  spin rejection), but it has no analytic rotational-VV test;
-- the coupled path is opt-in, default-off, described as **first order**, and its
-  guards reject configurations it cannot represent. It is not claimed to be
-  accurate or fast, and the legacy coupled solver is unchanged.
+- **Rotation.** `OrientationUpdate` and `FinalizeRotation` are launched on
+  every velocity-Verlet step because `RotPar` defaults to true, so the code
+  paths execute in all of the VV regressions - but every integrating case starts
+  with zero angular velocity and produces no torque (a free pair, or a central
+  collision), so `w` stays zero and the vertex-rotation branch of
+  `OrientationUpdate`, which requires a non-zero `w_half`, never fires. The only
+  non-zero `w` in the suite is set directly on a device buffer to check that a
+  rebuild does not disturb it. What the suite does assert is narrower: a pre-force
+  rebuild preserves `Wdot`, and a separate `vertex_rotation()` case feeds a
+  hand-rotated cube to `MaxD` and requires the measured displacement to be
+  `sqrt(2)*sin(theta/2)` with no centre motion. **No test integrates a spinning
+  body**: there is no analytic check of the quaternion half kick, the exponential
+  map, the renormalisation, or angular-momentum conservation in a free rotation.
+  That gap is the main reason this path is listed separately.
+- **Coupled VV–LBM.** The path is opt-in, default-off, described as **first
+  order**, and its guards reject configurations it cannot represent. It is not
+  claimed to be accurate or fast, and the legacy coupled solver is unchanged.
+  `dem_coupling_smoke` runs three tiny `Selection::ImplicitVV` fixtures and
+  checks the combined mass and momentum against fixed budgets, so the exchange
+  arithmetic does have a numeric guard rail. It is an endpoint check on three
+  fixtures, not a physical validation, and the rejection paths themselves are
+  only exercised by `tlbmdem/tlbmdem_cu_benchmark --guards`, which is not part
+  of the registered regression suite.
 
 Everything, including the AI-assisted parts, was reviewed, tested and accepted
 by the author; the bounded regression results in this document apply to the
