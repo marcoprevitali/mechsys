@@ -299,7 +299,6 @@ public:
     Rotate_ptr_t       pRotate;                                             ///< pointer to the rotation function
     Move_ptr_t         pMove;                                               ///< pointer to the combined translation/rotation function (NULL: use pTranslate and pRotate)
     Reset_ptr_t        pReset;                                              ///< pointer to the reset function
-    WrapZ_ptr_t        pWrapZ;                                             ///< pointer to the Lees-Edwards z-wrapping function
     void             * pExtraParams;                                        ///< pointer to a structure of extra parameters for force calculation
 
 
@@ -371,7 +370,6 @@ inline Domain::Domain (void * UD, size_t contactlaw)
     pRotate    = Rotate;
     pMove      = MoveParticles;
     pReset     = Reset;
-    pWrapZ     = NULL;
 
     pVerletStep1 = VerletStep1;
     pFinalizeVelocity = FinalizeVelocity;
@@ -834,13 +832,6 @@ if (RotPar) pRotate   <<<demaux.nparts/Nthread+1,Nthread>>>(pVertsCU, pParticles
 
     }
 
-
-// Wrap particles and reset displacement reference for wrapped particles
-// This must be done after BOTH VelocityVerlet and old integration paths
-if (pWrapZ!=NULL) {
-    pWrapZ<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pDynParticlesCU, pParticlesCU, pdemaux);
-    ResetMaxD<<<demaux.nparts/Nthread+1,Nthread>>>(pVertsCU, pVertsoCU, pMaxDCU, pParticlesCU, pDynParticlesCU, pdemaux);
-}
 
 // 4., calculate max displacement / recalculate the verlet list if needed
 // V1: for the Velocity-Verlet path this check has been moved to the pre-force

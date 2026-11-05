@@ -53,11 +53,6 @@ struct dem_aux
     bool   px     = false;
     bool   py     = false;
     bool   pz     = false;
-    real   strain = 0.0;   ///< Accumulated shear strain (gamma = gamma_dot * t)
-    real   shear_rate = 0.0; ///< Shear rate gamma_dot (1/T)
-    bool   use_wrapZ = false; ///< If true, pWrapZ handles LE shift; ResetMaxD skips it to avoid double-shifting
-    real   vZmin = 0.0;    ///< Velocity of Zmin boundary (for contact-wrapping compression)
-    real   vZmax = 0.0;    ///< Velocity of Zmax boundary (for contact-wrapping compression)
     size_t sphereCoulombMode = 0;       ///< Sphere Coulomb mode: 0 elastic cap with dashpot, 1 elastic cap dashpot off sliding, 2 total force cap
     bool   sphereTensileCutoff = false; ///< Clamp tensile total normal force for sphere contacts
     bool   sphereFirstContactCorrection = false; ///< Scale first active tangential increment by contact activation fraction
@@ -96,7 +91,6 @@ typedef void (*EnforceAngularFixity_ptr_t)(ParticleCU const *,
                                            dem_aux const *);
 typedef void (*RecomputeAccelerations_ptr_t)(ParticleCU const *, DynParticleCU const *,
                                              real3 *, real3 *, dem_aux const *);
-typedef void (*WrapZ_ptr_t)(DynParticleCU *, ParticleCU const *, dem_aux const *);
 // Quaternion exponential map (body‑frame angular velocity → rotation increment)
 __device__ inline real4 Exp_GPU(real3 w, real dt)
 {
@@ -1484,19 +1478,8 @@ __global__ void ResetMaxD(real3 * Verts, real3 * Vertso, real * maxd, ParticleCU
         }
         if (demaux[0].pz && fabs(demaux[0].Per.z) > 0.0)
         {
-            real shear_shift = demaux[0].strain * (demaux[0].Zmax - demaux[0].Zmin);
-            if (DPar[ic].x.z< demaux[0].Zmin)
-            {
-                dis.z = demaux[0].Zmax - demaux[0].Zmin;
-                dis.x += shear_shift;
-                wrapped = true;
-            }
-            if (DPar[ic].x.z>=demaux[0].Zmax)
-            {
-                dis.z = demaux[0].Zmin - demaux[0].Zmax;
-                dis.x -= shear_shift;
-                wrapped = true;
-            }
+            if (DPar[ic].x.z< demaux[0].Zmin) { dis.z = demaux[0].Zmax - demaux[0].Zmin; wrapped = true; }
+            if (DPar[ic].x.z>=demaux[0].Zmax) { dis.z = demaux[0].Zmin - demaux[0].Zmax; wrapped = true; }
         }
     }
 

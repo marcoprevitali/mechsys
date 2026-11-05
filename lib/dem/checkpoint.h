@@ -147,7 +147,7 @@ inline void Domain::SaveCheckpoint(char const * filename) {
 #ifdef USE_CUDA
     need(sizeof(real)==8,"CUDA checkpoint requires FP64");
     need(pForceVV==(ContactLaw==0?CalcForceVV:CalcForceVV_Hertz) && pForceEE==CalcForceEEPre && pForceVF==CalcForceVFPre && pForceFV==CalcForceFVPre &&
-         pReset==Reset && pWrapZ==NULL && pExtraParams==NULL && pVerletStep1==VerletStep1 && pFinalizeVelocity==FinalizeVelocity &&
+         pReset==Reset && pExtraParams==NULL && pVerletStep1==VerletStep1 && pFinalizeVelocity==FinalizeVelocity &&
          pOrientationUpdate==OrientationUpdate && pFinalizeRotation==FinalizeRotation,"custom CUDA/coupled state is unsupported");
     need(cudaDeviceSynchronize()==cudaSuccess,"device synchronization failed"); DnLoadDevice(Nproc,true);
     thrust::host_vector<ParticleCU> ps=bParticlesCU;
