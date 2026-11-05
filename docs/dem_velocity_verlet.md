@@ -101,6 +101,27 @@ upstream's history serialization; coupled checkpoint continuation is rejected.
 No performance experiment, mixed-precision path, unfinished application
 driver, or private evidence package is part of this contribution.
 
+## Example applications
+
+Three complete drivers exercise the optional integration and contact paths.
+They are ordinary example programs, not regression tests, and they are built by
+default with the other `tdem` targets.
+
+| Target | Source / input | Purpose |
+| --- | --- | --- |
+| `PID_v2` | `tdem/PID_v2.cpp`, `tdem/test_pid_v2.inp` | Wall-particle servo that compresses a box to a target pressure and then shears it at constant axial wall velocity. Uses velocity Verlet and Coulomb mode 2. |
+| `TX_PID_periodic` / `TX_PID_periodic_gpu` | `tdem/TX_PID_periodic.{cpp,cu}`, `tdem/test_tx_pid_periodic.inp` | Same PID workflow driven through the periodic cell instead of walls: the stress is measured from the contact virial and the servo resizes `Xmin`/`Xmax`/`Per`. The GPU variant reduces the virial on the device. |
+| `shearbox_LE_const_vol` | `tdem/shearbox_LE_const_vol.cu`, `tdem/test_shearbox_LE.inp` | Constant-volume three-phase periodic shearbox with Lees-Edwards kinematics. It owns its step loop and supplies the Lees-Edwards branch vector, force kernels and reset through `Domain`'s existing function pointers, so no Lees-Edwards support is required inside the library. |
+
+`PID_v2` and the shearbox keep MechSys's legacy integration default where they
+rely on it, and the two PID periodic drivers select velocity Verlet explicitly;
+nothing here changes a library default. `TX_PID_periodic` and
+`TX_PID_periodic_gpu` share the same physics but are separate sources, so the
+CPU and GPU builds can be compared directly. The shearbox example in
+`tdem/test_shearbox_LE.inp` is a small, quick configuration (1188 spheres); the
+solvers read every physical parameter from the input file, so larger
+production boxes only need a different `.inp`.
+
 ## Bounded regression checks
 
 Configure the usual dependencies and set
