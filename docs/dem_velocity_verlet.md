@@ -122,6 +122,26 @@ CPU and GPU builds can be compared directly. The shearbox example in
 solvers read every physical parameter from the input file, so larger
 production boxes only need a different `.inp`.
 
+## Selecting the integrator in the CUDA examples
+
+
+The four CUDA example drivers take the integrator as an optional trailing
+argument, so the same binary runs both schemes and prints the selection it
+actually used.  Position Verlet remains the default, matching the library.
+
+| Driver | Invocation |
+| --- | --- |
+| `tdem/test_cu_01` | `test_cu_01 [Nproc] [final time] [integrator]` |
+| `tdem/test_cu_02` | `test_cu_02 [Nproc] [final time] [integrator]` |
+| `tdem/test_cu_03` | `test_cu_03 [Nproc] [Alpha] [Nthread] [final time] [integrator]` |
+| `tdem/test_cu_04` | `test_cu_04 <input> [Nproc] [dthoot] [qin] [integrator]` |
+
+`integrator` is `0` for position Verlet and `1` for velocity Verlet, and every
+run prints `DEM_BENCHMARK_INTEGRATOR velocity_verlet=<0|1>` before solving.  The
+existing arguments keep their positions and meanings, so previous command lines
+behave exactly as before.  Tests 1 and 2 also accept a final time so a
+comparison can be shortened without editing the source.
+
 ## Bounded regression checks
 
 Configure the usual dependencies and set
