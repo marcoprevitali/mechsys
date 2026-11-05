@@ -50,6 +50,7 @@ unchanged; solver precision is independent of visualization precision.
 | --- | --- |
 | `Normal`, `Tangential` | Elastic normal and tangential contact force, summed over active features. |
 | `DashpotForceNormal`, `DashpotForceTangential` | Normal and tangential dashpot contributions. |
+| `Rolling` | Sphere rolling-resistance force history; zero for nonspherical rows when a mixed output contains this dataset. |
 | `NormalOverlap` | Maximum positive active feature overlap for the pair; sphere overlap is radius sum minus separation. Zero for force-only rows. |
 | `TangentialOverlap` | Sphere tangential displacement history; zero for nonspherical pairs, which have multiple feature histories. |
 | `ID1`, `ID2`, `Position`, `Branch` | Existing pair identification and display geometry. |
@@ -113,9 +114,10 @@ default with the other `tdem` targets.
 | `TX_PID_periodic` / `TX_PID_periodic_gpu` | `tdem/TX_PID_periodic.{cpp,cu}`, `tdem/test_tx_pid_periodic.inp` | Same PID workflow driven through the periodic cell instead of walls: the stress is measured from the contact virial and the servo resizes `Xmin`/`Xmax`/`Per`. The GPU variant reduces the virial on the device. |
 | `shearbox_LE_const_vol` | `tdem/shearbox_LE_const_vol.cu`, `tdem/test_shearbox_LE.inp` | Constant-volume three-phase periodic shearbox with Lees-Edwards kinematics. It owns its step loop and supplies the Lees-Edwards branch vector, force kernels and reset through `Domain`'s existing function pointers, so no Lees-Edwards support is required inside the library. |
 
-`PID_v2` and the shearbox keep MechSys's legacy integration default where they
-rely on it, and the two PID periodic drivers select velocity Verlet explicitly;
-nothing here changes a library default. `TX_PID_periodic` and
+All PID drivers select velocity Verlet explicitly. The shearbox uses legacy
+position Verlet during compression and velocity Verlet during shear; its local
+shear loop preserves contact histories and checks candidate validity after the
+drift and before forces. Nothing here changes a library default. `TX_PID_periodic` and
 `TX_PID_periodic_gpu` share the same physics but are separate sources, so the
 CPU and GPU builds can be compared directly. The shearbox example in
 `tdem/test_shearbox_LE.inp` is a small, quick configuration (1188 spheres); the
@@ -166,3 +168,42 @@ including its entry without standalone VV acceleration initialization. The histo
 oracles, and full-step checkpoint continuation. Export checks require Python
 with `h5py` and `numpy`. These are bounded regressions, not a full workload
 or scientific-accuracy certification.
+
+## Custom CPU contact compatibility and example verification
+
+The original four-argument virtual `Interacton::CalcForce(dt, Per, iter, law)`
+remains the extension point for custom CPU interactions. The overload accepting
+sphere options sets a scoped per-interaction context and dispatches through that
+original virtual method. Existing four-argument overrides keep receiving solver
+calls; options are restored after a return or exception. Builtin sphere contacts
+consume the options, while other interactions can retain their existing laws.
+This preserves source overrides; CUDA structures have changed, so rebuild all
+code sharing these headers and device buffers together.
+
+The optional regression suite also exercises the real periodic PID callbacks
+and the shearbox's custom force kernels and physical-step helper. These checks
+cover total contact stress, zero-duration initialization, history-preserving
+rebuilds, fast post-drift contact formation, shear-image motion and periodic
+wrapping. Both custom shearbox laws export overlap/count bookkeeping and force
+components that reconstruct the applied force, including the linear tensile
+clamp. The shearbox retains its existing custom friction laws, including their
+retained tangential/rolling force histories during a temporary gap. Rebuilds
+migrate those forces by pair identity; the Hertz case does not convert through
+zero stiffness when separated.
+
+After configuring a build with both regression/coupling options above, run:
+
+```sh
+python3 scripts/verify_dem_contribution.py --build build --output fresh-verification
+```
+
+The verifier builds the required targets, rejects a build configured for another
+checkout, checks each return code and integrator banner, and records source,
+input and binary hashes with individual logs and a final `SUMMARY.json` verdict.
+It runs all bounded regressions, exports, history/restart comparisons, legacy
+save/load, all four CUDA examples in both integration modes, and all four new
+application targets. Default application inputs use documented smaller windows
+or boxes, recorded alongside their hashes; `--full-examples` uses the checked-in
+application configurations. Output directories must be new and existing evidence
+is never deleted. Configure the normal library dependencies beforehand; the
+verifier does not borrow paths from unrelated projects or make timing claims.
