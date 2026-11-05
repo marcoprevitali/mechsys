@@ -254,7 +254,7 @@ public:
     void SetVelocityDevice (size_t idx, double vx, double vy, double vz);   ///< Set one particle's velocity on the device (prescribed motion)
 #endif
     void UpdateContactsDevice();                                            ///< Update contacts lists in device
-    void UpdateContactsDevicePreForce();                                    ///< V1: narrowly scoped pre-force rebuild preserving the VV integration state
+    void UpdateContactsDevicePreForce();                                    ///< Pre-force rebuild preserving the velocity-Verlet integration state
     thrust::device_vector<ParticleCU>      bParticlesCU;                    ///< device vector of particles
     thrust::device_vector<DynParticleCU>   bDynParticlesCU;                 ///< device vector of particles
     thrust::device_vector<real>            bMaxDCU;                         ///< device vector of maximun displacements
@@ -770,7 +770,7 @@ pVerletStep1<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pVertsCU, pParticle
 if (RotPar) pOrientationUpdate<<<(demaux.nparts+Nthread-1)/Nthread, Nthread>>>(pVertsCU, pParticlesCU, pDynParticlesCU, pWdot, pdemaux);
 
 #ifdef USE_CUDA
-// V1 fix: the drift above may have created new contacts that are absent from the
+// The drift above may have created new contacts that are absent from the
 // candidate list (which was built before the drift). The displacement check and
 // the rebuild must therefore run HERE, on the post-drift geometry, BEFORE the
 // force kernels - not at the end of the iteration. The criterion uses the same
@@ -834,7 +834,7 @@ if (RotPar) pRotate   <<<demaux.nparts/Nthread+1,Nthread>>>(pVertsCU, pParticles
 
 
 // 4., calculate max displacement / recalculate the verlet list if needed
-// V1: for the Velocity-Verlet path this check has been moved to the pre-force
+// For the velocity-Verlet path this check has been moved to the pre-force
 // stage (post-drift geometry), so it must not run again here - the displacement
 // reference was already reset by the pre-force rebuild and the positions have
 // not changed since.
@@ -845,7 +845,7 @@ MaxD<<<demaux.nverts/Nthread+1, Nthread>>>(pVertsCU, pVertsoCU, pMaxDCU, pdemaux
 }
 
 
-        // V1: the displacement reduction and rebuild decision run here only for the
+        // The displacement reduction and rebuild decision run here only for the
         // position-Verlet/leapfrog path; the Velocity-Verlet path performs them at the
         // pre-force stage on the post-drift geometry (see above).
         demaux.iter++;
@@ -898,7 +898,7 @@ if (UseVelocityVerlet){
         if (RotPar) Particles[i]->RotateVelVerlet(Dt);
         }
 
-        // V1 fix: pre-force list-validity check on the post-drift geometry. The drift
+        // Pre-force list-validity check on the post-drift geometry. The drift
         // above can create contacts absent from the candidate list; rebuild here,
         // before the forces, using the same displacement convention as the CPU
         // contact reconstruction (displacement since the last valid list).
@@ -4450,8 +4450,8 @@ inline void Domain::DnLoadDevice(size_t Nc, bool force)
     }
 }
 
-// V1: narrowly scoped contact-list rebuild for the pre-force stage of the
-// Velocity-Verlet path. Unlike UpdateContactsDevice, this operation:
+// Contact-list rebuild for the pre-force stage of the velocity-Verlet path.
+// Unlike UpdateContactsDevice, this operation:
 //  - does NOT re-upload particle dynamic state (positions, half-step velocities,
 //    orientations) - the device keeps the post-drift integration state;
 //  - does NOT upload A/Wdot from the host (those are stale in GPU mode; the device

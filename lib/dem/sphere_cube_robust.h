@@ -1,5 +1,6 @@
-// V3-I0-P2R: FP64-only exact expansions for a bounded sphere/cube geometry.
-// See benchmarks/v3_i0_p2r/COMPENSATED_ARITHMETIC.md for envelope and proof.
+// FP64 exact expansions for a bounded sphere/cube geometry.
+// Rounding-error compensation helpers used by the experimental coupled benchmark
+// path; the bound they enforce is documented at their point of use.
 #ifndef MECHSYS_SPHERE_CUBE_ROBUST_H
 #define MECHSYS_SPHERE_CUBE_ROBUST_H
 #include <cmath>
